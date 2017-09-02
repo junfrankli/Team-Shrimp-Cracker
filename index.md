@@ -40,3 +40,7 @@ void loop() {
 When run, here’s what happens:
 
 gfy
+
+### Team Contract
+Here is the [team contract]https://docs.google.com/a/cornell.edu/document/d/185qE_biNOK_HIIYWK4v1OBuVsC2TEDHkQdZEg_0X8gM/edit?usp=sharing that lists the goals and policies of the team.
+
