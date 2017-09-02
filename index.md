@@ -26,7 +26,7 @@ To output the measured values, we used the Serial library and the Arduino IDE’
 
 Here is the code that we used:
 
-‘’’Java
+```Java
 int value;
 void setup() {
   Serial.begin(115200);      // open the serial port at 9600 bps:
@@ -36,7 +36,7 @@ void loop() {
   value = analogRead(A0);
   Serial.println("value = " + value);
 }
-
+```
 When run, here’s what happens:
 
 gfy
