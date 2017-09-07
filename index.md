@@ -50,7 +50,7 @@ void loop() {
 ```
 We added a resistor to lower the current to the LED, as shown in the following image. 
 
-![External LED](http://i.imgur.com/Rn8bvosl.jpg)
+![External LED](http://i.imgur.com/Rn8bvosm.jpg)
 
 The LED blinked on and off, just as the built in LED did in the previous exercise.
 
@@ -75,7 +75,6 @@ void loop() {
   Serial.println("value = " + value);
 }
 ```
-<<<<<<< HEAD
 
 When run, here’s what happens:
 
@@ -84,13 +83,13 @@ When run, here’s what happens:
 ## Using the Arduino for Analog Output
 To output an analog signal from the Arduino, we chose a digital pin with pulse-width modulation capability. We connected this pin to the LED in series with a resistor. The circuits below show the LED and potentiometer connected to the arduino, as well as the different levels of brightness of the LED. 
 
-![LED circuit bright](https://lh5.googleusercontent.com/uM9ousc9k4QJiiv_gJrv8T3vyIZ0GfSbJWPJKhlUwz_eDroz0HSwYybYh3lJyI7LastCj2flsHdAPE0=w1461-h780-rw)
+![LED circuit bright](http://i.imgur.com/zr5EUwim.jpg)
 
-![LED circuit dull](https://lh3.googleusercontent.com/P1nK3a2EbWKHF2inhzWCfaQKRZ8QOYhjWPQcrUMfUrO1xD5d2mpOKpdGqRplFBuvsB7h7lQ_REUZa4w=w1461-h780-rw)
+![LED circuit dull](http://i.imgur.com/QGjNzXPm.jpg)
 
 We added to our code from the previous section in order to use the potentiometer to adjust the LED brightness. We added a map function that would map the input range (0-1023 for the analog pin) to the correct output range (0-255 for the digital pin). We then used the analogWrite function to write the output value to the digital pin we had chosen. The following oscilloscope graph shows the frequency of the signal and its response to changing analog values. 
 
-![Oscilloscope Graph](https://lh4.googleusercontent.com/rekdfs0oZ9bL4B-i_qlq74YDtRA386FyAla_KB0mnrXJKZ2kd0JqdcpBK2qXs-wir4arPKS9l4QFVVg=w1461-h780-rw)
+![Oscilloscope Graph](http://i.imgur.com/QthYOI4m.jpg)
 
 ## Applying the Parallax Servos
 One of the most important functions for a robot to discover the maze is the ability to "walk". Here, we used Parallax Continuous Rotation Servos. The white wire was connected to the digital pin "~11" with PWM capability. The red wire was connected to 5V output pin and the black wire was connected to ground "GND". The oscilloscope was attached to check the frequency and maximum/minimum duty cycle. The code is listed below.
@@ -109,7 +108,7 @@ void loop() {
 
 When ran, the oscilloscope looked like:
 
-![Oscilloscope Graph 2](https://lh3.googleusercontent.com/UDT-QtnvwE1fglqu8VlNuDFOKSz1WUDftiVrREEFQynHzGH5WQzO9Fd6xLVxXawEv_T4QNFDmtmnt_g=w1461-h780-rw)
+![Oscilloscope Graph 2](https://i.imgur.com/B9Udwd5m.jpg)
 
 When the servo ran at full speed as X for yep.write(X) was 0, the duty cycle was 0.5/20=0.025. When the servo stopped as X was 180, the duty cycle was 1.5/20=0.075.
 
@@ -118,9 +117,9 @@ The potentiometer was then connected to the servo running with the same code abo
 ## Let the Robot Run!
 Finally, we assembled the robot as shown below:
 
-![Assembled Robot 1](https://i.imgur.com/vlPUDgf.jpg)
+![Assembled Robot 1](https://i.imgur.com/vlPUDgfm.jpg)
 
-![Assembled Robot 2](http://i.imgur.com/z1QnSDW.jpg)
+![Assembled Robot 2](http://i.imgur.com/z1QnSDWm.jpg)
 
 To let the robot drive in a square, the code was listed below:
 
