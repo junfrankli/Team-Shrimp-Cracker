@@ -56,9 +56,7 @@ The LED blinked on and off, just as the built in LED did in the previous exercis
 
 
 ## Using the Serial Monitor and Analog Pins
-For this section we hooked up a potentiometer to one of the Arduino’s analog pins. The pot is a variable resistor, and is used in a voltage divider circuit to provide an output to the pin of between 0V and 5V, depending on its position. Refer to below circuit diagram for how we hooked up our circuit:
-
-Image here
+For this section we hooked up a potentiometer to one of the Arduino’s analog pins. The pot is a variable resistor, and is used in a voltage divider circuit to provide an output to the pin of between 0V and 5V, depending on its position.
 
 To output the measured values, we used the Serial library and the Arduino IDE’s serial monitor tool.
 
