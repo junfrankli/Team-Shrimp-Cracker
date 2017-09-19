@@ -1,4 +1,4 @@
-# Lab 1: Microcontroller
+# Lab 1: Microcontrollers
 ## Objective
 In this lab we learned how to use the Arduino Uno and IDE, taking digital and analog inputs and outputting digital and PWM signals.
 

@@ -1,0 +1,27 @@
+#include <Servo.h>
+
+Servo servoLeft;
+Servo servoRight;
+
+int thr = 500;
+
+String state;
+
+
+void setup() {
+  servoLeft.attach(9);
+  servoRight.attach(10);
+
+}
+
+void loop() {
+  state = "";
+  A = (analogRead(A0) > 500) ? 0 : 1);
+  B = (analogRead(A0) > 500) ? 0 : 1);
+  C = (analogRead(A0) > 500) ? 0 : 1);
+  D = (analogRead(A0) > 500) ? 0 : 1);
+  state += analogRead(
+
+  
+
+}
