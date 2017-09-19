@@ -8,8 +8,7 @@ Inspired by the delicious snack that holds so much flavor in such a small size, 
 # Lab 2:
 
 
-### Team Contract
-Here is the [team contract](teamcontract.mds) that lists the goals and policies of the team.
-### Meeting Notes
-[Meeting 1](Meeting_Sep_15)
-[Meeting 2](ECE3400_Meeting_9_8.docx)
+# [Team Contract](teamcontract.md)
+
+
+# [Meeting Notes](meetings.md)
