@@ -59,6 +59,7 @@ I understand that if I do not abide by these terms and conditions, I will suffer
 *Frank Li*                    date: 9/1/2017
 
 *Boyi Xu*                     date: 9/1/2017
+
 *Malavika Attaluri*           date: 9/1/2017
 
 *Shirley Burt*                date: 9/1/2017
