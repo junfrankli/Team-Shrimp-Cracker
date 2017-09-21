@@ -13,6 +13,12 @@ visualizing the data.
 
 #include <FFT.h> // include the library
 
+int threshold = 40; 
+int time_threshold = 10;
+int treasure_7 = 0;
+int treasure_12 = 0;
+int treasure_17 = 0;
+
 void setup() {
   Serial.begin(115200); // use the serial port
   TIMSK0 = 0; // turn off timer0 for lower jitter
@@ -40,16 +46,47 @@ void loop() {
     fft_run(); // process the data in the fft
     fft_mag_log(); // take the output of the fft
     sei(); // turns interrupts back on
-    //Serial.write(255); // send a start byte
-    //Detect Treasure Logic
-    bool treasure_detected = false;
-    for (int i = 0; i < 128; i++) {
+    int max_7_bin = 0;
+    for (int i = 46; i < 50; i++) {
       int x = (int) fft_log_out[i];
-      if (i >= 45 & i <= 50)
-        if (x > 50) 
-          treasure_detected = true;
+      if (x > max_7_bin)
+        max_7_bin = x;
     }
-    if (treasure_detected)
-      Serial.write("Treasure Detected!\n");
+    int max_12_bin = 0;
+    for (int i = 80; i < 83; i++) {
+      int x = (int) fft_log_out[i];
+      if(x > max_12_bin) 
+        max_12_bin = x;
+    }
+    int max_17_bin = 0;
+    for (int i = 113; i < 116; i++) {
+      int x = (int) fft_log_out[i];
+      if (x > max_17_bin)
+        max_17_bin = x;
+    }
+    if (max_17_bin > max_12_bin && max_17_bin > max_7_bin) {
+      if (max_17_bin > threshold) 
+       treasure_17++;
+    }
+    else if (max_12_bin > max_7_bin) {
+      if (max_12_bin > threshold)  
+       treasure_12++;
+    }
+    else 
+      if (max_7_bin > threshold)
+        treasure_7++;
+    if (treasure_7 > time_threshold) {
+      Serial.write("7 kHz treasure!\n");
+      treasure_7 = 0;
+    }
+    else if (treasure_12 > time_threshold) {
+      Serial.write ("12 kHz treasure!\n");
+      treasure_12 = 0;
+    }
+    else if (treasure_17 > time_threshold) {
+      Serial.write ("17 kHz treasure!\n");
+      treasure_17 = 0;
+    }
   }
 }
+
