@@ -8,6 +8,8 @@ Inspired by the delicious snack that holds so much flavor in such a small size, 
 # [Lab 2: Analog Circuitry and FFT](lab2.md)
 ![](https://thumbs.gfycat.com/TalkativeYearlyArcticfox-size_restricted.gif)
 
+# [Milestone 1](milestone1.md)
+![Figure_8](https://thumbs.gfycat.com/BlackandwhiteHonorableFirecrest-size_restricted.gif)
 
 # [Team Contract](teamcontract.md)
 
