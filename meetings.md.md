@@ -13,9 +13,7 @@ Meet next Wednesday, Sep. 13, at 6:30 to check on the prelab to make sure everyo
 #### Contract
 Contract will be updated according to the feedback.
 
-
-
-
+\n
 
 ## Meeting 2:
 
@@ -30,9 +28,7 @@ Upload all the codes, pictures, and videos to group's Google Drive and make sure
 #### Open Lab Meetup
 Scheduled to meet on open lab during 6:30-8:30 on Wednesday, Sep. 19, to work on lab2 and milestone1.
 
-
-
-
+\n
 
 ## Meeting 3:
 
