@@ -29,3 +29,13 @@ Upload all the codes, pictures, and videos to group's Google Drive and make sure
 Scheduled to meet on open lab during 6:30-8:30 on Wednesday, Sep. 19, to work on lab2 and milestone1.
 
 
+
+## Meeting 3:
+
+### September 22th
+
+#### Milestone 2
+Check the progress on milestone2. The wall detection is working fine and the treasure detection for 7 kHz, 12kHz, and 17 kHz is almost done.
+
+#### 3D Printing
+The 3D printing is almost done and should be coming to the stage at next lab time. At that time, some alternations are needed for the synchronization of our new robot to the requirements of the course.
