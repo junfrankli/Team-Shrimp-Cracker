@@ -15,6 +15,8 @@ Contract will be updated according to the feedback.
 
 
 
+
+
 ## Meeting 2:
 
 ### September 15th
@@ -27,6 +29,8 @@ Upload all the codes, pictures, and videos to group's Google Drive and make sure
 
 #### Open Lab Meetup
 Scheduled to meet on open lab during 6:30-8:30 on Wednesday, Sep. 19, to work on lab2 and milestone1.
+
+
 
 
 
