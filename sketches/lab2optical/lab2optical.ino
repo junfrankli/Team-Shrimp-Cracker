@@ -18,6 +18,7 @@ int time_threshold = 10;
 int treasure_7 = 0;
 int treasure_12 = 0;
 int treasure_17 = 0;
+bool started = false;
 
 void setup() {
   Serial.begin(115200); // use the serial port
@@ -46,7 +47,17 @@ void loop() {
     fft_run(); // process the data in the fft
     fft_mag_log(); // take the output of the fft
     sei(); // turns interrupts back on
-    int max_7_bin = 0;
+    if (!started) {
+      toneDetect();
+    }
+    if (started) {
+      treasureDetect();
+    }
+  }
+}
+
+void treasureDetect() {
+  int max_7_bin = 0;
     for (int i = 46; i < 50; i++) {
       int x = (int) fft_log_out[i];
       if (x > max_7_bin)
@@ -87,6 +98,19 @@ void loop() {
       Serial.write ("17 kHz treasure!\n");
       treasure_17 = 0;
     }
-  }
 }
 
+void toneDetect() {
+  bool signal = false;
+    for (byte i = 0 ; i < FFT_N/2 ; i++) { 
+      if (i==4) {
+        if (fft_log_out[i] > 150) {
+          signal = true;
+        }
+      } 
+      if (signal) {
+        Serial.println("660 Hz Signal Detected\n");
+        started = true;
+      }
+    }
+}
