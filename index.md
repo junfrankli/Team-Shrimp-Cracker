@@ -9,7 +9,7 @@ Inspired by the delicious snack that holds so much flavor in such a small size, 
 ![](https://thumbs.gfycat.com/TalkativeYearlyArcticfox-size_restricted.gif)
 
 # [Milestone 1](milestone1.md)
-![1](https://media.giphy.com/media/l378wjQBFTtWkXRy8/giphy.gif)
+![1](https://thumbs.gfycat.com/BlackandwhiteHonorableFirecrest-size_restricted.gif)
 
 # [Milestone 2](milestone2.md)
 ![Treasure detection](https://media.giphy.com/media/26FeY66dbC8TEIIBq/giphy.gif)
