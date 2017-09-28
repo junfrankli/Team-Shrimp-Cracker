@@ -12,7 +12,7 @@ Inspired by the delicious snack that holds so much flavor in such a small size, 
 ![Figure_8](https://thumbs.gfycat.com/BlackandwhiteHonorableFirecrest-size_restricted.gif)
 
 # [Milestone 2](milestone2.md)
-![Treasure detection](https://thumbs.gfycat.com/FarawayUnrealisticErmine-size_restricted.gif)
+![Treasure detection](https://media.giphy.com/media/26FeY66dbC8TEIIBq/giphy.gif)
 
 # [Team Contract](teamcontract.md)
 
