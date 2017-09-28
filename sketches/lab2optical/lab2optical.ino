@@ -111,6 +111,7 @@ void toneDetect() {
       if (signal) {
         Serial.println("660 Hz Signal Detected\n");
         started = true;
+        ADMUX = 0x41;
       }
     }
 }
