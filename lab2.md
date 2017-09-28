@@ -151,4 +151,20 @@ As seen by the axis transformation, the data that the microphone recorded was fa
 ![](https://i.imgur.com/sBGRjkj.png)
 Here is a [video](https://drive.google.com/file/d/0BwOxbk7b-QdoTkZFeEVKX1NSckU/view?usp=sharing) showing that the signal detected was very accurate in its frequency.
 
+The following snippet of code is added serial detector code in order to detect the frequencies around 660 Hz. 
+
+```C++
+ bool signal = false;
+    for (byte i = 0 ; i < FFT_N/2 ; i++) { 
+      if ((i==3) || (i==4) || (i=5)) {
+        if (fft_log_out[i] > 150) {
+          signal = true;
+        }
+      } 
+      if (signal) {
+        Serial.println("660 Hz Signal Detected\n"); // send out the data
+      }
+    }    
+```
+
 But these are pretty ideal conditions. And everyone knows all is fair in love and war. Intimidated by our gorgeous robot, other teams will likely attempt to sabotage our robot by making [noise](https://drive.google.com/file/d/0BwOxbk7b-QdodlJzWG5RNUc5Z1E/view?usp=sharing) during the starting launch. The basic signal still prevails even though the source of the noise was close to the sensor.
