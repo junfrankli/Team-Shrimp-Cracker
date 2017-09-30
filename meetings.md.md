@@ -39,3 +39,10 @@ Check the progress on milestone2. The wall detection is working fine and the tre
 
 #### 3D Printing
 The 3D printing is almost done and should be coming to the stage at next lab time. At that time, some alternations are needed for the synchronization of our new robot to the requirements of the course.
+
+## Meeting 4:
+
+### September 29th
+
+#### Lab3
+Check the tasks for lab3 and distribute work to team members.
