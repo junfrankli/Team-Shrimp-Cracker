@@ -46,3 +46,17 @@ The 3D printing is almost done and should be coming to the stage at next lab tim
 
 #### Lab3
 Check the tasks for lab3 and distribute work to team members.
+
+## Meeting 5:
+
+### October 6th
+
+#### Lab3
+Check on the progress of lab3. Arrange to attend open lab.
+
+## Meeting 6:
+
+### October 13th
+
+#### Lab3
+Check on the progress of lab3. Since this is the midterm week, we did not make significant progress on lab3. We planned to attend next week's open lab to make up the progress.
