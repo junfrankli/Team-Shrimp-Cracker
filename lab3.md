@@ -116,7 +116,7 @@ assign reset = ~KEY[0]; // reset when KEY0 is pressed
 We first choose to generate a square wave with a frequency of 440Hz. This can be accomplished simply and without the DAC by toggling a GPIO pin digitally on and off. Since the clock of the state machine we used is 25 MHz. Therefore the period of the 440Hz on the state machine is 25MHz/440Hz = 56818 cycles. Since one whole period is equally devided into low and high signal, the square pulse should toggle every 56818/2 = 28409 cycles. The code snippet used for generating square wave is included in the main DE0_NANO.v file and is represented below:
 
 
-```v
+```verilog
     localparam toggle = 25_000_000/440/2;
     reg [14:0] counter;
     reg SOUND_OUT;
@@ -158,7 +158,7 @@ Next, we choose to generate a more complicated wave, a sine wave, at the frequen
 
 Since it is an 8-bit converter, the highest value we could get is 255, which represents 3.3V output from R2R DAC. Therefore, we use 256 points to represent 1 period of a sine wave. In that case, we need to toggle the sine pulse every 25MHz/440Hz/256 = 222 cycles, i.e. one point will stay for 222 cycles until updating to the next point. When the point (counter) reaches maximum, it will go back to 0 and increment again. The code snippet and the oscillscope display for sine wave are represented below:
 
-```
+```verilog
 module SINE_WAVE
 (
     input [7:0] ADDR_VALUE,
@@ -190,7 +190,7 @@ And it sounds like:
 
 Finally, we made two more sine wave sounds with different frequencies: 660 Hz and 220 Hz, with state machine. The three different sounds will be played when Arduino generates a done signal to FPGA. At this point, the Arudino is generating on and off signals every 6 seconds so that the sound will play for 6 seconds and stop for 6 seconds. The code snippet is represented below:
 
-```
+```verilog
     localparam toggle_1 = 25_000_000/440/256;
     localparam toggle_2 = 25_000_000/660/256;
     localparam toggle_3 = 25_000_000/220/256;
