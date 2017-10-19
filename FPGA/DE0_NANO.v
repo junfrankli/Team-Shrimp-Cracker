@@ -149,7 +149,7 @@ module DE0_NANO(
 	 );
   
 	
-	 assign enable_sound = 2'b01;
+	 assign enable_sound = GPIO_0_D[30];
     always @(posedge CLOCK_25) begin
 		if (audio_state == 1) begin
 			if (counter == toggle_1) begin
@@ -195,18 +195,22 @@ module DE0_NANO(
 			end
 		end 
 		else begin 
-			if (sec_counter == ONE_SEC) begin
-				sec_counter <= 0;
-				if (audio_state == 3) 
-					next_audio_state <= 1;
-				else
-					next_audio_state <= audio_state + 2'b1;
-			end 
-			else begin
-				sec_counter <= sec_counter + 2'b1;
-				next_audio_state <= audio_state;
+			if (enable_sound == 0) begin
+				next_audio_state <= 2'b0;
+			end else begin
+				if (sec_counter == ONE_SEC) begin
+					sec_counter <= 0;
+					if (audio_state == 3) 
+						next_audio_state <= 1;
+					else
+						next_audio_state <= audio_state + 2'b1;
+				end 
+				else begin
+					sec_counter <= sec_counter + 2'b1;
+					next_audio_state <= audio_state;
+				end
 			end
-		 end
+		end
 	 end
 	 
 	 always @ (posedge CLOCK_25) begin
