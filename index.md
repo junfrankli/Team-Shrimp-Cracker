@@ -8,6 +8,9 @@ Inspired by the delicious snack that holds so much flavor in such a small size, 
 # [Lab 2: Analog Circuitry and FFT](lab2.md)
 ![](https://thumbs.gfycat.com/TalkativeYearlyArcticfox-size_restricted.gif)
 
+# [Lab 3: FPGA Video Controller and Sound Generation](lab3.md)
+![](https://i.imgur.com/ySxtBhZ.jpg)
+
 # [Milestone 1](milestone1.md)
 ![1](https://thumbs.gfycat.com/BlackandwhiteHonorableFirecrest-size_restricted.gif)
 
