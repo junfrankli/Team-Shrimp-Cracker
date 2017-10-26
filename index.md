@@ -11,6 +11,8 @@ Inspired by the delicious snack that holds so much flavor in such a small size, 
 # [Lab 3: FPGA Video Controller and Sound Generation](lab3.md)
 ![](https://i.imgur.com/ySxtBhZ.jpg)
 
+# [Lab 4: Radio Communication and Map Drawing](lab4.md)
+
 # [Milestone 1](milestone1.md)
 ![1](https://thumbs.gfycat.com/BlackandwhiteHonorableFirecrest-size_restricted.gif)
 
