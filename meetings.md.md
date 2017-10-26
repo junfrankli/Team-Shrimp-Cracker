@@ -60,3 +60,10 @@ Check on the progress of lab3. Arrange to attend open lab.
 
 #### Lab3
 Check on the progress of lab3. Since this is the midterm week, we did not make significant progress on lab3. We planned to attend next week's open lab to make up the progress.
+
+## Meeting 7:
+
+### October 20th
+
+#### Lab4
+Check the progress of lab4 and continue working on it. Raise up any questions and discuss as a group.
