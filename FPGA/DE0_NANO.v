@@ -94,7 +94,7 @@ module DE0_NANO(
 						  red   = 8'b111_000_00,
 						  blue  = 8'b000_000_11;
 						  
-	 parameter [1:0] unvisited = 2'b0o0,
+	 parameter [1:0] unvisited = 2'b00,
 	                 visited = 2'b01,
 						  currentpos = 2'b10,
 						  future = 2'b11;
@@ -112,11 +112,11 @@ module DE0_NANO(
         .V_SYNC_NEG(GPIO_0_D[5])
     );
 	 
-	 assign packet[0] = GPIO_0_D[29] 
-	 assign packet[1] = GPIO_0_D[30]
-	 assign packet[2] = GPIO_0_D[31]
-	 assign packet[3] = GPIO_0_D[32]
-	 assign packet[4] = GPIO_0_D[33]
+	 assign packet[0] = GPIO_0_D[29]; 
+	 assign packet[1] = GPIO_0_D[30];
+	 assign packet[2] = GPIO_0_D[31];
+	 assign packet[3] = GPIO_0_D[32];
+	 assign packet[4] = GPIO_0_D[33];
 	 
 	 assign reset = ~KEY[0]; // reset when KEY0 is pressed
 	 always @(packet) begin
