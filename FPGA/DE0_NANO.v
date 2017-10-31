@@ -99,6 +99,29 @@ module DE0_NANO(
 						  currentpos = 2'b10,
 						  future = 2'b11;
 						  
+	 initial begin
+		my_grid[0][0] = 2'b0;  
+		my_grid[1][1] = 2'b0;
+		my_grid[1][0] = 2'b0;
+		my_grid[0][1] = 2'b0;
+		my_grid[2][2] = 2'b0;
+		my_grid[0][2] = 2'b0;
+		my_grid[2][0] = 2'b0; 
+		my_grid[2][1] = 2'b0;
+		my_grid[1][2] = 2'b0;
+		my_grid[3][0] = 2'b0;
+		my_grid[0][3] = 2'b0;
+		my_grid[3][1] = 2'b0;
+		my_grid[1][3] = 2'b0;
+		my_grid[3][2] = 2'b0;
+		my_grid[2][3] = 2'b0;
+		my_grid[3][3] = 2'b0; 
+		my_grid[3][4] = 2'b0; 
+		my_grid[2][4] = 2'b0; 
+		my_grid[1][4] = 2'b0;
+		my_grid[0][4] = 2'b0;
+	 end
+						  
 	 
     // Module outputs coordinates of next pixel to be written onto screen
     VGA_DRIVER driver(
@@ -120,26 +143,26 @@ module DE0_NANO(
 	 
 	 assign reset = ~KEY[0]; // reset when KEY0 is pressed
 	 always @(packet) begin
-		my_grid[0][0] <=  (reset == 1) ? unvisited : ((packet == 5'b0) ? currentpos : ((my_grid[0][0]== currentpos) ? visited : my_grid[0][0]));
-		my_grid[1][1] <= (reset == 1) ? unvisited : ((packet == 5'b00101) ? currentpos : ((my_grid[1][1]== currentpos) ? visited : my_grid[1][1]));
-		my_grid[1][0] <= (reset == 1) ? unvisited : ((packet == 5'b00001) ? currentpos : ((my_grid[1][0]== currentpos) ? visited : my_grid[1][0]));
-		my_grid[0][1] <= (reset == 1) ? unvisited : ((packet == 5'b00100) ? currentpos : ((my_grid[0][1]== currentpos) ? visited : my_grid[0][1]));
-		my_grid[2][2] <= (reset == 1) ? unvisited : ((packet == 5'b01010) ? currentpos : ((my_grid[2][2]== currentpos) ? visited : my_grid[2][2]));
-		my_grid[0][2] <= (reset == 1) ? unvisited : ((packet == 5'b01000) ? currentpos : ((my_grid[0][2]== currentpos) ? visited : my_grid[0][2]));
-		my_grid[2][0] <= (reset == 1) ? unvisited : ((packet == 5'b00010) ? currentpos : ((my_grid[2][0]== currentpos) ? visited : my_grid[2][0]));
-		my_grid[2][1] <= (reset == 1) ? unvisited : ((packet == 5'b00110) ? currentpos : ((my_grid[2][1]== currentpos) ? visited : my_grid[2][1]));
-		my_grid[1][2] <= (reset == 1) ? unvisited : ((packet == 5'b01001) ? currentpos : ((my_grid[1][2]== currentpos) ? visited : my_grid[1][2]));
-		my_grid[3][0] <= (reset == 1) ? unvisited : ((packet == 5'b00011) ? currentpos : ((my_grid[3][0]== currentpos) ? visited : my_grid[3][0]));
-		my_grid[0][3] <= (reset == 1) ? unvisited : ((packet == 5'b01100) ? currentpos : ((my_grid[0][3]== currentpos) ? visited : my_grid[0][3]));
-		my_grid[3][1] <= (reset == 1) ? unvisited : ((packet == 5'b00111) ? currentpos : ((my_grid[3][1]== currentpos) ? visited : my_grid[3][1]));
-		my_grid[1][3] <= (reset == 1) ? unvisited : ((packet == 5'b01101) ? currentpos : ((my_grid[1][3]== currentpos) ? visited : my_grid[1][3]));
-		my_grid[3][2] <= (reset == 1) ? unvisited : ((packet == 5'b01011) ? currentpos : ((my_grid[3][2]== currentpos) ? visited : my_grid[3][2]));
-		my_grid[2][3] <= (reset == 1) ? unvisited : ((packet == 5'b01110) ? currentpos : ((my_grid[2][3]== currentpos) ? visited : my_grid[2][3]));
-		my_grid[3][3] <= (reset == 1) ? unvisited : ((packet == 5'b01111) ? currentpos : ((my_grid[3][3]== currentpos) ? visited : my_grid[3][3]));
-		my_grid[3][4] <= (reset == 1) ? unvisited : ((packet == 5'b10011) ? currentpos : ((my_grid[3][4]== currentpos) ? visited : my_grid[3][4]));
-		my_grid[2][4] <= (reset == 1) ? unvisited : ((packet == 5'b10010) ? currentpos : ((my_grid[2][4]== currentpos) ? visited : my_grid[2][4]));
-		my_grid[1][4] <= (reset == 1) ? unvisited : ((packet == 5'b10001) ? currentpos : ((my_grid[1][4]== currentpos) ? visited : my_grid[1][4]));
-		my_grid[0][4] <= (reset == 1) ? unvisited : ((packet == 5'b10000) ? currentpos : ((my_grid[0][4]== currentpos) ? visited : my_grid[0][4]));
+		my_grid[0][0] <= (packet == 5'b0) ? currentpos : ((my_grid[0][0]== currentpos) ? visited : my_grid[0][0]);
+		my_grid[1][1] <= (packet == 5'b00101) ? currentpos : ((my_grid[1][1]== currentpos) ? visited : my_grid[1][1]);
+		my_grid[1][0] <= (packet == 5'b00001) ? currentpos : ((my_grid[1][0]== currentpos) ? visited : my_grid[1][0]);
+		my_grid[0][1] <= (packet == 5'b00100) ? currentpos : ((my_grid[0][1]== currentpos) ? visited : my_grid[0][1]);
+		my_grid[2][2] <= (packet == 5'b01010) ? currentpos : ((my_grid[2][2]== currentpos) ? visited : my_grid[2][2]);
+		my_grid[0][2] <= (packet == 5'b01000) ? currentpos : ((my_grid[0][2]== currentpos) ? visited : my_grid[0][2]);
+		my_grid[2][0] <= (packet == 5'b00010) ? currentpos : ((my_grid[2][0]== currentpos) ? visited : my_grid[2][0]);
+		my_grid[2][1] <= (packet == 5'b00110) ? currentpos : ((my_grid[2][1]== currentpos) ? visited : my_grid[2][1]);
+		my_grid[1][2] <= (packet == 5'b01001) ? currentpos : ((my_grid[1][2]== currentpos) ? visited : my_grid[1][2]);
+		my_grid[3][0] <= (packet == 5'b00011) ? currentpos : ((my_grid[3][0]== currentpos) ? visited : my_grid[3][0]);
+		my_grid[0][3] <= (packet == 5'b01100) ? currentpos : ((my_grid[0][3]== currentpos) ? visited : my_grid[0][3]);
+		my_grid[3][1] <= (packet == 5'b00111) ? currentpos : ((my_grid[3][1]== currentpos) ? visited : my_grid[3][1]);
+		my_grid[1][3] <= (packet == 5'b01101) ? currentpos : ((my_grid[1][3]== currentpos) ? visited : my_grid[1][3]);
+		my_grid[3][2] <= (packet == 5'b01011) ? currentpos : ((my_grid[3][2]== currentpos) ? visited : my_grid[3][2]);
+		my_grid[2][3] <= (packet == 5'b01110) ? currentpos : ((my_grid[2][3]== currentpos) ? visited : my_grid[2][3]);
+		my_grid[3][3] <= (packet == 5'b01111) ? currentpos : ((my_grid[3][3]== currentpos) ? visited : my_grid[3][3]);
+		my_grid[3][4] <= (packet == 5'b10011) ? currentpos : ((my_grid[3][4]== currentpos) ? visited : my_grid[3][4]);
+		my_grid[2][4] <= (packet == 5'b10010) ? currentpos : ((my_grid[2][4]== currentpos) ? visited : my_grid[2][4]);
+		my_grid[1][4] <= (packet == 5'b10001) ? currentpos : ((my_grid[1][4]== currentpos) ? visited : my_grid[1][4]);
+		my_grid[0][4] <= (packet == 5'b10000) ? currentpos : ((my_grid[0][4]== currentpos) ? visited : my_grid[0][4]);
 	end
 	 
 	 
