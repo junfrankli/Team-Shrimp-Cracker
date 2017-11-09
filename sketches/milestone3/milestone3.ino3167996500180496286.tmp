@@ -3,8 +3,8 @@
 // leds
 #define led0pin 3
 #define led1pin 2
-#define led2pin 1
-#define led3pin 0
+#define led2pin 12
+#define led3pin 13
 
 // line sensors
 #define sensor0pin A0
@@ -29,7 +29,7 @@ Servo right;
 // line sensor threshold
 #define threshold 500
 
-int sensor0, sensor1, sensor2, sensor3, sensorBack;
+int sensor0, sensor1, sensor2, sensor3, sensorBack, state = 0;
 //unsigned long startTime, endTime;
 
 void setup() {
@@ -65,10 +65,9 @@ void loop() {
   digitalWrite(led2pin, sensor2);
   digitalWrite(led3pin, sensor3);
 
-  writeR(500);
-  writeL(500);
+  driveForward();
 
-  Serial.println(sensor0 + ' ' + sensor1 + ' ' + sensor2 + ' ' + sensor3);
+  Serial.println(analogRead(sensorBackPin));
 
   delay(1);
 }
@@ -92,7 +91,7 @@ void turnLeft() {
 }
 
 void driveForward() {
-  int state = sensor3 + 10 * sensor2 + 100 * sensor1 + 1000 * sensor0;
+  state = sensor3 + 10 * sensor2 + 100 * sensor1 + 1000 * sensor0;
   switch (state) {
     case 0000:
     // ur fukt

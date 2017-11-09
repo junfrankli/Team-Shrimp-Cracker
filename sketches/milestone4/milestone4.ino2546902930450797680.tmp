@@ -1,0 +1,67 @@
+#include <DRV8835MotorShield.h>
+#include <QTRSensors.h>
+#include <VL53L0X.h>
+#include <Wire.h>
+
+
+#define NUM_SENSORS   6     // number of line sensors used
+#define TIMEOUT       2500  // waits for 2500 microseconds for sensor outputs to go low
+#define EMITTER_PIN   QTR_NO_EMITTER_PIN     // emitter is controlled by digital pin 2, jk not
+
+#define LED_PIN 13
+
+DRV8835MotorShield motors;
+unsigned short speed = 400;
+
+// sensors 0 through 7 are connected to digital pins 3 through 10, respectively
+QTRSensorsRC qtrrc((unsigned char[]) {
+  3, 4, 5, 6, 7, 8
+},
+NUM_SENSORS, TIMEOUT, EMITTER_PIN);
+unsigned int sensorValues[NUM_SENSORS];
+
+VL53L0X sensor;
+
+void setup() {
+
+  Serial.begin(9600);
+  Wire.begin();
+
+  sensor.init();
+  sensor.setTimeout(500);
+
+  // Start continuous back-to-back mode (take readings as
+  // fast as possible).  To use continuous timed mode
+  // instead, provide a desired inter-measurement period in
+  // ms (e.g. sensor.startContinuous(100)).
+  sensor.startContinuous();
+  pinMode(LED_PIN, OUTPUT);
+
+  // uncomment one or both of the following lines if your motors' directions need to be flipped
+  //motors.flipM1(true);
+  motors.flipM2(true);
+
+}
+
+void loop() {
+  unsigned int position = qtrrc.read(sensorValues);
+
+  // print the sensor values as numbers from 0 to 2500, where 0 means maximum reflectance
+  for (unsigned char i = 0; i < NUM_SENSORS; i++)
+  {
+    Serial.print(sensorValues[i]);
+    Serial.print('\t');
+  }
+
+  motors.setM1Speed(speed);
+  motors.setM2Speed(speed);
+
+  Serial.print(sensor.readRangeContinuousMillimeters());
+  if (sensor.timeoutOccurred()) {
+    Serial.print(" TIMEOUT");
+  }
+
+  Serial.println();
+
+  delay(250);
+}

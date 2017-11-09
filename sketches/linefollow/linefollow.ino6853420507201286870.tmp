@@ -7,7 +7,7 @@
 #define led3pin 0
 
 // line sensors
-#define sensor0pin A0
+#define sensor0pin A0 
 #define sensor1pin A1
 #define sensor2pin A2
 #define sensor3pin A3
@@ -23,7 +23,6 @@ Servo right;
 #define forward0 550
 #define forward1 600
 #define forward2 700
-#define forward3 800
 #define backward 450
 
 // line sensor threshold
@@ -42,15 +41,13 @@ void setup() {
   pinMode(led1pin, OUTPUT);
   pinMode(led2pin, OUTPUT);
   pinMode(led3pin, OUTPUT);
-
-  Serial.begin(115200);
 }
 
 // main loop
 void loop() {
   //record loop start time
   //unsigned long currentMillis = millis();
-
+  
   // scan sensor states
   sensor0 = ((analogRead(A0) > threshold) ? 0 : 1);
   sensor1 = ((analogRead(A1) > threshold) ? 0 : 1);
@@ -64,38 +61,31 @@ void loop() {
   digitalWrite(led1pin, sensor1);
   digitalWrite(led2pin, sensor2);
   digitalWrite(led3pin, sensor3);
-
-  writeR(500);
-  writeL(500);
-
-  Serial.println(sensor0 + ' ' + sensor1 + ' ' + sensor2 + ' ' + sensor3);
-
-  delay(1);
-}
+  
+  }
 
 // takes value between 0 and 1000, 500 is middle
-void writeR(int s) {
-  right.writeMicroseconds(1000 + s);
-}
-void writeL(int s) {
-  left.writeMicroseconds(2000 - s);
-}
+  void writeR(int s) {
+    right.writeMircoseconds(1000+s);
+  }
+  void writeL(int s) {
+    left.writeMircoseconds(2000-s);
+  }
 
 
-void turnRight() {
+  void turnRight() {
+    
+  }
 
-}
+  void turnLeft() {
 
-void turnLeft() {
+    
+  }
 
-
-}
-
-void driveForward() {
-  int state = sensor3 + 10 * sensor2 + 100 * sensor1 + 1000 * sensor0;
-  switch (state) {
+  void driveForward() {
+   switch(state) {
     case 0000:
-    // ur fukt
+      // ur fukt
     case 0001:
       // hardest right
       writeL(forward3);
@@ -112,24 +102,24 @@ void driveForward() {
       break;
     case 1100:
       // hard left
-      writeL(forward2);
-      writeL(forward3);
+      left.write(90);
+      right.write(80);
       break;
     case 0010:
       // slight right
-      writeL(forward2);
-      writeL(forward1);
+      left.write(95);
+      right.write(0);
       break;
     case 0100:
       // slight left
-      writeL(forward1);
-      writeL(forward2);
+      left.write(90);
+      right.write(85);
       break;
     case 0110:
       // go straight
-      writeL(forward3);
-      writeL(forward3);
+      left.write(180);
+      right.write(0);
       break;
-      break;
+    break;
+  } 
   }
-}
