@@ -19,6 +19,9 @@ Inspired by the delicious snack that holds so much flavor in such a small size, 
 # [Milestone 2](milestone2.md)
 ![Treasure detection](https://media.giphy.com/media/26FeY66dbC8TEIIBq/giphy.gif)
 
+# [Milestone 3](milestone3.md)
+![demo](https://i.imgur.com/z1V1OlN.png)
+
 # [Team Contract](teamcontract.md)
 
 
