@@ -46,9 +46,6 @@ public class Maze extends JPanel{
 		 
 		 
 	 }
-	 
-	 /**Creates a blank maze, returns maze
-	  */
 	 private static int[][] generateMaze() {
 		 int[][] maze = new int[7][9];
 		for (int x = 0; x<7; x++){
@@ -117,9 +114,6 @@ public class Maze extends JPanel{
 			shapes.add(new Unvisited(x,y,width,height));
 			repaint();
 	}
-
-	/** adds a CurrPos square at i,j
-	 */
 	private void addCurrPos(int i, int j) {
 		 int x = (int) Math.floor((i/4.0)*WIDTH);
 			int y =  (int) Math.floor((j/5.0)*HEIGHT);
@@ -129,8 +123,6 @@ public class Maze extends JPanel{
 			repaint();
 	}
 
-	/** adds a wall at position i,j
-	 */
 	private void addWall(int i, int j) {
 		int x,y,width,height;
 		//vertical wall
