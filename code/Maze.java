@@ -22,8 +22,7 @@ public class Maze extends JPanel{
 
 	 public Maze(int[][] maze, int[] currPos){
 	        setPreferredSize(new Dimension(WIDTH, HEIGHT));
-	        drawMaze(maze, currPos);
-	     
+	        drawMaze(maze, currPos);   
 	 }
 	 
 	 
@@ -35,16 +34,10 @@ public class Maze extends JPanel{
 		 currPos[0] = 0;
 		 currPos[1] = 0;
 		 frame.add(new Maze(maze, currPos));
-		 
-		
-		 
-		 
 		 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	     frame.pack();
-	     frame.setLocationRelativeTo(null);
-	     frame.setVisible(true);
-		 
-		 
+	         frame.pack();
+	         frame.setLocationRelativeTo(null);
+	         frame.setVisible(true);	 
 	 }
 	 private static int[][] generateMaze() {
 		 int[][] maze = new int[7][9];
@@ -58,17 +51,8 @@ public class Maze extends JPanel{
 				}
 			}
 		}
-		return maze;
-		
-				
-			
-		
+		return maze;	
 	}
-
-
-		
-	
-	 
 	public void drawMaze(int[][] maze, int[] currPosArray){
 		 for (int i = 0; i<7; i++){
 				for (int j = 0; j<9; j++){
@@ -92,10 +76,7 @@ public class Maze extends JPanel{
 					}
 				}
 			}
-	 }
-	 
-	/** adds a Visited square at i,j
-	 */	
+	 }	
 	 private void addVisited(int i, int j) {
 		 int x = (int) Math.floor((i/4.0)*WIDTH);
 			int y =  (int) Math.floor((j/5.0)*HEIGHT);
@@ -104,8 +85,6 @@ public class Maze extends JPanel{
 			shapes.add(new Visited(x,y,width,height));
 			repaint();
 	}
-	 /** adds an Unvisited square at i,j
-	  */
 	private void addUnvisited(int i, int j) {
 		 int x = (int) Math.floor((i/4.0)*WIDTH);
 			int y =  (int) Math.floor((j/5.0)*HEIGHT);
@@ -125,9 +104,7 @@ public class Maze extends JPanel{
 
 	private void addWall(int i, int j) {
 		int x,y,width,height;
-		//vertical wall
 		if (i%2 == 1){
-			
 			int relativeX = (i+1)/2;
 			int relativeY = j/2;
 			 width = (int) Math.floor((1/4.0)*(float)WIDTH*(0.1));
@@ -136,9 +113,7 @@ public class Maze extends JPanel{
 			 y = (int) (Math.floor((relativeY/5.0)*HEIGHT));
 			
 		}
-		//horizontal wall
 		else{
-		
 			int relativeX = i/2;
 			int relativeY = (j+1)/2;
 			 width = (int) Math.floor((1/4.0)*WIDTH);
@@ -150,7 +125,6 @@ public class Maze extends JPanel{
 		shapes.add(new Wall(x,y, width, height));
 		repaint();
 	}
-
 	@Override
    protected void paintComponent(Graphics g) {
        super.paintComponent(g);
@@ -168,10 +142,6 @@ public class Maze extends JPanel{
            }
        }
    }
-	 
-
-
-	
 	public class Unvisited {
 		int x;
 		int y;
@@ -252,6 +222,4 @@ public class Maze extends JPanel{
 			g2d.fill(grid);
 		}
 	}
-	
-	
 }
