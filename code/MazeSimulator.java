@@ -7,7 +7,7 @@ import javax.swing.JFrame;
 
 
 public class MazeSimulator {
-	static int[][] actualMaze = new int[7][9];
+	static int[][] Maze = new int[7][9];
 	static int[] currPos = new int[2];
 	static HashSet<String> frontierSet= new HashSet<String>();
 	static Deque<int[]> visitedStack = new ArrayDeque<int[]>();
@@ -15,17 +15,17 @@ public class MazeSimulator {
 	static Maze oldMaze;
 	
 	public static void main(String []Args) throws InterruptedException{
-		initializeCurrentPosition();
+		initializeCurrPos();
 		frontierSet.add(Arrays.toString(currPos));
 		setMaze();
 		visitedStack.push(currPos);
 		createJFrame();
-		displayActualMaze();
+		displayMaze();
 		Thread.sleep(500);
 		frame.setVisible(false);
 		
 	}
-	private static void displayActualMaze() throws InterruptedException {
+	private static void displayMaze() throws InterruptedException {
 		DFS();
 		
 	}
@@ -33,23 +33,21 @@ public class MazeSimulator {
 	public static void DFS() throws InterruptedException {
 		while (!frontierSet.isEmpty()){
 			updateJFrame();
-			Thread.sleep(100);
-			actualMaze[currPos[0]][currPos[1]] = 2;
+			Maze[currPos[0]][currPos[1]] = 2;
 			visit();
 			ArrayList<int[]> reachableCells = frontier();
 			addFrontier(reachableCells);
 			updateVisited(reachableCells);
+			Thread.sleep(200);
 			if (!frontierSet.isEmpty()){
 				updateJFrame();
 			}
 		}
 	}
 
-	/** removes oldMaze and adds newMaze to frame
-	 */
 	private static void updateJFrame(){
 		 frame.remove(oldMaze);
-		 Maze newMaze = new Maze(actualMaze, currPos);
+		 Maze newMaze = new Maze(Maze, currPos);
 		 frame.add(newMaze);
 		 oldMaze = newMaze;
 		 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -57,45 +55,41 @@ public class MazeSimulator {
 	     frame.setVisible(true);
 	}
 	
-	/** creates new JFrame and adds oldMaze to frame
-	 */
 	private static void createJFrame(){
 		frame = new JFrame();
-		oldMaze = new Maze(actualMaze, currPos);
+		oldMaze = new Maze(Maze, currPos);
 		frame.add(oldMaze);
 	}
-	/** creates the "Actual" maze 2D array
-	 *  load map data here
-	 */
+
 	private static void setMaze() {
 		for (int i = 0; i<7; i++){
 			for (int j = 0; j<9; j++){
-				actualMaze[i][j] = 0;
+				Maze[i][j] = 0;
 			}
 		}
-		actualMaze[5][3] = 1;
-		actualMaze[6][3] = 1;
-		actualMaze[3][6] = 1;
-		actualMaze[5][2] = 1;
-		actualMaze[0][2] = 1;
-		actualMaze[3][2] = 1;
-        actualMaze[2][5] = 1;
-		actualMaze[4][5] = 1;
-		actualMaze[0][1] = 1;
-        actualMaze[1][0] = 1;
-		actualMaze[1][1] = 1;
-		actualMaze[1][2] = 0;
-		actualMaze[1][3] = 1;
-		actualMaze[1][4] = 1;
-		actualMaze[1][5] = 1;
-		actualMaze[3][3] = 1;
-		actualMaze[4][3] = 0;
+		Maze[5][3] = 1;
+		Maze[6][3] = 1;
+		Maze[3][6] = 1;
+		Maze[5][2] = 1;
+		Maze[0][2] = 1;
+		Maze[3][2] = 1;
+        Maze[2][5] = 1;
+		Maze[4][5] = 1;
+		Maze[0][1] = 1;
+        Maze[1][0] = 1;
+		Maze[1][1] = 1;
+		Maze[1][2] = 0;
+		Maze[1][3] = 1;
+		Maze[1][4] = 1;
+		Maze[1][5] = 1;
+		Maze[3][3] = 1;
+		Maze[4][3] = 0;
 	}
 
 
 	private static void addFrontier(ArrayList<int[]> reachableCells) {
 		for (int[] cell : reachableCells){
-			if (actualMaze[cell[0]][cell[1]]==0){
+			if (Maze[cell[0]][cell[1]]==0){
 				frontierSet.add(Arrays.toString(cell));
 			}
 		}
@@ -105,7 +99,7 @@ public class MazeSimulator {
 		boolean foundUnexplored = false;
 		int[] newCurrPos = new int[2];
 		for (int[] cell : reachableCells){
-			if (actualMaze[cell[0]][cell[1]]==0){
+			if (Maze[cell[0]][cell[1]]==0){
 				foundUnexplored = true;
 				newCurrPos = cell;
 				break;
@@ -130,8 +124,8 @@ public class MazeSimulator {
 		ArrayList<int[]> reachableCells = new ArrayList<>();
 		ArrayList<int[]> validCoordinates = getValidMazeCoordinates();
 		for (int [] validCoord : validCoordinates){
-			actualMaze[validCoord[0]][validCoord[1]] = actualMaze[validCoord[0]][validCoord[1]];
-			if (actualMaze[validCoord[0]][validCoord[1]]==0){
+			Maze[validCoord[0]][validCoord[1]] = Maze[validCoord[0]][validCoord[1]];
+			if (Maze[validCoord[0]][validCoord[1]]==0){
 				int[] reachableCell = findReachableCell(validCoord);
 				reachableCells.add(reachableCell);
 			}
@@ -176,9 +170,7 @@ public class MazeSimulator {
 		}
 		return validMazeCoordinates;
 	}
-	/** sets currPos to [6, 8]
-	 */
-	private static void initializeCurrentPosition() {
+	private static void initializeCurrPos() {
 		currPos[0] = 0;
 		currPos[1] = 2;
 	}
