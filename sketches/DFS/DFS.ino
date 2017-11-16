@@ -1,3 +1,35 @@
+#include <Servo.h>
+
+#define led0pin 3
+#define led1pin 2
+#define led2pin 12
+#define led3pin 13
+
+// line sensors
+#define sensor0pin A0
+#define sensor1pin A1
+#define sensor2pin A2
+#define sensor3pin A3
+#define sensorBackPin A4
+
+// servos
+#define servoLeft 9
+#define servoRight 10
+Servo left;
+Servo right;
+
+// servo PWM values
+#define forwardFull 1000
+#define forwardAlmost 700
+#define forwardMed 600
+#define forwardSlow 530
+#define uwot 500
+
+// line sensor threshold
+#define threshold 500
+
+int sensor0, sensor1, sensor2, sensor3, sensorBack, state = 0;
+
 typedef struct square {
   int xPos;
   int yPos;
@@ -12,7 +44,16 @@ SQUARE * pop (SQUARE **);
 
 void setup() {
   // put your setup code here, to run once:
-  
+  left.attach(servoLeft);
+  right.attach(servoRight);
+
+  // set LED pins as output
+  pinMode(led0pin, OUTPUT);
+  pinMode(led1pin, OUTPUT);
+  pinMode(led2pin, OUTPUT);
+  pinMode(led3pin, OUTPUT);
+
+  Serial.begin(115200);
 }
 
 void loop() {
@@ -28,9 +69,9 @@ void loop() {
 
   visited = push(visited, 0, 0);
   path = push(path, 0, 0);
-  if (detectPath(0, curX, curY))
+  if (!detectWall(0))
     frontier = push(frontier, 0, 1);
-  if (detectPath(1, curX, curY))
+  if (!detectWall(1))
     frontier = push(frontier, 1, 0); 
  
   //DFS 
@@ -79,19 +120,19 @@ void loop() {
       visited = push(visited, curX, curY);
       
       //detect possible places to go -- if not in visited add to frontier
-      if (detectPath(0, curX, curY)) {
+      if (!detectWall(0)) {
         if (!findsquare(visited, curX, curY+1))
           frontier = push(frontier, curX, curY+1);
       } 
-      if (detectPath(1, curX, curY)) {
+      if (!detectWall(1)) {
         if (!findsquare(visited, curX+1, curY))
           frontier = push(frontier, curX+1, curY);
       }
-      if (detectPath(2, curX, curY)){
+      if (!detectWall(2)){
         if (!findsquare(visited, curX, curY-1))
           frontier = push(frontier, curX, curY-1);
       }
-      if (detectPath(3, curX, curY)) {
+      if (!detectWall(3)) {
         if (!findsquare(visited, curX-1, curY))
           frontier = push(frontier, curX-1, curY);
       }
@@ -129,24 +170,42 @@ int moveAdjacent(int curX, int curY, int heading, int goalX, int goalY) {
       turnRight();
   }
 
-  **goForwardOneSquare();
+  goForwardOneSquare();
   return dir;
 }
 
-// returns true if there is a square in the specified direction
+void goForwardOneSquare() {
+  while (sensorBack == 0) {
+    driveForward();
+    sensor0 = ((analogRead(A0) < threshold) ? 0 : 1);
+    sensor1 = ((analogRead(A1) < threshold) ? 0 : 1);
+    sensor2 = ((analogRead(A2) < threshold) ? 0 : 1);
+    sensor3 = ((analogRead(A3) < threshold) ? 0 : 1);
+    sensorBack = ((analogRead(A4) < threshold) ? 0 : 1);
+  }
+  sensorBack = 0;
+}
+
+// returns true if there is a wall in the specified direction
 // 0 is pos y, 1 is pos x, 2 is neg y, 3 is neg x
-bool detectPath(int dir, int x, int y) {
-  if (detectWall(dir))
+bool detectWall(int dir) {
+  float SensorValue;
+  if (dir == 2) 
     return false;
-  if (dir == 0 && y == 4)
+  else if (dir == 0)
+    SensorValue = analogRead(A5); // read from forward sensor
+  else if (dir == 1)
+    SensorValue = analogRead(A6); //read from right sensor
+  else 
+    SensorValue = analogRead(A7); //read from left sensor
+  float dis = 2076/(SensorValue - 11);
+  //Serial.println(dis);
+  if (dis>3 && dis<15){
+    //Serial.print("wall\n");
+    return true;
+  } else {
     return false;
-  if (dir == 1 && x == 3)
-    return false;
-  if (dir == 2 && y == 0)
-    return false;
-  if (dir == 3 && x == 0)
-    return false;
-  return true;
+  }   
 }
 
 bool findsquare(SQUARE *head, int x, int y) {
@@ -172,5 +231,80 @@ SQUARE * pop (SQUARE **head) {
   SQUARE *node = *head;
   *head = (*head)->next;
   return node;
+}
+
+void driveForward() {
+  sensor0 = ((analogRead(A0) < threshold) ? 0 : 1);
+  sensor1 = ((analogRead(A1) < threshold) ? 0 : 1);
+  sensor2 = ((analogRead(A2) < threshold) ? 0 : 1);
+  sensor3 = ((analogRead(A3) < threshold) ? 0 : 1);
+  sensorBack = ((analogRead(A4) < threshold) ? 0 : 1);
+
+  state = sensor3 + 10 * sensor2 + 100 * sensor1 + 1000 * sensor0;
+
+  digitalWrite(led0pin, sensor0);
+  digitalWrite(led1pin, sensor1);
+  digitalWrite(led2pin, sensor2);
+  digitalWrite(led3pin, sensor3);
+  switch (state) {
+    case 0000:
+    // ur fukt
+    case 1:
+      // hardest right
+      writeL(forwardFull);
+      writeL(forwardSlow);
+    case 1000:
+      // hardest left
+      writeL(forwardSlow);
+      writeR(forwardFull);
+      break;
+    case 11:
+      // hard right
+      writeL(forwardFull);
+      writeR(forwardMed);
+      break;
+    case 1100:
+      // hard left
+      writeL(forwardMed);
+      writeR(forwardFull);
+      break;
+    case 10:
+      // slight right
+      writeL(forwardFull);
+      writeR(forwardAlmost);
+      break;
+    case 100:
+      // slight left
+      writeL(forwardAlmost);
+      writeR(forwardFull);
+      break;
+    case 110:
+      // go straight
+      writeL(forwardFull);
+      writeR(forwardFull);
+      break;
+      //    case 1111:
+      //      turnRight();
+      //      break;
+  }
+}
+
+void turnRight() {
+  writeL(1000);
+  writeR(0);
+  delay(500);
+}
+
+void turnLeft() {
+  writeL(0);
+  writeR(1000);
+  delay(500);
+}
+
+void writeR(int s) {
+  right.writeMicroseconds(2000 - s);
+}
+void writeL(int s) {
+  left.writeMicroseconds(1000 + s);
 }
 
