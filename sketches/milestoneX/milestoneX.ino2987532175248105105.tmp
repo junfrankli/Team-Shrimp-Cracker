@@ -16,6 +16,23 @@
 #define SensorRight_newAddress 43
 VL53L0X sensorLeft, sensorRight, sensorCenter;
 
+// Line Sensors
+#define NUM_SENSORS   6     // number of line sensors used
+#define TIMEOUT       2500  // waits for 2500 microseconds for sensor outputs to go low
+#define EMITTER_PIN   QTR_NO_EMITTER_PIN     // emitter is controlled by digital pin 2, jk not
+// sensors 0 through 7 are connected to digital pins 3 through 10, respectively
+QTRSensorsRC qtrrc((unsigned char[]) {
+  A5, A4, 2, 3, 4, 5, 
+},
+NUM_SENSORS, TIMEOUT, EMITTER_PIN);
+unsigned int sensorValues[NUM_SENSORS];
+
+
+// Motor driver
+DRV8835MotorShield motors;
+unsigned short speed = 400;
+// uses pins 10, 9, 8, 7, 6
+
 
 void setup()
 {
