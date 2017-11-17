@@ -66,14 +66,15 @@ void loop() {
   int curX = 0;
   int curY = 0;
   int heading = 0;
-
+  
   visited = push(visited, 0, 0);
   path = push(path, 0, 0);
-  if (!detectWall(0))
+  if (!detectWall(0)) 
     frontier = push(frontier, 0, 1);
   if (!detectWall(1))
     frontier = push(frontier, 1, 0); 
- 
+
+  
   //DFS 
   while (frontier != NULL) {
     SQUARE* frontier_loc = pop(&frontier);
@@ -138,8 +139,10 @@ void loop() {
       }
       free(frontier_loc);
     }
+    delay(100);
   }
-
+  Serial.println("Done");
+  delay(100000);
   //DONE signal
 }
 
@@ -164,59 +167,35 @@ int moveAdjacent(int curX, int curY, int heading, int goalX, int goalY) {
     return dir;
 
   while (heading != dir) {
-    if (heading > dir) 
-      turnLeft();
-    else
-      turnRight();
+    if (heading > dir) {
+      Serial.println("Trying to turn left");
+      Serial.println(heading);
+      Serial.println(dir);
+      //turnLeft();
+      heading = heading - 1;
+    } else {
+      Serial.println("Trying to turn right");
+      Serial.println(heading);
+      Serial.println(dir);
+      //turnRight();
+      heading = heading + 1;
+    }
   }
 
   goForwardOneSquare();
   return dir;
 }
 
-void goForwardOneSquare() {
-  while (sensorBack == 0) {
-    driveForward();
-    sensor0 = ((analogRead(A0) < threshold) ? 0 : 1);
-    sensor1 = ((analogRead(A1) < threshold) ? 0 : 1);
-    sensor2 = ((analogRead(A2) < threshold) ? 0 : 1);
-    sensor3 = ((analogRead(A3) < threshold) ? 0 : 1);
-    sensorBack = ((analogRead(A4) < threshold) ? 0 : 1);
-  }
-  sensorBack = 0;
-}
-
-// returns true if there is a wall in the specified direction
-// 0 is pos y, 1 is pos x, 2 is neg y, 3 is neg x
-bool detectWall(int dir) {
-  float SensorValue;
-  if (dir == 2) 
-    return false;
-  else if (dir == 0)
-    SensorValue = analogRead(A5); // read from forward sensor
-  else if (dir == 1)
-    SensorValue = analogRead(A6); //read from right sensor
-  else 
-    SensorValue = analogRead(A7); //read from left sensor
-  float dis = 2076/(SensorValue - 11);
-  //Serial.println(dis);
-  if (dis>3 && dis<15){
-    //Serial.print("wall\n");
-    return true;
-  } else {
-    return false;
-  }   
-}
-
 bool findsquare(SQUARE *head, int x, int y) {
   while (head != NULL) {
-   if (head->xPos == x){ 
-    if (head->yPos == y)
-      return true;
-   } else
-     head = head->next;
+    if (head->xPos == x) {
+      if (head->yPos == y)
+        return true;
+    }
+    head = head->next;
   }
   return false;
+  
 }
 
 SQUARE * push (SQUARE *head, int x, int y) {
@@ -233,10 +212,54 @@ SQUARE * pop (SQUARE **head) {
   return node;
 }
 
+
+void goForwardOneSquare() {
+  Serial.println("Trying to move forward one square.");
+  while (sensorBack == 0) {
+    driveForward();
+    sensor0 = ((analogRead(A0) < threshold) ? 0 : 1);
+    sensor1 = ((analogRead(A0) < threshold) ? 0 : 1);
+    sensor2 = ((analogRead(A3) < threshold) ? 0 : 1);
+    sensor3 = ((analogRead(A3) < threshold) ? 0 : 1);
+    sensorBack = ((analogRead(A4) < threshold) ? 0 : 1);
+  }
+  sensorBack = 0;
+  Serial.println("Moved forward one square.");
+}
+
+// returns true if there is a wall in the specified direction
+// 0 is pos y, 1 is pos x, 2 is neg y, 3 is neg x
+bool detectWall(int dir) {
+  Serial.println(dir);
+  float SensorValue;
+  if (dir == 2) 
+    return false;
+  else if (dir == 0)
+    SensorValue = analogRead(A5); // read from forward sensor
+  else if (dir == 1)
+    SensorValue = analogRead(A2); //read from right sensor
+  else 
+    SensorValue = analogRead(A1); //read from left sensor
+  float dis = 2076/(SensorValue - 11);
+  //Serial.println(dis);
+  if (dis>3 && dis<15){
+    Serial.println("wall");
+    return true;
+  } else {
+    Serial.println("no wall");
+    return false;
+  }   
+}
+
+
+
 void driveForward() {
+  Serial.println("Driving forward");
+  Serial.println(analogRead(A0));
+  Serial.println(analogRead(A3));
   sensor0 = ((analogRead(A0) < threshold) ? 0 : 1);
-  sensor1 = ((analogRead(A1) < threshold) ? 0 : 1);
-  sensor2 = ((analogRead(A2) < threshold) ? 0 : 1);
+  sensor1 = ((analogRead(A0) < threshold) ? 0 : 1);
+  sensor2 = ((analogRead(A3) < threshold) ? 0 : 1);
   sensor3 = ((analogRead(A3) < threshold) ? 0 : 1);
   sensorBack = ((analogRead(A4) < threshold) ? 0 : 1);
 
@@ -248,11 +271,14 @@ void driveForward() {
   digitalWrite(led3pin, sensor3);
   switch (state) {
     case 0000:
-    // ur fukt
+      writeL(forwardFull);
+      writeR(forwardFull);
+      break;
     case 1:
       // hardest right
       writeL(forwardFull);
       writeL(forwardSlow);
+      break;
     case 1000:
       // hardest left
       writeL(forwardSlow);
@@ -306,5 +332,5 @@ void writeR(int s) {
 }
 void writeL(int s) {
   left.writeMicroseconds(1000 + s);
-}
+} 
 
