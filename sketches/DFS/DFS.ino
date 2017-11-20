@@ -116,8 +116,6 @@ void loop() {
       //add current position to current path
       path = push(path, curX, curY);
       
-      Serial.println("here");
-      Serial.println(heading);
       heading = dir;
       if (heading == 0)
         curY = curY + 1;
@@ -187,19 +185,40 @@ int moveAdjacent(int curX, int curY, int heading, int goalX, int goalY) {
     return dir;
 
   while (heading != dir) {
-    if (heading > dir) {
-      Serial.println("Trying to turn left");
-      Serial.println(heading);
-      Serial.println(dir);
-      turnLeft();
-      heading = heading - 1;
+    if (heading == 0) {
+      if (dir == 1) {
+        turnLeft();
+        heading = heading + 1;
+      } else {
+        turnRight();
+        heading = heading - 1;
+      }
+    } else if (heading == 1) {
+      if (dir == 0) {
+        turnRight();
+        heading = heading - 1;
+      } else {
+        turnLeft();
+        heading = heading + 1;
+      }
+    } else if (heading == 2) {
+      if (dir == 1) {
+        turnRight();
+        heading = heading - 1;
+      } else {
+        turnLeft();
+        heading = heading + 1;
+      }
     } else {
-      Serial.println("Trying to turn right");
-      Serial.println(heading);
-      Serial.println(dir);
-      turnRight();
-      heading = heading + 1;
+      if (dir == 0) {
+        turnLeft();
+        heading = heading + 1;
+      } else {
+        turnRight();
+        heading = heading - 1;
+      }
     }
+    heading = heading % 4;
   }
 
   goForwardOneSquare();
@@ -238,22 +257,32 @@ SQUARE * pop (SQUARE **head) {
 // returns true if there is a wall in the specified direction
 // 0 is pos y, 1 is pos x, 2 is neg y, 3 is neg x
 bool detectWall(int dir) {
-  float SensorValue;
+  float sensorValue;
   if (dir == 2) 
     return false;
-  else if (dir == 0)
-    SensorValue = analogRead(A5); // read from forward sensor
-  else if (dir == 1)
-    SensorValue = analogRead(A3); //read from right sensor
-  else 
-    SensorValue = analogRead(A2); //read from left sensor
-  float dis = 2076/(SensorValue - 11);
-  //Serial.println(dis);
-  if (dis>3 && dis<15){
+  int sum = 0;
+  for (int n = 0; n < 10; n++) {
+    if (dir == 1) {
+      sensorValue = analogRead(A2); //read from left sensor
+      sum = sum + (sensorValue > 500);
+    } else {
+      if (dir == 0) 
+        sensorValue = analogRead(A5); //read from front sensor
+      else
+        sensorValue = analogRead(A3); //read from right sensor
+      float dis = 2076/(sensorValue - 11);
+      sum = sum + (dis < 12);
+    }
+  }
+  if (sum/10.0 > 0.5) {
+    Serial.println("Wall");
+    Serial.println(dir);
     return true;
   } else {
+    Serial.println("no wall");
+    Serial.println(dir);
     return false;
-  }   
+  }
 }
 
 void goForwardOneSquare() {
