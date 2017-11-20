@@ -39,7 +39,7 @@ Initially, we are going to send the entire maze every time some part of it is mo
 
 Here is how it is defined:
 
-'''
+```
 unsigned char maze[5][5] =
 {
 3, 3, 3, 3, 3,
@@ -48,7 +48,7 @@ unsigned char maze[5][5] =
 3, 1, 3, 1, 3,
 3, 0, 3, 1, 0,
 };
-'''
+```
 
 We then created the following sketch to send the array.
 ```
