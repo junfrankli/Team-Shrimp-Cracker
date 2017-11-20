@@ -75,7 +75,7 @@ void loop() {
   
   visited = push(visited, 0, 0);
   path = push(path, 0, 0);
-  if (!detectWall(1))
+  if (!detectWall(3))
     frontier = push(frontier, 1, 0); 
   if (!detectWall(0)) 
     frontier = push(frontier, 0, 1);
@@ -96,11 +96,11 @@ void loop() {
       if (dir == 0) 
         curY = curY + 1;
       else if (dir == 1)
-        curX = curX + 1;
+        curX = curX - 1;
       else if (dir == 2)
         curY = curY - 1;
       else if (dir == 3)
-        curX = curX - 1;
+        curX = curX + 1;
 
       if (dir != -1)
         heading = dir;
@@ -120,36 +120,133 @@ void loop() {
       if (heading == 0)
         curY = curY + 1;
       else if (heading == 1)
-        curX = curX + 1;
+        curX = curX - 1;
       else if (heading == 2)
         curY = curY - 1;
       else if (heading == 3)
-        curX = curX - 1;
+        curX = curX + 1;
       
       //add current position to visited
       visited = push(visited, curX, curY);
       
       //detect possible places to go -- if not in visited add to frontier
+      int goalX;
+      int goalY;
       if (!detectWall(3)) {
-        if (!findsquare(visited, curX-1, curY))
-          frontier = push(frontier, curX-1, curY);
+        switch(heading) {
+          case 0:
+            goalX = curX+1;
+            goalY = curY;
+            break;
+          case 1:
+            goalX = curX;
+            goalY = curY+1;
+            break;
+          case 2:
+            goalX = curX-1;
+            goalY = curY;
+            break;
+          case 3:
+            goalX = curX;
+            goalY = curY-1;
+            break;
+        }
+        if (!findsquare(visited, goalX, goalY) && !findsquare(frontier, goalX, goalY)) {  
+          frontier = push(frontier, goalX, goalY);
+          Serial.println("adding to frontier");
+          Serial.println("direction 3");
+          Serial.println(goalX);
+          Serial.println(goalY);
+        }
       }
       if (!detectWall(2)){
-        if (!findsquare(visited, curX, curY-1))
-          frontier = push(frontier, curX, curY-1);
+        switch(heading) {
+          case 0:
+            goalX = curX;
+            goalY = curY-1;
+            break;
+          case 1:
+            goalX = curX+1;
+            goalY = curY;
+            break;
+          case 2:
+            goalX = curX;
+            goalY = curY+1;
+            break;
+          case 3:
+            goalX = curX-1;
+            goalY = curY;
+            break;
+        }
+        if (!findsquare(visited, goalX, goalY) && !findsquare(frontier, goalX, goalY)) {
+          frontier = push(frontier, goalX, goalY);
+          Serial.println("adding to frontier");
+          Serial.println("direction 2");
+          Serial.println(goalX);
+          Serial.println(goalY);
+        }
       }
       if (!detectWall(1)) {
-        if (!findsquare(visited, curX+1, curY))
-          frontier = push(frontier, curX+1, curY);
+        switch(heading) {
+          case 0:
+            goalX = curX-1;
+            goalY = curY;
+            break;
+          case 1:
+            goalX = curX;
+            goalY = curY-1;
+            break;
+          case 2:
+            goalX = curX+1;
+            goalY = curY;
+            break;
+          case 3:
+            goalX = curX;
+            goalY = curY+1;
+            break;
+        }
+        if (!findsquare(visited, goalX, goalY) && !findsquare(frontier, goalX, goalY)){
+          frontier = push(frontier, goalX, goalY);
+          Serial.println("adding to frontier");
+          Serial.println("direction 1");
+          Serial.println(goalX);
+          Serial.println(goalY);
+        }
+        
       }
       if (!detectWall(0)) {
-        if (!findsquare(visited, curX, curY+1))
-          frontier = push(frontier, curX, curY+1);
+        switch(heading) {
+          case 0:
+            goalX = curX;
+            goalY = curY+1;
+            break;
+          case 1:
+            goalX = curX-1;
+            goalY = curY;
+            break;
+          case 2:
+            goalX = curX;
+            goalY = curY-1;
+            break;
+          case 3:
+            goalX = curX+1;
+            goalY = curY;
+            break;
+        }
+        if (!findsquare(visited, goalX, goalY) && !findsquare(frontier, goalX, goalY)) {
+          frontier = push(frontier, goalX, goalY);
+          Serial.println("adding to frontier");
+          Serial.println("direction 0");
+          Serial.println(goalX);
+          Serial.println(goalY);
+        }
       } 
       free(frontier_loc);
     }
     delay(100);
   }
+  left.write(92);
+  right.write(92);
   Serial.println("Done");
   delay(100000);
   //DONE signal
@@ -158,14 +255,6 @@ void loop() {
 //moves robot one square based on current position and heading
 //returns heading if robot is able to move to specified square, -1 otherwise
 int moveAdjacent(int curX, int curY, int heading, int goalX, int goalY) {
-  Serial.println("moving");
-  Serial.println(heading);
-  Serial.println("start square");
-  Serial.println(curX);
-  Serial.println(curY);
-  Serial.println("goal square");
-  Serial.println(goalX);
-  Serial.println(goalY);
   int distX = goalX - curX;
   int distY = goalY - curY;
   int dir = -1;
@@ -176,51 +265,74 @@ int moveAdjacent(int curX, int curY, int heading, int goalX, int goalY) {
       dir = 2;
   } else if (distY == 0) {
     if (distX == 1)
-      dir = 1;
-    else if (distX == -1)
       dir = 3;
+    else if (distX == -1)
+      dir = 1;
   }
-  Serial.println(dir);
   if (dir == -1)
     return dir;
 
-  while (heading != dir) {
-    if (heading == 0) {
-      if (dir == 1) {
-        turnLeft();
-        heading = heading + 1;
-      } else {
-        turnRight();
-        heading = heading - 1;
-      }
-    } else if (heading == 1) {
-      if (dir == 0) {
-        turnRight();
-        heading = heading - 1;
-      } else {
-        turnLeft();
-        heading = heading + 1;
-      }
-    } else if (heading == 2) {
-      if (dir == 1) {
-        turnRight();
-        heading = heading - 1;
-      } else {
-        turnLeft();
-        heading = heading + 1;
-      }
-    } else {
-      if (dir == 0) {
-        turnLeft();
-        heading = heading + 1;
-      } else {
-        turnRight();
-        heading = heading - 1;
-      }
+  if (heading != dir) {
+    switch (heading) {
+      case 0:
+        switch (dir) {
+          case 1:
+            turnLeft();
+            break;
+          case 2: 
+            turnLeft();
+            turnLeft();
+            break;
+          case 3:
+            turnRight();
+            break;
+        }
+        break;
+      case 1:
+        switch (dir) {
+          case 0:
+            turnRight();
+            break;
+          case 2: 
+            turnLeft();
+            break;
+          case 3:
+            turnRight();
+            turnRight();
+            break;
+        }
+        break;
+      case 2: 
+        switch (dir) {
+          case 1:
+            turnRight();
+            break;
+          case 0: 
+            turnLeft();
+            turnLeft();
+            break;
+          case 3:
+            turnLeft();
+            break;
+        }
+        break;
+      case 3:
+        switch (dir) {
+          case 1:
+            turnLeft();
+            turnLeft();
+            break;
+          case 0: 
+            turnLeft();
+            break;
+          case 2:
+            turnRight();
+            break;
+        }
+        break;
     }
-    heading = heading % 4;
   }
-
+  
   goForwardOneSquare();
   return dir;
 }
@@ -251,9 +363,6 @@ SQUARE * pop (SQUARE **head) {
   return node;
 }
 
-
-
-
 // returns true if there is a wall in the specified direction
 // 0 is pos y, 1 is pos x, 2 is neg y, 3 is neg x
 bool detectWall(int dir) {
@@ -261,28 +370,26 @@ bool detectWall(int dir) {
   if (dir == 2) 
     return false;
   int sum = 0;
-  for (int n = 0; n < 10; n++) {
-    if (dir == 1) {
-      sensorValue = analogRead(A2); //read from left sensor
-      sum = sum + (sensorValue > 500);
-    } else {
-      if (dir == 0) 
-        sensorValue = analogRead(A5); //read from front sensor
-      else
-        sensorValue = analogRead(A3); //read from right sensor
-      float dis = 2076/(sensorValue - 11);
-      sum = sum + (dis < 12);
-    }
-  }
-  if (sum/10.0 > 0.5) {
-    Serial.println("Wall");
-    Serial.println(dir);
-    return true;
+  if (dir == 1) {
+    for (int i = 0; i < 10; i++) 
+      sensorValue = sensorValue + analogRead(A2); //read from left sensor
+    if (sensorValue > (220*10)) return true;
+    else return false;
   } else {
-    Serial.println("no wall");
-    Serial.println(dir);
-    return false;
-  }
+    if (dir == 0) {
+      for (int i = 0; i < 10; i++)
+        sensorValue = sensorValue + analogRead(A5); //read from front sensor
+      if (sensorValue > (220*10)) return true;
+      else return false;
+    }
+    else {
+      for (int i = 0; i < 10; i++)
+        sensorValue = sensorValue + analogRead(A3); //read from right sensor
+      if (sensorValue > (250*10)) return true;
+      else return false;
+    }
+    
+   }
 }
 
 void goForwardOneSquare() {
@@ -307,8 +414,8 @@ void goForwardOneSquare() {
     state = sensor3 + 10 * sensor2 + 100 * sensor1 + 1000 * sensor0;
     lineFollow(state);
   } 
-  left.write(92);
-  right.write(92);
+  //left.write(92);
+  //right.write(92);
 }
 
 void lineFollow(int state) {
@@ -365,7 +472,7 @@ void turnRight() {
 void turnLeft() {
   writeR(forwardFull);
   left.write(30);
-  delay(900);
+  delay(1150);
   left.write(92);
   right.write(92);
 }
@@ -376,4 +483,5 @@ void writeR(int s) {
 void writeL(int s) {
   left.writeMicroseconds(1000 + s);
 } 
+
 
