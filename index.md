@@ -22,7 +22,7 @@ Inspired by the delicious snack that holds so much flavor in such a small size, 
 # [Milestone 3](milestone3.md)
 [![deeeeemo](https://i.imgur.com/z1V1OlN.png)](https://l.facebook.com/l.php?u=https%3A%2F%2Fyoutu.be%2FbeaNwDU7myo&h=ATMk15_mkxEEMS2NNmcqvEp4xnsGWUL7vO1sHba_yr-QNkjwsIK-B3J4OSpyPElof-jbdjnEwPJkDjTXjJqe6Kt9HBYpMMOIob_cE06iOtsI-HidNeBZa-G7BOW1fBmxOTINZ0XWhfk4zA)
 
-# [Milestone 4](Milestone 4_ Integrating Everything.md)
+# [Milestone 4](Milestone%204_%20Integrating%20Everything.md)
 
 # [Team Contract](teamcontract.md)
 
