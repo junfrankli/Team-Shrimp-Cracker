@@ -28,3 +28,5 @@ Inspired by the delicious snack that holds so much flavor in such a small size, 
 
 
 # [Meeting Notes](meetings.md)
+
+# [Ethics Case Study](ethics.docx)
