@@ -23,7 +23,7 @@ void setup()
   //pinMode(XSHUT_pinRight, OUTPUT);
   //pinMode(XSHUT_pinCenter, OUTPUT);
 
-  Serial.begin(9600);
+  Serial.begin(115200);
   Wire.begin();
 
   //sensorLeft.setAddress(SensorLeft_newAddress);
@@ -48,9 +48,9 @@ void setup()
 
 void loop()
 {
-  //Serial.println(sensorLeft.readRangeContinuousMillimeters());
+  Serial.print(sensorLeft.readRangeContinuousMillimeters());
   //Serial.print(",");              //seperator
   //Serial.print(sensorCenter.readRangeContinuousMillimeters());
-  Serial.print(",");              //seperator
+  //Serial.print(",");              //seperator
   //Serial.println(sensorRight.readRangeContinuousMillimeters());
 }
