@@ -464,7 +464,7 @@ void lineFollow(int state) {
 void turnRight() {
   writeL(forwardFull);
   right.write(150);
-  delay(1000);
+  delay(900);
   left.write(92);
   right.write(92);
 }
@@ -472,7 +472,7 @@ void turnRight() {
 void turnLeft() {
   writeR(forwardFull);
   left.write(30);
-  delay(1150);
+  delay(1000);
   left.write(92);
   right.write(92);
 }
