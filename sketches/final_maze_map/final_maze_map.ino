@@ -11,6 +11,7 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+  while (!detectTone());
   SQUARE *visited = NULL;
   SQUARE *frontier = NULL;
   SQUARE *path = NULL;
@@ -286,9 +287,12 @@ SQUARE * pop (SQUARE **head) {
   return node;
 }
 
+//RADIO CODE
+void sendPacket(state) {}
+
 //NEEDS TO BE UDPATED
 bool detectTone() {
-  //return true if tone is detected, false otherwise
+  //return true if tone is detected and robot should start, false otherwise
 }
 
 bool detectWall(int dir) {
