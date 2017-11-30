@@ -149,1213 +149,1214 @@ module DE0_NANO(
 	 assign packet[6] = GPIO_0_D[26];//left wall
 	 assign packet[7] = GPIO_0_D[28];//down wall
 	 assign packet[8] = GPIO_0_D[30];//up wall
-	 assign packet[9] = GPIO_1_D[0];//treasure1
-	 assign packet[10] = GPIO_1_D[1];//treasure2
-	 assign packet[11] = GPIO_1_D[3];//treasure3
+	 assign packet[9] = GPIO_1_D[10];//treasure1
+	 assign packet[10] = GPIO_1_D[11];//treasure2
+	 assign packet[11] = GPIO_1_D[13];//treasure3
 	 assign packet[12] = GPIO_0_D[32];//done
+	 assign valid = GPIO_0_D[0];
 	 
 	 assign reset = ~KEY[0]; // reset when KEY0 is pressed
 	 always @(posedge CLOCK_25) begin 
-	 
-		my_grid[0][0] <= wall;
-		my_grid[0][1] <= wall;
-		my_grid[0][2] <= wall;
-		my_grid[0][3] <= wall;
-		my_grid[0][4] <= wall;
-		my_grid[0][5] <= wall;
-		my_grid[0][6] <= wall;
-		my_grid[0][7] <= wall;
-		my_grid[0][8] <= wall;
+		if (valid == 1) begin 
+			my_grid[0][0] <= wall;
+			my_grid[0][1] <= wall;
+			my_grid[0][2] <= wall;
+			my_grid[0][3] <= wall;
+			my_grid[0][4] <= wall;
+			my_grid[0][5] <= wall;
+			my_grid[0][6] <= wall;
+			my_grid[0][7] <= wall;
+			my_grid[0][8] <= wall;
 		
-		my_grid[1][0] <= wall;
-		my_grid[2][0] <= wall;
-		my_grid[3][0] <= wall;
-		my_grid[4][0] <= wall;
-		my_grid[5][0] <= wall;
-		my_grid[6][0] <= wall;
-		my_grid[7][0] <= wall;
-		my_grid[8][0] <= wall;
-		my_grid[9][0] <= wall;
-		
-		my_grid[10][0] <= wall;
-		my_grid[10][1] <= wall;
-		my_grid[10][2] <= wall;
-		my_grid[10][3] <= wall;
-		my_grid[10][4] <= wall;
-		my_grid[10][5] <= wall;
-		my_grid[10][6] <= wall;
-		my_grid[10][7] <= wall;
-		my_grid[10][8] <= wall;
-		
-		my_grid[1][8] <= wall;
-		my_grid[2][8] <= wall;
-		my_grid[3][8] <= wall;
-		my_grid[4][8] <= wall;
-		my_grid[5][8] <= wall;
-		my_grid[6][8] <= wall;
-		my_grid[7][8] <= wall;
-		my_grid[8][8] <= wall;
-		my_grid[9][8] <= wall;
-		
-		/*my_grid[1][1] <= currentpos;
-		my_grid[3][1] <= currentpos;
-		my_grid[5][1] <= currentpos;
-		my_grid[7][1] <= currentpos;
-		my_grid[9][1] <= currentpos;
-		
-		my_grid[1][3] <= visited;
-		my_grid[3][3] <= visited;
-		my_grid[5][3] <= visited;
-		my_grid[7][3] <= visited;
-		my_grid[9][3] <= visited;
-		
-		my_grid[1][5] <= treasure1;
-		my_grid[3][5] <= treasure2;
-		my_grid[5][5] <= treasure3;
-		my_grid[7][5] <= future;
-		my_grid[9][5] <= future;
-		
-		my_grid[1][7] <= visited;
-		my_grid[3][7] <= visited;
-		my_grid[5][7] <= visited;
-		my_grid[7][7] <= visited;
-		my_grid[9][7] <= visited;*/
-		
-		// path grid
-		//(0,0)
-		if (packet[4:0] != 5'b000_00 && my_grid[1][1] != currentpos && my_grid[1][1] != visited && my_grid[1][1] != treasure1 && my_grid[1][1] != treasure2 && my_grid[1][1] != treasure3)
-			my_grid[1][1] <= unvisited;
-		else if (packet[4:0] == 5'b000_00) begin
-			if (packet[10:8] == 3'b000)
-				my_grid[1][1] <= currentpos;
-			else if (packet[10:8] == 3'b001)
-				my_grid[1][1] <= treasure1;
-			else if (packet[10:8] == 3'b010)
-				my_grid[1][1] <= treasure2;
-			else if (packet[10:8] == 3'b100)
-				my_grid[1][1] <= treasure3;
-		end
-		else if (packet[4:0] != 5'b000_00) begin
-			if (my_grid[1][1] == treasure1)
-				my_grid[1][1] <= treasure1;
-			else if (my_grid[1][1] == treasure2)
-				my_grid[1][1] <= treasure2;
-			else if (my_grid[1][1] == treasure3)
-				my_grid[1][1] <= treasure3;
-			else my_grid[1][1] <= visited;
-		end
-		
-		//(1,0)
-		if (packet[4:0] != 5'b001_00 && my_grid[3][1] != currentpos && my_grid[3][1] != visited && my_grid[3][1] != treasure1 && my_grid[3][1] != treasure2 && my_grid[3][1] != treasure3)
-			my_grid[3][1] <= unvisited;
-		else if (packet[4:0] == 5'b001_00) begin
-			if (packet[10:8] == 3'b000)
-				my_grid[3][1] <= currentpos;
-			else if (packet[10:8] == 3'b001)
-				my_grid[3][1] <= treasure1;
-			else if (packet[10:8] == 3'b010)
-				my_grid[3][1] <= treasure2;
-			else if (packet[10:8] == 3'b100)
-				my_grid[3][1] <= treasure3;
-		end
-		else if (packet[4:0] != 5'b001_00) begin
-			if (my_grid[3][1] == treasure1)
-				my_grid[3][1] <= treasure1;
-			else if (my_grid[3][1] == treasure2)
-				my_grid[3][1] <= treasure2;
-			else if (my_grid[3][1] == treasure3)
-				my_grid[3][1] <= treasure3;
-			else my_grid[3][1] <= visited;
-		end
-		
-		if (packet[4:0] == 5'b001_00) 
-		  my_grid[3][2] <= visited;
-		
-		//(2,0)
-		if (packet[4:0] != 5'b010_00 && my_grid[5][1] != currentpos && my_grid[5][1] != visited && my_grid[5][1] != treasure1 && my_grid[5][1] != treasure2 && my_grid[5][1] != treasure3)
-			my_grid[5][1] <= unvisited;
-		else if (packet[4:0] == 5'b010_00) begin
-			if (packet[10:8] == 3'b000)
-				my_grid[5][1] <= currentpos;
-			else if (packet[10:8] == 3'b001)
-				my_grid[5][1] <= treasure1;
-			else if (packet[10:8] == 3'b010)
-				my_grid[5][1] <= treasure2;
-			else if (packet[10:8] == 3'b100)
-				my_grid[5][1] <= treasure3;
-		end
-		else if (packet[4:0] != 5'b010_00) begin
-			if (my_grid[5][1] == treasure1)
-				my_grid[5][1] <= treasure1;
-			else if (my_grid[5][1] == treasure2)
-				my_grid[5][1] <= treasure2;
-			else if (my_grid[5][1] == treasure3)
-				my_grid[5][1] <= treasure3;
-			else my_grid[5][1] <= visited;
-		end
-		
-		//(3,0)
-		if (packet[4:0] != 5'b011_00 && my_grid[7][1] != currentpos && my_grid[7][1] != visited && my_grid[7][1] != treasure1 && my_grid[7][1] != treasure2 && my_grid[7][1] != treasure3)
-			my_grid[7][1] <= unvisited;
-		else if (packet[4:0] == 5'b011_00) begin
-			if (packet[10:8] == 3'b000)
-				my_grid[7][1] <= currentpos;
-			else if (packet[10:8] == 3'b001)
-				my_grid[7][1] <= treasure1;
-			else if (packet[10:8] == 3'b010)
-				my_grid[7][1] <= treasure2;
-			else if (packet[10:8] == 3'b100)
-				my_grid[7][1] <= treasure3;
-		end
-		else if (packet[4:0] != 5'b011_00) begin
-			if (my_grid[7][1] == treasure1)
-				my_grid[7][1] <= treasure1;
-			else if (my_grid[7][1] == treasure2)
-				my_grid[7][1] <= treasure2;
-			else if (my_grid[7][1] == treasure3)
-				my_grid[7][1] <= treasure3;
-			else my_grid[7][1] <= visited;
-		end
-		
-		//(4,0)
-		if (packet[4:0] != 5'b100_00 && my_grid[9][1] != currentpos && my_grid[9][1] != visited && my_grid[9][1] != treasure1 && my_grid[9][1] != treasure2 && my_grid[9][1] != treasure3)
-			my_grid[9][1] <= unvisited;
-		else if (packet[4:0] == 5'b100_00) begin
-			if (packet[10:8] == 3'b000)
-				my_grid[9][1] <= currentpos;
-			else if (packet[10:8] == 3'b001)
-				my_grid[9][1] <= treasure1;
-			else if (packet[10:8] == 3'b010)
-				my_grid[9][1] <= treasure2;
-			else if (packet[10:8] == 3'b100)
-				my_grid[9][1] <= treasure3;
-		end
-		else if (packet[4:0] != 5'b100_00) begin
-			if (my_grid[9][1] == treasure1)
-				my_grid[9][1] <= treasure1;
-			else if (my_grid[9][1] == treasure2)
-				my_grid[9][1] <= treasure2;
-			else if (my_grid[9][1] == treasure3)
-				my_grid[9][1] <= treasure3;
-			else my_grid[9][1] <= visited;
-		end
-		
-		//(0,1)
-		if (packet[4:0] != 5'b000_01 && my_grid[1][3] != currentpos && my_grid[1][3] != visited && my_grid[1][3] != treasure1 && my_grid[1][3] != treasure2 && my_grid[1][3] != treasure3)
-			my_grid[1][3] <= unvisited;
-		else if (packet[4:0] == 5'b000_01) begin
-			if (packet[10:8] == 3'b000)
-				my_grid[1][3] <= currentpos;
-			else if (packet[10:8] == 3'b001)
-				my_grid[1][3] <= treasure1;
-			else if (packet[10:8] == 3'b010)
-				my_grid[1][3] <= treasure2;
-			else if (packet[10:8] == 3'b100)
-				my_grid[1][3] <= treasure3;
-		end
-		else if (packet[4:0] != 5'b000_01) begin
-			if (my_grid[1][3] == treasure1)
-				my_grid[1][3] <= treasure1;
-			else if (my_grid[1][3] == treasure2)
-				my_grid[1][3] <= treasure2;
-			else if (my_grid[1][3] == treasure3)
-				my_grid[1][3] <= treasure3;
-			else my_grid[1][3] <= visited;
-		end
-		
-		//(1,1)
-		if (packet[4:0] != 5'b001_01 && my_grid[3][3] != currentpos && my_grid[3][3] != visited && my_grid[3][3] != treasure1 && my_grid[3][3] != treasure2 && my_grid[3][3] != treasure3)
-			my_grid[3][3] <= unvisited;
-		else if (packet[4:0] == 5'b001_01) begin
-			if (packet[10:8] == 3'b000)
-				my_grid[3][3] <= currentpos;
-			else if (packet[10:8] == 3'b001)
-				my_grid[3][3] <= treasure1;
-			else if (packet[10:8] == 3'b010)
-				my_grid[3][3] <= treasure2;
-			else if (packet[10:8] == 3'b100)
-				my_grid[3][3] <= treasure3;
-		end
-		else if (packet[4:0] != 5'b001_01) begin
-			if (my_grid[3][3] == treasure1)
-				my_grid[3][3] <= treasure1;
-			else if (my_grid[3][3] == treasure2)
-				my_grid[3][3] <= treasure2;
-			else if (my_grid[3][3] == treasure3)
-				my_grid[3][3] <= treasure3;
-			else my_grid[3][3] <= visited;
-		end
-		
-		//(2,1)
-		if (packet[4:0] != 5'b010_01 && my_grid[5][3] != currentpos && my_grid[5][3] != visited && my_grid[5][3] != treasure1 && my_grid[5][3] != treasure2 && my_grid[5][3] != treasure3)
-			my_grid[5][3] <= unvisited;
-		else if (packet[4:0] == 5'b010_01) begin
-			if (packet[10:8] == 3'b000)
-				my_grid[5][3] <= currentpos;
-			else if (packet[10:8] == 3'b001)
-				my_grid[5][3] <= treasure1;
-			else if (packet[10:8] == 3'b010)
-				my_grid[5][3] <= treasure2;
-			else if (packet[10:8] == 3'b100)
-				my_grid[5][3] <= treasure3;
-		end
-		else if (packet[4:0] != 5'b010_01) begin
-			if (my_grid[5][3] == treasure1)
-				my_grid[5][3] <= treasure1;
-			else if (my_grid[5][3] == treasure2)
-				my_grid[5][3] <= treasure2;
-			else if (my_grid[5][3] == treasure3)
-				my_grid[5][3] <= treasure3;
-			else my_grid[5][3] <= visited;
-		end
-		
-		//(3,1)
-		if (packet[4:0] != 5'b011_01 && my_grid[7][3] != currentpos && my_grid[7][3] != visited && my_grid[7][3] != treasure1 && my_grid[7][3] != treasure2 && my_grid[7][3] != treasure3)
-			my_grid[7][3] <= unvisited;
-		else if (packet[4:0] == 5'b011_01) begin
-			if (packet[10:8] == 3'b000)
-				my_grid[7][3] <= currentpos;
-			else if (packet[10:8] == 3'b001)
-				my_grid[7][3] <= treasure1;
-			else if (packet[10:8] == 3'b010)
-				my_grid[7][3] <= treasure2;
-			else if (packet[10:8] == 3'b100)
-				my_grid[7][3] <= treasure3;
-		end
-		else if (packet[4:0] != 5'b011_01) begin
-			if (my_grid[7][3] == treasure1)
-				my_grid[7][3] <= treasure1;
-			else if (my_grid[7][3] == treasure2)
-				my_grid[7][3] <= treasure2;
-			else if (my_grid[7][3] == treasure3)
-				my_grid[7][3] <= treasure3;
-			else my_grid[7][3] <= visited;
-		end
-		
-		//(4,1)
-		if (packet[4:0] != 5'b100_01 && my_grid[9][3] != currentpos && my_grid[9][3] != visited && my_grid[9][3] != treasure1 && my_grid[9][3] != treasure2 && my_grid[9][3] != treasure3)
-			my_grid[9][3] <= unvisited;
-		else if (packet[4:0] == 5'b100_01) begin
-			if (packet[10:8] == 3'b000)
-				my_grid[9][3] <= currentpos;
-			else if (packet[10:8] == 3'b001)
-				my_grid[9][3] <= treasure1;
-			else if (packet[10:8] == 3'b010)
-				my_grid[9][3] <= treasure2;
-			else if (packet[10:8] == 3'b100)
-				my_grid[9][3] <= treasure3;
-		end
-		else if (packet[4:0] != 5'b100_01) begin
-			if (my_grid[9][3] == treasure1)
-				my_grid[9][3] <= treasure1;
-			else if (my_grid[9][3] == treasure2)
-				my_grid[9][3] <= treasure2;
-			else if (my_grid[9][3] == treasure3)
-				my_grid[9][3] <= treasure3;
-			else my_grid[9][3] <= visited;
-		end
-		
-		//(0,2)
-		if (packet[4:0] != 5'b000_10 && my_grid[1][5] != currentpos && my_grid[1][5] != visited && my_grid[1][5] != treasure1 && my_grid[1][5] != treasure2 && my_grid[1][5] != treasure3)
-			my_grid[1][5] <= unvisited;
-		else if (packet[4:0] == 5'b000_10) begin
-			if (packet[10:8] == 3'b000)
-				my_grid[1][5] <= currentpos;
-			else if (packet[10:8] == 3'b001)
-				my_grid[1][5] <= treasure1;
-			else if (packet[10:8] == 3'b010)
-				my_grid[1][5] <= treasure2;
-			else if (packet[10:8] == 3'b100)
-				my_grid[1][5] <= treasure3;
-		end
-		else if (packet[4:0] != 5'b000_10) begin
-			if (my_grid[1][5] == treasure1)
-				my_grid[1][5] <= treasure1;
-			else if (my_grid[1][5] == treasure2)
-				my_grid[1][5] <= treasure2;
-			else if (my_grid[1][5] == treasure3)
-				my_grid[1][5] <= treasure3;
-			else my_grid[1][5] <= visited;
-		end
-		
-		//(1,2)
-		if (packet[4:0] != 5'b001_10 && my_grid[3][5] != currentpos && my_grid[3][5] != visited && my_grid[3][5] != treasure1 && my_grid[3][5] != treasure2 && my_grid[3][5] != treasure3)
-			my_grid[3][5] <= unvisited;
-		else if (packet[4:0] == 5'b001_10) begin
-			if (packet[10:8] == 3'b000)
-				my_grid[3][5] <= currentpos;
-			else if (packet[10:8] == 3'b001)
-				my_grid[3][5] <= treasure1;
-			else if (packet[10:8] == 3'b010)
-				my_grid[3][5] <= treasure2;
-			else if (packet[10:8] == 3'b100)
-				my_grid[3][5] <= treasure3;
-		end
-		else if (packet[4:0] != 5'b001_10) begin
-			if (my_grid[3][5] == treasure1)
-				my_grid[3][5] <= treasure1;
-			else if (my_grid[3][5] == treasure2)
-				my_grid[3][5] <= treasure2;
-			else if (my_grid[3][5] == treasure3)
-				my_grid[3][5] <= treasure3;
-			else my_grid[3][5] <= visited;
-		end
-		
-		//(2,2)
-		if (packet[4:0] != 5'b010_10 && my_grid[5][5] != currentpos && my_grid[5][5] != visited && my_grid[5][5] != treasure1 && my_grid[5][5] != treasure2 && my_grid[5][5] != treasure3)
-			my_grid[5][5] <= unvisited;
-		else if (packet[4:0] == 5'b010_10) begin
-			if (packet[10:8] == 3'b000)
-				my_grid[5][5] <= currentpos;
-			else if (packet[10:8] == 3'b001)
-				my_grid[5][5] <= treasure1;
-			else if (packet[10:8] == 3'b010)
-				my_grid[5][5] <= treasure2;
-			else if (packet[10:8] == 3'b100)
-				my_grid[5][5] <= treasure3;
-		end
-		else if (packet[4:0] != 5'b010_10) begin
-			if (my_grid[5][5] == treasure1)
-				my_grid[5][5] <= treasure1;
-			else if (my_grid[5][5] == treasure2)
-				my_grid[5][5] <= treasure2;
-			else if (my_grid[5][5] == treasure3)
-				my_grid[5][5] <= treasure3;
-			else my_grid[5][5] <= visited;
-		end
+			my_grid[1][0] <= wall;
+			my_grid[2][0] <= wall;
+			my_grid[3][0] <= wall;
+			my_grid[4][0] <= wall;
+			my_grid[5][0] <= wall;
+			my_grid[6][0] <= wall;
+			my_grid[7][0] <= wall;
+			my_grid[8][0] <= wall;
+			my_grid[9][0] <= wall;
+			
+			my_grid[10][0] <= wall;
+			my_grid[10][1] <= wall;
+			my_grid[10][2] <= wall;
+			my_grid[10][3] <= wall;
+			my_grid[10][4] <= wall;
+			my_grid[10][5] <= wall;
+			my_grid[10][6] <= wall;
+			my_grid[10][7] <= wall;
+			my_grid[10][8] <= wall;
+			
+			my_grid[1][8] <= wall;
+			my_grid[2][8] <= wall;
+			my_grid[3][8] <= wall;
+			my_grid[4][8] <= wall;
+			my_grid[5][8] <= wall;
+			my_grid[6][8] <= wall;
+			my_grid[7][8] <= wall;
+			my_grid[8][8] <= wall;
+			my_grid[9][8] <= wall;
+			
+			/*my_grid[1][1] <= currentpos;
+			my_grid[3][1] <= currentpos;
+			my_grid[5][1] <= currentpos;
+			my_grid[7][1] <= currentpos;
+			my_grid[9][1] <= currentpos;
+			
+			my_grid[1][3] <= visited;
+			my_grid[3][3] <= visited;
+			my_grid[5][3] <= visited;
+			my_grid[7][3] <= visited;
+			my_grid[9][3] <= visited;
+			
+			my_grid[1][5] <= treasure1;
+			my_grid[3][5] <= treasure2;
+			my_grid[5][5] <= treasure3;
+			my_grid[7][5] <= future;
+			my_grid[9][5] <= future;
+			
+			my_grid[1][7] <= visited;
+			my_grid[3][7] <= visited;
+			my_grid[5][7] <= visited;
+			my_grid[7][7] <= visited;
+			my_grid[9][7] <= visited;*/
+			
+			// path grid
+			//(0,0)
+			if (packet[4:0] != 5'b000_00 && my_grid[1][1] != currentpos && my_grid[1][1] != visited && my_grid[1][1] != treasure1 && my_grid[1][1] != treasure2 && my_grid[1][1] != treasure3)
+				my_grid[1][1] <= unvisited;
+			else if (packet[4:0] == 5'b000_00) begin
+				if (packet[10:8] == 3'b000)
+					my_grid[1][1] <= currentpos;
+				else if (packet[10:8] == 3'b001)
+					my_grid[1][1] <= treasure1;
+				else if (packet[10:8] == 3'b010)
+					my_grid[1][1] <= treasure2;
+				else if (packet[10:8] == 3'b100)
+					my_grid[1][1] <= treasure3;
+			end
+			else if (packet[4:0] != 5'b000_00) begin
+				if (my_grid[1][1] == treasure1)
+					my_grid[1][1] <= treasure1;
+				else if (my_grid[1][1] == treasure2)
+					my_grid[1][1] <= treasure2;
+				else if (my_grid[1][1] == treasure3)
+					my_grid[1][1] <= treasure3;
+				else my_grid[1][1] <= visited;
+			end
+			
+			//(1,0)
+			if (packet[4:0] != 5'b001_00 && my_grid[3][1] != currentpos && my_grid[3][1] != visited && my_grid[3][1] != treasure1 && my_grid[3][1] != treasure2 && my_grid[3][1] != treasure3)
+				my_grid[3][1] <= unvisited;
+			else if (packet[4:0] == 5'b001_00) begin
+				if (packet[10:8] == 3'b000)
+					my_grid[3][1] <= currentpos;
+				else if (packet[10:8] == 3'b001)
+					my_grid[3][1] <= treasure1;
+				else if (packet[10:8] == 3'b010)
+					my_grid[3][1] <= treasure2;
+				else if (packet[10:8] == 3'b100)
+					my_grid[3][1] <= treasure3;
+			end
+			else if (packet[4:0] != 5'b001_00) begin
+				if (my_grid[3][1] == treasure1)
+					my_grid[3][1] <= treasure1;
+				else if (my_grid[3][1] == treasure2)
+					my_grid[3][1] <= treasure2;
+				else if (my_grid[3][1] == treasure3)
+					my_grid[3][1] <= treasure3;
+				else my_grid[3][1] <= visited;
+			end
+			
+			if (packet[4:0] == 5'b001_00) 
+			  my_grid[3][2] <= visited;
+			
+			//(2,0)
+			if (packet[4:0] != 5'b010_00 && my_grid[5][1] != currentpos && my_grid[5][1] != visited && my_grid[5][1] != treasure1 && my_grid[5][1] != treasure2 && my_grid[5][1] != treasure3)
+				my_grid[5][1] <= unvisited;
+			else if (packet[4:0] == 5'b010_00) begin
+				if (packet[10:8] == 3'b000)
+					my_grid[5][1] <= currentpos;
+				else if (packet[10:8] == 3'b001)
+					my_grid[5][1] <= treasure1;
+				else if (packet[10:8] == 3'b010)
+					my_grid[5][1] <= treasure2;
+				else if (packet[10:8] == 3'b100)
+					my_grid[5][1] <= treasure3;
+			end
+			else if (packet[4:0] != 5'b010_00) begin
+				if (my_grid[5][1] == treasure1)
+					my_grid[5][1] <= treasure1;
+				else if (my_grid[5][1] == treasure2)
+					my_grid[5][1] <= treasure2;
+				else if (my_grid[5][1] == treasure3)
+					my_grid[5][1] <= treasure3;
+				else my_grid[5][1] <= visited;
+			end
+			
+			//(3,0)
+			if (packet[4:0] != 5'b011_00 && my_grid[7][1] != currentpos && my_grid[7][1] != visited && my_grid[7][1] != treasure1 && my_grid[7][1] != treasure2 && my_grid[7][1] != treasure3)
+				my_grid[7][1] <= unvisited;
+			else if (packet[4:0] == 5'b011_00) begin
+				if (packet[10:8] == 3'b000)
+					my_grid[7][1] <= currentpos;
+				else if (packet[10:8] == 3'b001)
+					my_grid[7][1] <= treasure1;
+				else if (packet[10:8] == 3'b010)
+					my_grid[7][1] <= treasure2;
+				else if (packet[10:8] == 3'b100)
+					my_grid[7][1] <= treasure3;
+			end
+			else if (packet[4:0] != 5'b011_00) begin
+				if (my_grid[7][1] == treasure1)
+					my_grid[7][1] <= treasure1;
+				else if (my_grid[7][1] == treasure2)
+					my_grid[7][1] <= treasure2;
+				else if (my_grid[7][1] == treasure3)
+					my_grid[7][1] <= treasure3;
+				else my_grid[7][1] <= visited;
+			end
+			
+			//(4,0)
+			if (packet[4:0] != 5'b100_00 && my_grid[9][1] != currentpos && my_grid[9][1] != visited && my_grid[9][1] != treasure1 && my_grid[9][1] != treasure2 && my_grid[9][1] != treasure3)
+				my_grid[9][1] <= unvisited;
+			else if (packet[4:0] == 5'b100_00) begin
+				if (packet[10:8] == 3'b000)
+					my_grid[9][1] <= currentpos;
+				else if (packet[10:8] == 3'b001)
+					my_grid[9][1] <= treasure1;
+				else if (packet[10:8] == 3'b010)
+					my_grid[9][1] <= treasure2;
+				else if (packet[10:8] == 3'b100)
+					my_grid[9][1] <= treasure3;
+			end
+			else if (packet[4:0] != 5'b100_00) begin
+				if (my_grid[9][1] == treasure1)
+					my_grid[9][1] <= treasure1;
+				else if (my_grid[9][1] == treasure2)
+					my_grid[9][1] <= treasure2;
+				else if (my_grid[9][1] == treasure3)
+					my_grid[9][1] <= treasure3;
+				else my_grid[9][1] <= visited;
+			end
+			
+			//(0,1)
+			if (packet[4:0] != 5'b000_01 && my_grid[1][3] != currentpos && my_grid[1][3] != visited && my_grid[1][3] != treasure1 && my_grid[1][3] != treasure2 && my_grid[1][3] != treasure3)
+				my_grid[1][3] <= unvisited;
+			else if (packet[4:0] == 5'b000_01) begin
+				if (packet[10:8] == 3'b000)
+					my_grid[1][3] <= currentpos;
+				else if (packet[10:8] == 3'b001)
+					my_grid[1][3] <= treasure1;
+				else if (packet[10:8] == 3'b010)
+					my_grid[1][3] <= treasure2;
+				else if (packet[10:8] == 3'b100)
+					my_grid[1][3] <= treasure3;
+			end
+			else if (packet[4:0] != 5'b000_01) begin
+				if (my_grid[1][3] == treasure1)
+					my_grid[1][3] <= treasure1;
+				else if (my_grid[1][3] == treasure2)
+					my_grid[1][3] <= treasure2;
+				else if (my_grid[1][3] == treasure3)
+					my_grid[1][3] <= treasure3;
+				else my_grid[1][3] <= visited;
+			end
+			
+			//(1,1)
+			if (packet[4:0] != 5'b001_01 && my_grid[3][3] != currentpos && my_grid[3][3] != visited && my_grid[3][3] != treasure1 && my_grid[3][3] != treasure2 && my_grid[3][3] != treasure3)
+				my_grid[3][3] <= unvisited;
+			else if (packet[4:0] == 5'b001_01) begin
+				if (packet[10:8] == 3'b000)
+					my_grid[3][3] <= currentpos;
+				else if (packet[10:8] == 3'b001)
+					my_grid[3][3] <= treasure1;
+				else if (packet[10:8] == 3'b010)
+					my_grid[3][3] <= treasure2;
+				else if (packet[10:8] == 3'b100)
+					my_grid[3][3] <= treasure3;
+			end
+			else if (packet[4:0] != 5'b001_01) begin
+				if (my_grid[3][3] == treasure1)
+					my_grid[3][3] <= treasure1;
+				else if (my_grid[3][3] == treasure2)
+					my_grid[3][3] <= treasure2;
+				else if (my_grid[3][3] == treasure3)
+					my_grid[3][3] <= treasure3;
+				else my_grid[3][3] <= visited;
+			end
+			
+			//(2,1)
+			if (packet[4:0] != 5'b010_01 && my_grid[5][3] != currentpos && my_grid[5][3] != visited && my_grid[5][3] != treasure1 && my_grid[5][3] != treasure2 && my_grid[5][3] != treasure3)
+				my_grid[5][3] <= unvisited;
+			else if (packet[4:0] == 5'b010_01) begin
+				if (packet[10:8] == 3'b000)
+					my_grid[5][3] <= currentpos;
+				else if (packet[10:8] == 3'b001)
+					my_grid[5][3] <= treasure1;
+				else if (packet[10:8] == 3'b010)
+					my_grid[5][3] <= treasure2;
+				else if (packet[10:8] == 3'b100)
+					my_grid[5][3] <= treasure3;
+			end
+			else if (packet[4:0] != 5'b010_01) begin
+				if (my_grid[5][3] == treasure1)
+					my_grid[5][3] <= treasure1;
+				else if (my_grid[5][3] == treasure2)
+					my_grid[5][3] <= treasure2;
+				else if (my_grid[5][3] == treasure3)
+					my_grid[5][3] <= treasure3;
+				else my_grid[5][3] <= visited;
+			end
+			
+			//(3,1)
+			if (packet[4:0] != 5'b011_01 && my_grid[7][3] != currentpos && my_grid[7][3] != visited && my_grid[7][3] != treasure1 && my_grid[7][3] != treasure2 && my_grid[7][3] != treasure3)
+				my_grid[7][3] <= unvisited;
+			else if (packet[4:0] == 5'b011_01) begin
+				if (packet[10:8] == 3'b000)
+					my_grid[7][3] <= currentpos;
+				else if (packet[10:8] == 3'b001)
+					my_grid[7][3] <= treasure1;
+				else if (packet[10:8] == 3'b010)
+					my_grid[7][3] <= treasure2;
+				else if (packet[10:8] == 3'b100)
+					my_grid[7][3] <= treasure3;
+			end
+			else if (packet[4:0] != 5'b011_01) begin
+				if (my_grid[7][3] == treasure1)
+					my_grid[7][3] <= treasure1;
+				else if (my_grid[7][3] == treasure2)
+					my_grid[7][3] <= treasure2;
+				else if (my_grid[7][3] == treasure3)
+					my_grid[7][3] <= treasure3;
+				else my_grid[7][3] <= visited;
+			end
+			
+			//(4,1)
+			if (packet[4:0] != 5'b100_01 && my_grid[9][3] != currentpos && my_grid[9][3] != visited && my_grid[9][3] != treasure1 && my_grid[9][3] != treasure2 && my_grid[9][3] != treasure3)
+				my_grid[9][3] <= unvisited;
+			else if (packet[4:0] == 5'b100_01) begin
+				if (packet[10:8] == 3'b000)
+					my_grid[9][3] <= currentpos;
+				else if (packet[10:8] == 3'b001)
+					my_grid[9][3] <= treasure1;
+				else if (packet[10:8] == 3'b010)
+					my_grid[9][3] <= treasure2;
+				else if (packet[10:8] == 3'b100)
+					my_grid[9][3] <= treasure3;
+			end
+			else if (packet[4:0] != 5'b100_01) begin
+				if (my_grid[9][3] == treasure1)
+					my_grid[9][3] <= treasure1;
+				else if (my_grid[9][3] == treasure2)
+					my_grid[9][3] <= treasure2;
+				else if (my_grid[9][3] == treasure3)
+					my_grid[9][3] <= treasure3;
+				else my_grid[9][3] <= visited;
+			end
+			
+			//(0,2)
+			if (packet[4:0] != 5'b000_10 && my_grid[1][5] != currentpos && my_grid[1][5] != visited && my_grid[1][5] != treasure1 && my_grid[1][5] != treasure2 && my_grid[1][5] != treasure3)
+				my_grid[1][5] <= unvisited;
+			else if (packet[4:0] == 5'b000_10) begin
+				if (packet[10:8] == 3'b000)
+					my_grid[1][5] <= currentpos;
+				else if (packet[10:8] == 3'b001)
+					my_grid[1][5] <= treasure1;
+				else if (packet[10:8] == 3'b010)
+					my_grid[1][5] <= treasure2;
+				else if (packet[10:8] == 3'b100)
+					my_grid[1][5] <= treasure3;
+			end
+			else if (packet[4:0] != 5'b000_10) begin
+				if (my_grid[1][5] == treasure1)
+					my_grid[1][5] <= treasure1;
+				else if (my_grid[1][5] == treasure2)
+					my_grid[1][5] <= treasure2;
+				else if (my_grid[1][5] == treasure3)
+					my_grid[1][5] <= treasure3;
+				else my_grid[1][5] <= visited;
+			end
+			
+			//(1,2)
+			if (packet[4:0] != 5'b001_10 && my_grid[3][5] != currentpos && my_grid[3][5] != visited && my_grid[3][5] != treasure1 && my_grid[3][5] != treasure2 && my_grid[3][5] != treasure3)
+				my_grid[3][5] <= unvisited;
+			else if (packet[4:0] == 5'b001_10) begin
+				if (packet[10:8] == 3'b000)
+					my_grid[3][5] <= currentpos;
+				else if (packet[10:8] == 3'b001)
+					my_grid[3][5] <= treasure1;
+				else if (packet[10:8] == 3'b010)
+					my_grid[3][5] <= treasure2;
+				else if (packet[10:8] == 3'b100)
+					my_grid[3][5] <= treasure3;
+			end
+			else if (packet[4:0] != 5'b001_10) begin
+				if (my_grid[3][5] == treasure1)
+					my_grid[3][5] <= treasure1;
+				else if (my_grid[3][5] == treasure2)
+					my_grid[3][5] <= treasure2;
+				else if (my_grid[3][5] == treasure3)
+					my_grid[3][5] <= treasure3;
+				else my_grid[3][5] <= visited;
+			end
+			
+			//(2,2)
+			if (packet[4:0] != 5'b010_10 && my_grid[5][5] != currentpos && my_grid[5][5] != visited && my_grid[5][5] != treasure1 && my_grid[5][5] != treasure2 && my_grid[5][5] != treasure3)
+				my_grid[5][5] <= unvisited;
+			else if (packet[4:0] == 5'b010_10) begin
+				if (packet[10:8] == 3'b000)
+					my_grid[5][5] <= currentpos;
+				else if (packet[10:8] == 3'b001)
+					my_grid[5][5] <= treasure1;
+				else if (packet[10:8] == 3'b010)
+					my_grid[5][5] <= treasure2;
+				else if (packet[10:8] == 3'b100)
+					my_grid[5][5] <= treasure3;
+			end
+			else if (packet[4:0] != 5'b010_10) begin
+				if (my_grid[5][5] == treasure1)
+					my_grid[5][5] <= treasure1;
+				else if (my_grid[5][5] == treasure2)
+					my_grid[5][5] <= treasure2;
+				else if (my_grid[5][5] == treasure3)
+					my_grid[5][5] <= treasure3;
+				else my_grid[5][5] <= visited;
+			end
 
-		//(3,2)
-		if (packet[4:0] != 5'b011_10 && my_grid[7][5] != currentpos && my_grid[7][5] != visited && my_grid[7][5] != treasure1 && my_grid[7][5] != treasure2 && my_grid[7][5] != treasure3)
-			my_grid[7][5] <= unvisited;
-		else if (packet[4:0] == 5'b011_10) begin
-			if (packet[10:8] == 3'b000)
-				my_grid[7][5] <= currentpos;
-			else if (packet[10:8] == 3'b001)
-				my_grid[7][5] <= treasure1;
-			else if (packet[10:8] == 3'b010)
-				my_grid[7][5] <= treasure2;
-			else if (packet[10:8] == 3'b100)
-				my_grid[7][5] <= treasure3;
-		end
-		else if (packet[4:0] != 5'b011_10) begin
-			if (my_grid[7][5] == treasure1)
-				my_grid[7][5] <= treasure1;
-			else if (my_grid[7][5] == treasure2)
-				my_grid[7][5] <= treasure2;
-			else if (my_grid[7][5] == treasure3)
-				my_grid[7][5] <= treasure3;
-			else my_grid[7][5] <= visited;
-		end
-		
-		//(4,2)
-		if (packet[4:0] != 5'b100_10 && my_grid[9][5] != currentpos && my_grid[9][5] != visited && my_grid[9][5] != treasure1 && my_grid[9][5] != treasure2 && my_grid[9][5] != treasure3)
-			my_grid[9][5] <= unvisited;
-		else if (packet[4:0] == 5'b100_10) begin
-			if (packet[10:8] == 3'b000)
-				my_grid[9][5] <= currentpos;
-			else if (packet[10:8] == 3'b001)
-				my_grid[9][5] <= treasure1;
-			else if (packet[10:8] == 3'b010)
-				my_grid[9][5] <= treasure2;
-			else if (packet[10:8] == 3'b100)
-				my_grid[9][5] <= treasure3;
-		end
-		else if (packet[4:0] != 5'b100_10) begin
-			if (my_grid[9][5] == treasure1)
-				my_grid[9][5] <= treasure1;
-			else if (my_grid[9][5] == treasure2)
-				my_grid[9][5] <= treasure2;
-			else if (my_grid[9][5] == treasure3)
-				my_grid[9][5] <= treasure3;
-			else my_grid[9][5] <= visited;
-		end
-		
-		//(0,3)
-		if (packet[4:0] != 5'b000_11 && my_grid[1][7] != currentpos && my_grid[1][7] != visited && my_grid[1][7] != treasure1 && my_grid[1][7] != treasure2 && my_grid[1][7] != treasure3)
-			my_grid[1][7] <= unvisited;
-		else if (packet[4:0] == 5'b000_11) begin
-			if (packet[10:8] == 3'b000)
-				my_grid[1][7] <= currentpos;
-			else if (packet[10:8] == 3'b001)
-				my_grid[1][7] <= treasure1;
-			else if (packet[10:8] == 3'b010)
-				my_grid[1][7] <= treasure2;
-			else if (packet[10:8] == 3'b100)
-				my_grid[1][7] <= treasure3;
-		end
-		else if (packet[4:0] != 5'b000_11) begin
-			if (my_grid[1][7] == treasure1)
-				my_grid[1][7] <= treasure1;
-			else if (my_grid[1][7] == treasure2)
-				my_grid[1][7] <= treasure2;
-			else if (my_grid[1][7] == treasure3)
-				my_grid[1][7] <= treasure3;
-			else my_grid[1][7] <= visited;
-		end
-		
-		//(1,3)
-		if (packet[4:0] != 5'b001_11 && my_grid[3][7] != currentpos && my_grid[3][7] != visited && my_grid[3][7] != treasure1 && my_grid[3][7] != treasure2 && my_grid[3][7] != treasure3)
-			my_grid[3][7] <= unvisited;
-		else if (packet[4:0] == 5'b001_11) begin
-			if (packet[10:8] == 3'b000)
-				my_grid[3][7] <= currentpos;
-			else if (packet[10:8] == 3'b001)
-				my_grid[3][7] <= treasure1;
-			else if (packet[10:8] == 3'b010)
-				my_grid[3][7] <= treasure2;
-			else if (packet[10:8] == 3'b100)
-				my_grid[3][7] <= treasure3;
-		end
-		else if (packet[4:0] != 5'b001_11) begin
-			if (my_grid[3][7] == treasure1)
-				my_grid[3][7] <= treasure1;
-			else if (my_grid[3][7] == treasure2)
-				my_grid[3][7] <= treasure2;
-			else if (my_grid[3][7] == treasure3)
-				my_grid[3][7] <= treasure3;
-			else my_grid[3][7] <= visited;
-		end
-		
-		//(2,3)
-		if (packet[4:0] != 5'b010_11 && my_grid[5][7] != currentpos && my_grid[5][7] != visited && my_grid[5][7] != treasure1 && my_grid[5][7] != treasure2 && my_grid[5][7] != treasure3)
-			my_grid[5][7] <= unvisited;
-		else if (packet[4:0] == 5'b010_11) begin
-			if (packet[10:8] == 3'b000)
-				my_grid[5][7] <= currentpos;
-			else if (packet[10:8] == 3'b001)
-				my_grid[5][7] <= treasure1;
-			else if (packet[10:8] == 3'b010)
-				my_grid[5][7] <= treasure2;
-			else if (packet[10:8] == 3'b100)
-				my_grid[5][7] <= treasure3;
-		end
-		else if (packet[4:0] != 5'b010_11) begin
-			if (my_grid[5][7] == treasure1)
-				my_grid[5][7] <= treasure1;
-			else if (my_grid[5][7] == treasure2)
-				my_grid[5][7] <= treasure2;
-			else if (my_grid[5][7] == treasure3)
-				my_grid[5][7] <= treasure3;
-			else my_grid[5][7] <= visited;
-		end
-		
-		//(3,3)
-		if (packet[4:0] != 5'b011_11 && my_grid[7][7] != currentpos && my_grid[7][7] != visited && my_grid[7][7] != treasure1 && my_grid[7][7] != treasure2 && my_grid[7][7] != treasure3)
-			my_grid[7][7] <= unvisited;
-		else if (packet[4:0] == 5'b011_11) begin
-			if (packet[10:8] == 3'b000)
-				my_grid[7][7] <= currentpos;
-			else if (packet[10:8] == 3'b001)
-				my_grid[7][7] <= treasure1;
-			else if (packet[10:8] == 3'b010)
-				my_grid[7][7] <= treasure2;
-			else if (packet[10:8] == 3'b100)
-				my_grid[7][7] <= treasure3;
-		end
-		else if (packet[4:0] != 5'b011_11) begin
-			if (my_grid[7][7] == treasure1)
-				my_grid[7][7] <= treasure1;
-			else if (my_grid[7][7] == treasure2)
-				my_grid[7][7] <= treasure2;
-			else if (my_grid[7][7] == treasure3)
-				my_grid[7][7] <= treasure3;
-			else my_grid[7][7] <= visited;
-		end
-		
-		//(4,3)
-		if (packet[4:0] != 5'b100_11 && my_grid[9][7] != currentpos && my_grid[9][7] != visited && my_grid[9][7] != treasure1 && my_grid[9][7] != treasure2 && my_grid[9][7] != treasure3)
-			my_grid[9][7] <= unvisited;
-		else if (packet[4:0] == 5'b100_11) begin
-			if (packet[10:8] == 3'b000)
-				my_grid[9][7] <= currentpos;
-			else if (packet[10:8] == 3'b001)
-				my_grid[9][7] <= treasure1;
-			else if (packet[10:8] == 3'b010)
-				my_grid[9][7] <= treasure2;
-			else if (packet[10:8] == 3'b100)
-				my_grid[9][7] <= treasure3;
-		end
-		else if (packet[4:0] != 5'b100_11) begin
-			if (my_grid[9][7] == treasure1)
-				my_grid[9][7] <= treasure1;
-			else if (my_grid[9][7] == treasure2)
-				my_grid[9][7] <= treasure2;
-			else if (my_grid[9][7] == treasure3)
-				my_grid[9][7] <= treasure3;
-			else my_grid[9][7] <= visited;
-		end
+			//(3,2)
+			if (packet[4:0] != 5'b011_10 && my_grid[7][5] != currentpos && my_grid[7][5] != visited && my_grid[7][5] != treasure1 && my_grid[7][5] != treasure2 && my_grid[7][5] != treasure3)
+				my_grid[7][5] <= unvisited;
+			else if (packet[4:0] == 5'b011_10) begin
+				if (packet[10:8] == 3'b000)
+					my_grid[7][5] <= currentpos;
+				else if (packet[10:8] == 3'b001)
+					my_grid[7][5] <= treasure1;
+				else if (packet[10:8] == 3'b010)
+					my_grid[7][5] <= treasure2;
+				else if (packet[10:8] == 3'b100)
+					my_grid[7][5] <= treasure3;
+			end
+			else if (packet[4:0] != 5'b011_10) begin
+				if (my_grid[7][5] == treasure1)
+					my_grid[7][5] <= treasure1;
+				else if (my_grid[7][5] == treasure2)
+					my_grid[7][5] <= treasure2;
+				else if (my_grid[7][5] == treasure3)
+					my_grid[7][5] <= treasure3;
+				else my_grid[7][5] <= visited;
+			end
+			
+			//(4,2)
+			if (packet[4:0] != 5'b100_10 && my_grid[9][5] != currentpos && my_grid[9][5] != visited && my_grid[9][5] != treasure1 && my_grid[9][5] != treasure2 && my_grid[9][5] != treasure3)
+				my_grid[9][5] <= unvisited;
+			else if (packet[4:0] == 5'b100_10) begin
+				if (packet[10:8] == 3'b000)
+					my_grid[9][5] <= currentpos;
+				else if (packet[10:8] == 3'b001)
+					my_grid[9][5] <= treasure1;
+				else if (packet[10:8] == 3'b010)
+					my_grid[9][5] <= treasure2;
+				else if (packet[10:8] == 3'b100)
+					my_grid[9][5] <= treasure3;
+			end
+			else if (packet[4:0] != 5'b100_10) begin
+				if (my_grid[9][5] == treasure1)
+					my_grid[9][5] <= treasure1;
+				else if (my_grid[9][5] == treasure2)
+					my_grid[9][5] <= treasure2;
+				else if (my_grid[9][5] == treasure3)
+					my_grid[9][5] <= treasure3;
+				else my_grid[9][5] <= visited;
+			end
+			
+			//(0,3)
+			if (packet[4:0] != 5'b000_11 && my_grid[1][7] != currentpos && my_grid[1][7] != visited && my_grid[1][7] != treasure1 && my_grid[1][7] != treasure2 && my_grid[1][7] != treasure3)
+				my_grid[1][7] <= unvisited;
+			else if (packet[4:0] == 5'b000_11) begin
+				if (packet[10:8] == 3'b000)
+					my_grid[1][7] <= currentpos;
+				else if (packet[10:8] == 3'b001)
+					my_grid[1][7] <= treasure1;
+				else if (packet[10:8] == 3'b010)
+					my_grid[1][7] <= treasure2;
+				else if (packet[10:8] == 3'b100)
+					my_grid[1][7] <= treasure3;
+			end
+			else if (packet[4:0] != 5'b000_11) begin
+				if (my_grid[1][7] == treasure1)
+					my_grid[1][7] <= treasure1;
+				else if (my_grid[1][7] == treasure2)
+					my_grid[1][7] <= treasure2;
+				else if (my_grid[1][7] == treasure3)
+					my_grid[1][7] <= treasure3;
+				else my_grid[1][7] <= visited;
+			end
+			
+			//(1,3)
+			if (packet[4:0] != 5'b001_11 && my_grid[3][7] != currentpos && my_grid[3][7] != visited && my_grid[3][7] != treasure1 && my_grid[3][7] != treasure2 && my_grid[3][7] != treasure3)
+				my_grid[3][7] <= unvisited;
+			else if (packet[4:0] == 5'b001_11) begin
+				if (packet[10:8] == 3'b000)
+					my_grid[3][7] <= currentpos;
+				else if (packet[10:8] == 3'b001)
+					my_grid[3][7] <= treasure1;
+				else if (packet[10:8] == 3'b010)
+					my_grid[3][7] <= treasure2;
+				else if (packet[10:8] == 3'b100)
+					my_grid[3][7] <= treasure3;
+			end
+			else if (packet[4:0] != 5'b001_11) begin
+				if (my_grid[3][7] == treasure1)
+					my_grid[3][7] <= treasure1;
+				else if (my_grid[3][7] == treasure2)
+					my_grid[3][7] <= treasure2;
+				else if (my_grid[3][7] == treasure3)
+					my_grid[3][7] <= treasure3;
+				else my_grid[3][7] <= visited;
+			end
+			
+			//(2,3)
+			if (packet[4:0] != 5'b010_11 && my_grid[5][7] != currentpos && my_grid[5][7] != visited && my_grid[5][7] != treasure1 && my_grid[5][7] != treasure2 && my_grid[5][7] != treasure3)
+				my_grid[5][7] <= unvisited;
+			else if (packet[4:0] == 5'b010_11) begin
+				if (packet[10:8] == 3'b000)
+					my_grid[5][7] <= currentpos;
+				else if (packet[10:8] == 3'b001)
+					my_grid[5][7] <= treasure1;
+				else if (packet[10:8] == 3'b010)
+					my_grid[5][7] <= treasure2;
+				else if (packet[10:8] == 3'b100)
+					my_grid[5][7] <= treasure3;
+			end
+			else if (packet[4:0] != 5'b010_11) begin
+				if (my_grid[5][7] == treasure1)
+					my_grid[5][7] <= treasure1;
+				else if (my_grid[5][7] == treasure2)
+					my_grid[5][7] <= treasure2;
+				else if (my_grid[5][7] == treasure3)
+					my_grid[5][7] <= treasure3;
+				else my_grid[5][7] <= visited;
+			end
+			
+			//(3,3)
+			if (packet[4:0] != 5'b011_11 && my_grid[7][7] != currentpos && my_grid[7][7] != visited && my_grid[7][7] != treasure1 && my_grid[7][7] != treasure2 && my_grid[7][7] != treasure3)
+				my_grid[7][7] <= unvisited;
+			else if (packet[4:0] == 5'b011_11) begin
+				if (packet[10:8] == 3'b000)
+					my_grid[7][7] <= currentpos;
+				else if (packet[10:8] == 3'b001)
+					my_grid[7][7] <= treasure1;
+				else if (packet[10:8] == 3'b010)
+					my_grid[7][7] <= treasure2;
+				else if (packet[10:8] == 3'b100)
+					my_grid[7][7] <= treasure3;
+			end
+			else if (packet[4:0] != 5'b011_11) begin
+				if (my_grid[7][7] == treasure1)
+					my_grid[7][7] <= treasure1;
+				else if (my_grid[7][7] == treasure2)
+					my_grid[7][7] <= treasure2;
+				else if (my_grid[7][7] == treasure3)
+					my_grid[7][7] <= treasure3;
+				else my_grid[7][7] <= visited;
+			end
+			
+			//(4,3)
+			if (packet[4:0] != 5'b100_11 && my_grid[9][7] != currentpos && my_grid[9][7] != visited && my_grid[9][7] != treasure1 && my_grid[9][7] != treasure2 && my_grid[9][7] != treasure3)
+				my_grid[9][7] <= unvisited;
+			else if (packet[4:0] == 5'b100_11) begin
+				if (packet[10:8] == 3'b000)
+					my_grid[9][7] <= currentpos;
+				else if (packet[10:8] == 3'b001)
+					my_grid[9][7] <= treasure1;
+				else if (packet[10:8] == 3'b010)
+					my_grid[9][7] <= treasure2;
+				else if (packet[10:8] == 3'b100)
+					my_grid[9][7] <= treasure3;
+			end
+			else if (packet[4:0] != 5'b100_11) begin
+				if (my_grid[9][7] == treasure1)
+					my_grid[9][7] <= treasure1;
+				else if (my_grid[9][7] == treasure2)
+					my_grid[9][7] <= treasure2;
+				else if (my_grid[9][7] == treasure3)
+					my_grid[9][7] <= treasure3;
+				else my_grid[9][7] <= visited;
+			end
 
-		// wall grid
-		//wall (2,1) based on (0,0), (1,0) (using different coordiate system between (2,1) and (0,0))
-		if ((packet[4:0] != 5'b000_00 || packet[4:0] != 5'b001_00) && my_grid [2][1] != wall && my_grid [2][1] != visited)
-			my_grid [2][1] <= unvisited;
-		else if ((packet[4:0] == 5'b000_00 || packet[4:0] == 5'b001_00) && my_grid [2][1] != wall && my_grid [2][1] != visited) begin
-			if (packet[8:0] == 9'b1xxx_000_00 || packet[8:0] == 9'bx1xx_001_00)
-				my_grid [2][1] <= wall;
-			else if (packet[8:0] == 9'b0xxx_000_00 || packet[8:0] == 9'bx0xx_001_00)
-				my_grid [2][1] <= visited;
+			// wall grid
+			//wall (2,1) based on (0,0), (1,0) (using different coordiate system between (2,1) and (0,0))
+			if ((packet[4:0] != 5'b000_00 || packet[4:0] != 5'b001_00) && my_grid [2][1] != wall && my_grid [2][1] != visited)
+				my_grid [2][1] <= unvisited;
+			else if ((packet[4:0] == 5'b000_00 || packet[4:0] == 5'b001_00) && my_grid [2][1] != wall && my_grid [2][1] != visited) begin
+				if (packet[8:0] == 9'b1xxx_000_00 || packet[8:0] == 9'bx1xx_001_00)
+					my_grid [2][1] <= wall;
+				else if (packet[8:0] == 9'b0xxx_000_00 || packet[8:0] == 9'bx0xx_001_00)
+					my_grid [2][1] <= visited;
+			end
+			else if (packet[4:0] == 5'b000_00 || packet[4:0] == 5'b001_00) begin
+				if (my_grid [2][1] == wall)
+					my_grid [2][1] <= wall;
+				else if (my_grid [2][1] == visited)
+					my_grid [2][1] <= visited;
+			end
+			else if (packet[4:0] != 5'b000_00 || packet[4:0] != 5'b001_00) begin
+				if (my_grid [2][1] == wall)
+					my_grid [2][1] <= wall;
+				else if (my_grid [2][1] == visited)
+					my_grid [2][1] <= visited;
+			end
+			
+			//wall (4,1) based on (1,0), (2,0)
+			if ((packet[4:0] != 5'b001_00 || packet[4:0] != 5'b010_00) && my_grid [4][1] != wall && my_grid [4][1] != visited)
+				my_grid [4][1] <= unvisited;
+			else if ((packet[4:0] == 5'b001_00 || packet[4:0] == 5'b010_00) && my_grid [4][1] != wall && my_grid [4][1] != visited) begin
+				if (packet[8:0] == 9'b1xxx_001_00 || packet[8:0] == 9'bx1xx_010_00)
+					my_grid [4][1] <= wall;
+				else if (packet[8:0] == 9'b0xxx_001_00 || packet[8:0] == 9'bx0xx_010_00)
+					my_grid [4][1] <= visited;
+			end
+			else if (packet[4:0] == 5'b001_00 || packet[4:0] == 5'b010_00) begin
+				if (my_grid [4][1] == wall)
+					my_grid [4][1] <= wall;
+				else if (my_grid [4][1] == visited)
+					my_grid [4][1] <= visited;
+			end
+			else if (packet[4:0] != 5'b001_00 || packet[4:0] != 5'b010_00) begin
+				if (my_grid [4][1] == wall)
+					my_grid [4][1] <= wall;
+				else if (my_grid [4][1] == visited)
+					my_grid [4][1] <= visited;
+			end
+			
+			//wall (6,1) based on (2,0), (3,0)
+			if ((packet[4:0] != 5'b010_00 || packet[4:0] != 5'b011_00) && my_grid [6][1] != wall && my_grid [6][1] != visited)
+				my_grid [6][1] <= unvisited;
+			else if ((packet[4:0] == 5'b010_00 || packet[4:0] == 5'b011_00) && my_grid [6][1] != wall && my_grid [6][1] != visited) begin
+				if (packet[8:0] == 9'b1xxx_010_00 || packet[8:0] == 9'bx1xx_011_00)
+					my_grid [6][1] <= wall;
+				else if (packet[8:0] == 9'b0xxx_010_00 || packet[8:0] == 9'bx0xx_011_00)
+					my_grid [6][1] <= visited;
+			end
+			else if (packet[4:0] == 5'b010_00 || packet[4:0] == 5'b011_00) begin
+				if (my_grid [6][1] == wall)
+					my_grid [6][1] <= wall;
+				else if (my_grid [6][1] == visited)
+					my_grid [6][1] <= visited;
+			end
+			else if (packet[4:0] != 5'b010_00 || packet[4:0] != 5'b011_00) begin
+				if (my_grid [6][1] == wall)
+					my_grid [6][1] <= wall;
+				else if (my_grid [6][1] == visited)
+					my_grid [6][1] <= visited;
+			end
+			
+			//wall (8,1) based on (3,0), (4,0)
+			if ((packet[4:0] != 5'b011_00 || packet[4:0] != 5'b100_00) && my_grid [8][1] != wall && my_grid [8][1] != visited)
+				my_grid [8][1] <= unvisited;
+			else if ((packet[4:0] == 5'b011_00 || packet[4:0] == 5'b100_00) && my_grid [8][1] != wall && my_grid [8][1] != visited) begin
+				if (packet[8:0] == 9'b1xxx_011_00 || packet[8:0] == 9'bx1xx_100_00)
+					my_grid [8][1] <= wall;
+				else if (packet[8:0] == 9'b0xxx_011_00 || packet[8:0] == 9'bx0xx_100_00)
+					my_grid [8][1] <= visited;
+			end
+			else if (packet[4:0] == 5'b011_00 || packet[4:0] == 5'b100_00) begin
+				if (my_grid [8][1] == wall)
+					my_grid [8][1] <= wall;
+				else if (my_grid [8][1] == visited)
+					my_grid [8][1] <= visited;
+			end
+			else if (packet[4:0] != 5'b011_00 || packet[4:0] != 5'b100_00) begin
+				if (my_grid [8][1] == wall)
+					my_grid [8][1] <= wall;
+				else if (my_grid [8][1] == visited)
+					my_grid [8][1] <= visited;
+			end
+			
+			//wall (2,3) based on (0,1), (1,1)
+			if ((packet[4:0] != 5'b000_01 || packet[4:0] != 5'b001_01) && my_grid [2][3] != wall && my_grid [2][3] != visited)
+				my_grid [2][3] <= unvisited;
+			else if ((packet[4:0] == 5'b000_01 || packet[4:0] == 5'b001_01) && my_grid [2][3] != wall && my_grid [2][3] != visited) begin
+				if (packet[8:0] == 9'b1xxx_000_01 || packet[8:0] == 9'bx1xx_001_01)
+					my_grid [2][3] <= wall;
+				else if (packet[8:0] == 9'b0xxx_000_01 || packet[8:0] == 9'bx0xx_001_01)
+					my_grid [2][3] <= visited;
+			end
+			else if (packet[4:0] == 5'b000_01 || packet[4:0] == 5'b001_01) begin
+				if (my_grid [2][3] == wall)
+					my_grid [2][3] <= wall;
+				else if (my_grid [2][3] == visited)
+					my_grid [2][3] <= visited;
+			end
+			else if (packet[4:0] != 5'b000_01 || packet[4:0] != 5'b001_01) begin
+				if (my_grid [2][3] == wall)
+					my_grid [2][3] <= wall;
+				else if (my_grid [2][3] == visited)
+					my_grid [2][3] <= visited;
+			end
+			
+			//wall (4,3) based on (1,1), (2,1)
+			if ((packet[4:0] != 5'b001_01 || packet[4:0] != 5'b010_01) && my_grid [4][3] != wall && my_grid [4][3] != visited)
+				my_grid [4][3] <= unvisited;
+			else if ((packet[4:0] == 5'b001_01 || packet[4:0] == 5'b010_01) && my_grid [4][3] != wall && my_grid [4][3] != visited) begin
+				if (packet[8:0] == 9'b1xxx_001_01 || packet[8:0] == 9'bx1xx_010_01)
+					my_grid [4][3] <= wall;
+				else if (packet[8:0] == 9'b0xxx_001_01 || packet[8:0] == 9'bx0xx_010_01)
+					my_grid [4][3] <= visited;
+			end
+			else if (packet[4:0] == 5'b001_01 || packet[4:0] == 5'b010_01) begin
+				if (my_grid [4][3] == wall)
+					my_grid [4][3] <= wall;
+				else if (my_grid [4][3] == visited)
+					my_grid [4][3] <= visited;
+			end
+			else if (packet[4:0] != 5'b001_01 || packet[4:0] != 5'b010_01) begin
+				if (my_grid [4][3] == wall)
+					my_grid [4][3] <= wall;
+				else if (my_grid [4][3] == visited)
+					my_grid [4][3] <= visited;
+			end
+			
+			//wall (6,3) based on (2,1), (3,1)
+			if ((packet[4:0] != 5'b010_01 || packet[4:0] != 5'b011_01) && my_grid [6][3] != wall && my_grid [6][3] != visited)
+				my_grid [6][3] <= unvisited;
+			else if ((packet[4:0] == 5'b010_01 || packet[4:0] == 5'b011_01) && my_grid [6][3] != wall && my_grid [6][3] != visited) begin
+				if (packet[8:0] == 9'b1xxx_010_01 || packet[8:0] == 9'bx1xx_011_01)
+					my_grid [6][3] <= wall;
+				else if (packet[8:0] == 9'b0xxx_010_01 || packet[8:0] == 9'bx0xx_011_01)
+					my_grid [6][3] <= visited;
+			end
+			else if (packet[4:0] == 5'b010_01 || packet[4:0] == 5'b011_01) begin
+				if (my_grid [6][3] == wall)
+					my_grid [6][3] <= wall;
+				else if (my_grid [6][3] == visited)
+					my_grid [6][3] <= visited;
+			end
+			else if (packet[4:0] != 5'b010_01 || packet[4:0] != 5'b011_01) begin
+				if (my_grid [6][3] == wall)
+					my_grid [6][3] <= wall;
+				else if (my_grid [6][3] == visited)
+					my_grid [6][3] <= visited;
+			end
+			
+			//wall (8,3) based on (3,1), (4,1)
+			if ((packet[4:0] != 5'b011_01 || packet[4:0] != 5'b100_01) && my_grid [8][3] != wall && my_grid [8][3] != visited)
+				my_grid [8][3] <= unvisited;
+			else if ((packet[4:0] == 5'b011_01 || packet[4:0] == 5'b100_01) && my_grid [8][3] != wall && my_grid [8][3] != visited) begin
+				if (packet[8:0] == 9'b1xxx_011_01 || packet[8:0] == 9'bx1xx_100_01)
+					my_grid [8][3] <= wall;
+				else if (packet[8:0] == 9'b0xxx_011_01 || packet[8:0] == 9'bx0xx_100_01)
+					my_grid [8][3] <= visited;
+			end
+			else if (packet[4:0] == 5'b011_01 || packet[4:0] == 5'b100_01) begin
+				if (my_grid [8][3] == wall)
+					my_grid [8][3] <= wall;
+				else if (my_grid [8][3] == visited)
+					my_grid [8][3] <= visited;
+			end
+			else if (packet[4:0] != 5'b011_01 || packet[4:0] != 5'b100_01) begin
+				if (my_grid [8][3] == wall)
+					my_grid [8][3] <= wall;
+				else if (my_grid [8][3] == visited)
+					my_grid [8][3] <= visited;
+			end
+			
+			//wall (2,5) based on (0,2), (1,2)
+			if ((packet[4:0] != 5'b000_10 || packet[4:0] != 5'b001_10) && my_grid [2][5] != wall && my_grid [2][5] != visited)
+				my_grid [2][5] <= unvisited;
+			else if ((packet[4:0] == 5'b000_10 || packet[4:0] == 5'b001_10) && my_grid [2][5] != wall && my_grid [2][5] != visited) begin
+				if (packet[8:0] == 9'b1xxx_000_10 || packet[8:0] == 9'bx1xx_001_10)
+					my_grid [2][5] <= wall;
+				else if (packet[8:0] == 9'b0xxx_000_10 || packet[8:0] == 9'bx0xx_001_10)
+					my_grid [2][5] <= visited;
+			end
+			else if (packet[4:0] == 5'b000_10 || packet[4:0] == 5'b001_10) begin
+				if (my_grid [2][5] == wall)
+					my_grid [2][5] <= wall;
+				else if (my_grid [2][5] == visited)
+					my_grid [2][5] <= visited;
+			end
+			else if (packet[4:0] != 5'b000_10 || packet[4:0] != 5'b001_10) begin
+				if (my_grid [2][5] == wall)
+					my_grid [2][5] <= wall;
+				else if (my_grid [2][5] == visited)
+					my_grid [2][5] <= visited;
+			end
+			
+			//wall (4,5) based on (1,2), (2,2)
+			if ((packet[4:0] != 5'b001_10 || packet[4:0] != 5'b010_10) && my_grid [4][5] != wall && my_grid [4][5] != visited)
+				my_grid [4][5] <= unvisited;
+			else if ((packet[4:0] == 5'b001_10 || packet[4:0] == 5'b010_10) && my_grid [4][5] != wall && my_grid [4][5] != visited) begin
+				if (packet[8:0] == 9'b1xxx_001_10 || packet[8:0] == 9'bx1xx_010_10)
+					my_grid [4][5] <= wall;
+				else if (packet[8:0] == 9'b0xxx_001_10 || packet[8:0] == 9'bx0xx_010_10)
+					my_grid [4][5] <= visited;
+			end
+			else if (packet[4:0] == 5'b001_10 || packet[4:0] == 5'b010_10) begin
+				if (my_grid [4][5] == wall)
+					my_grid [4][5] <= wall;
+				else if (my_grid [4][5] == visited)
+					my_grid [4][5] <= visited;
+			end
+			else if (packet[4:0] != 5'b001_10 || packet[4:0] != 5'b010_10) begin
+				if (my_grid [4][5] == wall)
+					my_grid [4][5] <= wall;
+				else if (my_grid [4][5] == visited)
+					my_grid [4][5] <= visited;
+			end
+			
+			//wall (6,5) based on (2,2), (3,2)
+			if ((packet[4:0] != 5'b010_10 || packet[4:0] != 5'b011_10) && my_grid [6][5] != wall && my_grid [6][5] != visited)
+				my_grid [6][5] <= unvisited;
+			else if ((packet[4:0] == 5'b010_10 || packet[4:0] == 5'b011_10) && my_grid [6][5] != wall && my_grid [6][5] != visited) begin
+				if (packet[8:0] == 9'b1xxx_010_10 || packet[8:0] == 9'bx1xx_011_10)
+					my_grid [6][5] <= wall;
+				else if (packet[8:0] == 9'b0xxx_010_10 || packet[8:0] == 9'bx0xx_011_10)
+					my_grid [6][5] <= visited;
+			end
+			else if (packet[4:0] == 5'b010_10 || packet[4:0] == 5'b011_10) begin
+				if (my_grid [6][5] == wall)
+					my_grid [6][5] <= wall;
+				else if (my_grid [6][5] == visited)
+					my_grid [6][5] <= visited;
+			end
+			else if (packet[4:0] != 5'b010_10 || packet[4:0] != 5'b011_10) begin
+				if (my_grid [6][5] == wall)
+					my_grid [6][5] <= wall;
+				else if (my_grid [6][5] == visited)
+					my_grid [6][5] <= visited;
+			end
+			
+			//wall (8,5) based on (3,2), (4,2)
+			if ((packet[4:0] != 5'b011_10 || packet[4:0] != 5'b100_10) && my_grid [8][5] != wall && my_grid [8][5] != visited)
+				my_grid [8][5] <= unvisited;
+			else if ((packet[4:0] == 5'b011_10 || packet[4:0] == 5'b100_10) && my_grid [8][5] != wall && my_grid [8][5] != visited) begin
+				if (packet[8:0] == 9'b1xxx_011_10 || packet[8:0] == 9'bx1xx_100_10)
+					my_grid [8][5] <= wall;
+				else if (packet[8:0] == 9'b0xxx_011_10 || packet[8:0] == 9'bx0xx_100_10)
+					my_grid [8][5] <= visited;
+			end
+			else if (packet[4:0] == 5'b011_10 || packet[4:0] == 5'b100_10) begin
+				if (my_grid [8][5] == wall)
+					my_grid [8][5] <= wall;
+				else if (my_grid [8][5] == visited)
+					my_grid [8][5] <= visited;
+			end
+			else if (packet[4:0] != 5'b011_10 || packet[4:0] != 5'b100_10) begin
+				if (my_grid [8][5] == wall)
+					my_grid [8][5] <= wall;
+				else if (my_grid [8][5] == visited)
+					my_grid [8][5] <= visited;
+			end
+			
+			//wall (2,7) based on (0,3), (1,3)
+			if ((packet[4:0] != 5'b000_11 || packet[4:0] != 5'b001_11) && my_grid [2][7] != wall && my_grid [2][7] != visited)
+				my_grid [2][7] <= unvisited;
+			else if ((packet[4:0] == 5'b000_11 || packet[4:0] == 5'b001_11) && my_grid [2][7] != wall && my_grid [2][7] != visited) begin
+				if (packet[8:0] == 9'b1xxx_000_11 || packet[8:0] == 9'bx1xx_001_11)
+					my_grid [2][7] <= wall;
+				else if (packet[8:0] == 9'b0xxx_000_11 || packet[8:0] == 9'bx0xx_001_11)
+					my_grid [2][7] <= visited;
+			end
+			else if (packet[4:0] == 5'b000_11 || packet[4:0] == 5'b001_11) begin
+				if (my_grid [2][7] == wall)
+					my_grid [2][7] <= wall;
+				else if (my_grid [2][7] == visited)
+					my_grid [2][7] <= visited;
+			end
+			else if (packet[4:0] != 5'b000_11 || packet[4:0] != 5'b001_11) begin
+				if (my_grid [2][7] == wall)
+					my_grid [2][7] <= wall;
+				else if (my_grid [2][7] == visited)
+					my_grid [2][7] <= visited;
+			end
+			
+			//wall (4,7) based on (1,3), (2,3)
+			if ((packet[4:0] != 5'b001_11 || packet[4:0] != 5'b010_11) && my_grid [4][7] != wall && my_grid [4][7] != visited)
+				my_grid [4][7] <= unvisited;
+			else if ((packet[4:0] == 5'b001_11 || packet[4:0] == 5'b010_11) && my_grid [4][7] != wall && my_grid [4][7] != visited) begin
+				if (packet[8:0] == 9'b1xxx_001_11 || packet[8:0] == 9'bx1xx_010_11)
+					my_grid [4][7] <= wall;
+				else if (packet[8:0] == 9'b0xxx_001_11 || packet[8:0] == 9'bx0xx_010_11)
+					my_grid [4][7] <= visited;
+			end
+			else if (packet[4:0] == 5'b001_11 || packet[4:0] == 5'b010_11) begin
+				if (my_grid [4][7] == wall)
+					my_grid [4][7] <= wall;
+				else if (my_grid [4][7] == visited)
+					my_grid [4][7] <= visited;
+			end
+			else if (packet[4:0] != 5'b001_11 || packet[4:0] != 5'b010_11) begin
+				if (my_grid [4][7] == wall)
+					my_grid [4][7] <= wall;
+				else if (my_grid [4][7] == visited)
+					my_grid [4][7] <= visited;
+			end
+			
+			//wall (6,7) based on (2,3), (3,3)
+			if ((packet[4:0] != 5'b010_11 || packet[4:0] != 5'b011_11) && my_grid [6][7] != wall && my_grid [6][7] != visited)
+				my_grid [6][7] <= unvisited;
+			else if ((packet[4:0] == 5'b010_11 || packet[4:0] == 5'b011_11) && my_grid [6][7] != wall && my_grid [6][7] != visited) begin
+				if (packet[8:0] == 9'b1xxx_010_11 || packet[8:0] == 9'bx1xx_011_11)
+					my_grid [6][7] <= wall;
+				else if (packet[8:0] == 9'b0xxx_010_11 || packet[8:0] == 9'bx0xx_011_11)
+					my_grid [6][7] <= visited;
+			end
+			else if (packet[4:0] == 5'b010_11 || packet[4:0] == 5'b011_11) begin
+				if (my_grid [6][7] == wall)
+					my_grid [6][7] <= wall;
+				else if (my_grid [6][7] == visited)
+					my_grid [6][7] <= visited;
+			end
+			else if (packet[4:0] != 5'b010_11 || packet[4:0] != 5'b011_11) begin
+				if (my_grid [6][7] == wall)
+					my_grid [6][7] <= wall;
+				else if (my_grid [6][7] == visited)
+					my_grid [6][7] <= visited;
+			end
+			
+			//wall (8,7) based on (3,3), (4,3)
+			if ((packet[4:0] != 5'b011_11 || packet[4:0] != 5'b100_11) && my_grid [8][7] != wall && my_grid [8][7] != visited)
+				my_grid [8][7] <= unvisited;
+			else if ((packet[4:0] == 5'b011_11 || packet[4:0] == 5'b100_11) && my_grid [8][7] != wall && my_grid [8][7] != visited) begin
+				if (packet[8:0] == 9'b1xxx_011_11 || packet[8:0] == 9'bx1xx_100_11)
+					my_grid [8][7] <= wall;
+				else if (packet[8:0] == 9'b0xxx_011_11 || packet[8:0] == 9'bx0xx_100_11)
+					my_grid [8][7] <= visited;
+			end
+			else if (packet[4:0] == 5'b011_11 || packet[4:0] == 5'b100_11) begin
+				if (my_grid [8][7] == wall)
+					my_grid [8][7] <= wall;
+				else if (my_grid [8][7] == visited)
+					my_grid [8][7] <= visited;
+			end
+			else if (packet[4:0] != 5'b011_11 || packet[4:0] != 5'b100_11) begin
+				if (my_grid [8][7] == wall)
+					my_grid [8][7] <= wall;
+				else if (my_grid [8][7] == visited)
+					my_grid [8][7] <= visited;
+			end
+			
+			//wall (1,2) based on (0,0), (0,1)
+			if (packet[4:0] != 5'b000_00 && packet[4:0] != 5'b000_01 && my_grid[1][2] != wall && my_grid[1][2] != visited)
+				my_grid[1][2] <= unvisited;
+			else if ((packet[4:0] == 5'b000_00 || packet[4:0] == 5'b000_01) && my_grid[1][2] != wall && my_grid[1][2] != visited) begin
+				if ((packet[4:0] == 5'b000_00 && packet[5]==1'b1) || (packet[4:0]==5'b000_01 && packet[6]==1'b1))
+					my_grid[1][2] <= wall;
+				else
+					my_grid[1][2] <= visited;
+			end
+			//else if (packet[4:0] == 5'b000_00 || packet[4:0] == 5'b000_01) begin
+				//if (my_grid[1][2] == wall)
+					//my_grid[1][2] <= wall;
+				//else if (my_grid[1][2] == visited)
+					//my_grid[1][2] <= visited;
+			//end
+			//else if (packet[4:0] != 5'b000_00 || packet[4:0] != 5'b000_01) begin
+				//if (my_grid[1][2] == wall)
+					//my_grid[1][2] <= wall;
+				//else if (my_grid[1][2] == visited)
+					//my_grid[1][2] <= visited;
+			//end
+			
+			//wall (3,2) based on (1,0), (1,1)
+			if ((packet[4:0] != 5'b001_00 || packet[4:0] != 5'b001_01) && my_grid[3][2] != wall && my_grid[3][2] != visited)
+				my_grid[3][2] <= unvisited;
+			else if ((packet[4:0] == 5'b001_00 || packet[4:0] == 5'b001_01) && my_grid[3][2] != wall && my_grid[3][2] != visited) begin
+				if ((packet[4:0] == 5'b001_00 && packet[5]==1'b1) || (packet[4:0] == 5'b001_01 && packet[6]==1'b1))
+					my_grid[3][2] <= wall;
+				else
+					my_grid[3][2] <= visited;
+			end
+			else if (packet[4:0] == 5'b001_00 || packet[4:0] == 5'b001_01) begin
+				if (my_grid [3][2] == wall)
+					my_grid [3][2] <= wall;
+				else if (my_grid [3][2] == visited)
+					my_grid [3][2] <= visited;
+			end
+			else if (packet[4:0] != 5'b001_00 || packet[4:0] != 5'b001_01) begin
+				if (my_grid [3][2] == wall)
+					my_grid [3][2] <= wall;
+				else if (my_grid [3][2] == visited)
+					my_grid [3][2] <= visited;
+			end
+			
+			//wall (5,2) based on (2,0), (2,1)
+			if ((packet[4:0] != 5'b010_00 || packet[4:0] != 5'b010_01) && my_grid[5][2] != wall && my_grid[5][2] != visited)
+				my_grid[5][2] <= unvisited;
+			else if ((packet[4:0] == 5'b010_00 || packet[4:0] == 5'b010_01) && my_grid[5][2] != wall && my_grid[5][2] != visited) begin
+				if ((packet[4:0] == 5'b010_00 && packet[5]==1'b1) || (packet[4:0] == 5'b010_01 && packet[6]==1'b1))
+					my_grid[5][2] <= wall;
+				else
+					my_grid [5][2] <= visited;
+			end
+			
+			//wall (7,2) based on (3,0), (3,1)
+			if ((packet[4:0] != 5'b011_00 || packet[4:0] != 5'b011_01) && my_grid [7][2] != wall && my_grid [7][2] != visited)
+				my_grid [7][2] <= unvisited;
+			else if ((packet[4:0] == 5'b011_00 || packet[4:0] == 5'b011_01) && my_grid [7][2] != wall && my_grid [7][2] != visited) begin
+				if (packet[8:0] == 9'bxxx1_011_00 || packet[8:0] == 9'bxx1x_011_01)
+					my_grid [7][2] <= wall;
+				else if (packet[8:0] == 9'bxxx0_011_00 || packet[8:0] == 9'bxx0x_011_01)
+					my_grid [7][2] <= visited;
+			end
+			else if (packet[4:0] == 5'b011_00 || packet[4:0] == 5'b011_01) begin
+				if (my_grid [7][2] == wall)
+					my_grid [7][2] <= wall;
+				else if (my_grid [7][2] == visited)
+					my_grid [7][2] <= visited;
+			end
+			else if (packet[4:0] != 5'b011_00 || packet[4:0] != 5'b011_01) begin
+				if (my_grid [7][2] == wall)
+					my_grid [7][2] <= wall;
+				else if (my_grid [7][2] == visited)
+					my_grid [7][2] <= visited;
+			end
+			
+			//wall (9,2) based on (4,0), (4,1)
+			if ((packet[4:0] != 5'b100_00 || packet[4:0] != 5'b100_01) && my_grid [9][2] != wall && my_grid [9][2] != visited)
+				my_grid [9][2] <= unvisited;
+			else if ((packet[4:0] == 5'b100_00 || packet[4:0] == 5'b100_01) && my_grid [9][2] != wall && my_grid [9][2] != visited) begin
+				if (packet[8:0] == 9'bxxx1_100_00 || packet[8:0] == 9'bxx1x_100_01)
+					my_grid [9][2] <= wall;
+				else if (packet[8:0] == 9'bxxx0_100_00 || packet[8:0] == 9'bxx0x_100_01)
+					my_grid [9][2] <= visited;
+			end
+			else if (packet[4:0] == 5'b100_00 || packet[4:0] == 5'b100_01) begin
+				if (my_grid [9][2] == wall)
+					my_grid [9][2] <= wall;
+				else if (my_grid [9][2] == visited)
+					my_grid [9][2] <= visited;
+			end
+			else if (packet[4:0] != 5'b100_00 || packet[4:0] != 5'b100_01) begin
+				if (my_grid [9][2] == wall)
+					my_grid [9][2] <= wall;
+				else if (my_grid [9][2] == visited)
+					my_grid [9][2] <= visited;
+			end
+			
+			//wall (1,4) based on (0,1), (0,2)
+			if ((packet[4:0] != 5'b000_01 || packet[4:0] != 5'b000_10) && my_grid [1][4] != wall && my_grid [1][4] != visited)
+				my_grid [1][4] <= unvisited;
+			else if ((packet[4:0] == 5'b000_01 || packet[4:0] == 5'b000_10) && my_grid [1][4] != wall && my_grid [1][4] != visited) begin
+				if (packet[8:0] == 9'bxxx1_000_01 || packet[8:0] == 9'bxx1x_000_10)
+					my_grid [1][4] <= wall;
+				else if (packet[8:0] == 9'bxxx0_000_01 || packet[8:0] == 9'bxx0x_000_10)
+					my_grid [1][4] <= visited;
+			end
+			else if (packet[4:0] == 5'b000_01 || packet[4:0] == 5'b000_10) begin
+				if (my_grid [1][4] == wall)
+					my_grid [1][4] <= wall;
+				else if (my_grid [1][4] == visited)
+					my_grid [1][4] <= visited;
+			end
+			else if (packet[4:0] != 5'b000_01 || packet[4:0] != 5'b000_10) begin
+				if (my_grid [1][4] == wall)
+					my_grid [1][4] <= wall;
+				else if (my_grid [1][4] == visited)
+					my_grid [1][4] <= visited;
+			end
+			
+			//wall (3,4) based on (1,1), (1,2)
+			if ((packet[4:0] != 5'b001_01 || packet[4:0] != 5'b001_10) && my_grid [3][4] != wall && my_grid [3][4] != visited)
+				my_grid [3][4] <= unvisited;
+			else if ((packet[4:0] == 5'b001_01 || packet[4:0] == 5'b001_10) && my_grid [3][4] != wall && my_grid [3][4] != visited) begin
+				if (packet[8:0] == 9'bxxx1_001_01 || packet[8:0] == 9'bxx1x_001_10)
+					my_grid [3][4] <= wall;
+				else if (packet[8:0] == 9'bxxx0_001_01 || packet[8:0] == 9'bxx0x_001_10)
+					my_grid [3][4] <= visited;
+			end
+			else if (packet[4:0] == 5'b001_01 || packet[4:0] == 5'b001_10) begin
+				if (my_grid [3][4] == wall)
+					my_grid [3][4] <= wall;
+				else if (my_grid [3][4] == visited)
+					my_grid [3][4] <= visited;
+			end
+			else if (packet[4:0] != 5'b001_01 || packet[4:0] != 5'b001_10) begin
+				if (my_grid [3][4] == wall)
+					my_grid [3][4] <= wall;
+				else if (my_grid [3][4] == visited)
+					my_grid [3][4] <= visited;
+			end
+			
+			//wall (5,4) based on (2,1), (2,2)
+			if ((packet[4:0] != 5'b010_01 || packet[4:0] != 5'b010_10) && my_grid [5][4] != wall && my_grid [5][4] != visited)
+				my_grid [5][4] <= unvisited;
+			else if ((packet[4:0] == 5'b010_01 || packet[4:0] == 5'b010_10) && my_grid [5][4] != wall && my_grid [5][4] != visited) begin
+				if (packet[8:0] == 9'bxxx1_010_01 || packet[8:0] == 9'bxx1x_010_10)
+					my_grid [5][4] <= wall;
+				else if (packet[8:0] == 9'bxxx0_010_01 || packet[8:0] == 9'bxx0x_010_10)
+					my_grid [5][4] <= visited;
+			end
+			else if (packet[4:0] == 5'b010_01 || packet[4:0] == 5'b010_10) begin
+				if (my_grid [5][4] == wall)
+					my_grid [5][4] <= wall;
+				else if (my_grid [5][4] == visited)
+					my_grid [5][4] <= visited;
+			end
+			else if (packet[4:0] != 5'b010_01 || packet[4:0] != 5'b010_10) begin
+				if (my_grid [5][4] == wall)
+					my_grid [5][4] <= wall;
+				else if (my_grid [5][4] == visited)
+					my_grid [5][4] <= visited;
+			end
+			
+			//wall (7,4) based on (3,1), (3,2)
+			if ((packet[4:0] != 5'b011_01 || packet[4:0] != 5'b011_10) && my_grid [7][4] != wall && my_grid [7][4] != visited)
+				my_grid [7][4] <= unvisited;
+			else if ((packet[4:0] == 5'b011_01 || packet[4:0] == 5'b011_10) && my_grid [7][4] != wall && my_grid [7][4] != visited) begin
+				if (packet[8:0] == 9'bxxx1_011_01 || packet[8:0] == 9'bxx1x_011_10)
+					my_grid [7][4] <= wall;
+				else if (packet[8:0] == 9'bxxx0_011_01 || packet[8:0] == 9'bxx0x_011_10)
+					my_grid [7][4] <= visited;
+			end
+			else if (packet[4:0] == 5'b011_01 || packet[4:0] == 5'b011_10) begin
+				if (my_grid [7][4] == wall)
+					my_grid [7][4] <= wall;
+				else if (my_grid [7][4] == visited)
+					my_grid [7][4] <= visited;
+			end
+			else if (packet[4:0] != 5'b011_01 || packet[4:0] != 5'b011_10) begin
+				if (my_grid [7][4] == wall)
+					my_grid [7][4] <= wall;
+				else if (my_grid [7][4] == visited)
+					my_grid [7][4] <= visited;
+			end
+			
+			//wall (9,4) based on (4,1), (4,2)
+			if ((packet[4:0] != 5'b100_01 || packet[4:0] != 5'b100_10) && my_grid [9][4] != wall && my_grid [9][4] != visited)
+				my_grid [9][4] <= unvisited;
+			else if ((packet[4:0] == 5'b100_01 || packet[4:0] == 5'b100_10) && my_grid [9][4] != wall && my_grid [9][4] != visited) begin
+				if (packet[8:0] == 9'bxxx1_100_01 || packet[8:0] == 9'bxx1x_100_10)
+					my_grid [9][4] <= wall;
+				else if (packet[8:0] == 9'bxxx0_100_01 || packet[8:0] == 9'bxx0x_100_10)
+					my_grid [9][4] <= visited;
+			end
+			else if (packet[4:0] == 5'b100_01 || packet[4:0] == 5'b100_10) begin
+				if (my_grid [9][4] == wall)
+					my_grid [9][4] <= wall;
+				else if (my_grid [9][4] == visited)
+					my_grid [9][4] <= visited;
+			end
+			else if (packet[4:0] != 5'b100_01 || packet[4:0] != 5'b100_10) begin
+				if (my_grid [9][4] == wall)
+					my_grid [9][4] <= wall;
+				else if (my_grid [9][4] == visited)
+					my_grid [9][4] <= visited;
+			end
+			
+			//wall (1,6) based on (0,2), (0,3)
+			if ((packet[4:0] != 5'b000_10 || packet[4:0] != 5'b000_11) && my_grid [1][6] != wall && my_grid [1][6] != visited)
+				my_grid [1][6] <= unvisited;
+			else if ((packet[4:0] == 5'b000_10 || packet[4:0] == 5'b000_11) && my_grid [1][6] != wall && my_grid [1][6] != visited) begin
+				if (packet[8:0] == 9'bxxx1_000_10 || packet[8:0] == 9'bxx1x_000_11)
+					my_grid [1][6] <= wall;
+				else if (packet[8:0] == 9'bxxx0_000_10 || packet[8:0] == 9'bxx0x_000_11)
+					my_grid [1][6] <= visited;
+			end
+			else if (packet[4:0] == 5'b000_10 || packet[4:0] == 5'b000_11) begin
+				if (my_grid [1][6] == wall)
+					my_grid [1][6] <= wall;
+				else if (my_grid [1][6] == visited)
+					my_grid [1][6] <= visited;
+			end
+			else if (packet[4:0] != 5'b000_10 || packet[4:0] != 5'b000_11) begin
+				if (my_grid [1][6] == wall)
+					my_grid [1][6] <= wall;
+				else if (my_grid [1][6] == visited)
+					my_grid [1][6] <= visited;
+			end
+			
+			//wall (3,6) based on (1,2), (1,3)
+			if ((packet[4:0] != 5'b001_10 || packet[4:0] != 5'b001_11) && my_grid [3][6] != wall && my_grid [3][6] != visited)
+				my_grid [3][6] <= unvisited;
+			else if ((packet[4:0] == 5'b001_10 || packet[4:0] == 5'b001_11) && my_grid [3][6] != wall && my_grid [3][6] != visited) begin
+				if (packet[8:0] == 9'bxxx1_001_10 || packet[8:0] == 9'bxx1x_001_11)
+					my_grid [3][6] <= wall;
+				else if (packet[8:0] == 9'bxxx0_001_10 || packet[8:0] == 9'bxx0x_001_11)
+					my_grid [3][6] <= visited;
+			end
+			else if (packet[4:0] == 5'b001_10 || packet[4:0] == 5'b001_11) begin
+				if (my_grid [3][6] == wall)
+					my_grid [3][6] <= wall;
+				else if (my_grid [3][6] == visited)
+					my_grid [3][6] <= visited;
+			end
+			else if (packet[4:0] != 5'b001_10 || packet[4:0] != 5'b001_11) begin
+				if (my_grid [3][6] == wall)
+					my_grid [3][6] <= wall;
+				else if (my_grid [3][6] == visited)
+					my_grid [3][6] <= visited;
+			end
+			
+			//wall (5,6) based on (2,2), (2,3)
+			if ((packet[4:0] != 5'b010_10 || packet[4:0] != 5'b010_11) && my_grid [5][6] != wall && my_grid [5][6] != visited)
+				my_grid [5][6] <= unvisited;
+			else if ((packet[4:0] == 5'b010_10 || packet[4:0] == 5'b010_11) && my_grid [5][6] != wall && my_grid [5][6] != visited) begin
+				if (packet[8:0] == 9'bxxx1_010_10 || packet[8:0] == 9'bxx1x_010_11)
+					my_grid [5][6] <= wall;
+				else if (packet[8:0] == 9'bxxx0_010_10 || packet[8:0] == 9'bxx0x_010_11)
+					my_grid [5][6] <= visited;
+			end
+			else if (packet[4:0] == 5'b010_10 || packet[4:0] == 5'b010_11) begin
+				if (my_grid [5][6] == wall)
+					my_grid [5][6] <= wall;
+				else if (my_grid [5][6] == visited)
+					my_grid [5][6] <= visited;
+			end
+			else if (packet[4:0] != 5'b010_10 || packet[4:0] != 5'b010_11) begin
+				if (my_grid [5][6] == wall)
+					my_grid [5][6] <= wall;
+				else if (my_grid [5][6] == visited)
+					my_grid [5][6] <= visited;
+			end
+			
+			//wall (7,6) based on (3,2), (3,3)
+			if ((packet[4:0] != 5'b011_10 || packet[4:0] != 5'b011_11) && my_grid [7][6] != wall && my_grid [7][6] != visited)
+				my_grid [7][6] <= unvisited;
+			else if ((packet[4:0] == 5'b011_10 || packet[4:0] == 5'b011_11) && my_grid [7][6] != wall && my_grid [7][6] != visited) begin
+				if (packet[8:0] == 9'bxxx1_011_10 || packet[8:0] == 9'bxx1x_011_11)
+					my_grid [7][6] <= wall;
+				else if (packet[8:0] == 9'bxxx0_011_10 || packet[8:0] == 9'bxx0x_011_11)
+					my_grid [7][6] <= visited;
+			end
+			else if (packet[4:0] == 5'b011_10 || packet[4:0] == 5'b011_11) begin
+				if (my_grid [7][6] == wall)
+					my_grid [7][6] <= wall;
+				else if (my_grid [7][6] == visited)
+					my_grid [7][6] <= visited;
+			end
+			else if (packet[4:0] != 5'b011_10 || packet[4:0] != 5'b011_11) begin
+				if (my_grid [7][6] == wall)
+					my_grid [7][6] <= wall;
+				else if (my_grid [7][6] == visited)
+					my_grid [7][6] <= visited;
+			end
+			
+			//wall (9,6) based on (4,2), (4,3)
+			if ((packet[4:0] != 5'b100_10 || packet[4:0] != 5'b100_11) && my_grid [9][6] != wall && my_grid [9][6] != visited)
+				my_grid [9][6] <= unvisited;
+			else if ((packet[4:0] == 5'b100_10 || packet[4:0] == 5'b100_11) && my_grid [9][6] != wall && my_grid [9][6] != visited) begin
+				if (packet[8:0] == 9'bxxx1_100_10 || packet[8:0] == 9'bxx1x_100_11)
+					my_grid [9][6] <= wall;
+				else if (packet[8:0] == 9'bxxx0_100_10 || packet[8:0] == 9'bxx0x_100_11)
+					my_grid [9][6] <= visited;
+			end
+			else if (packet[4:0] == 5'b100_10 || packet[4:0] == 5'b100_11) begin
+				if (my_grid [9][6] == wall)
+					my_grid [9][6] <= wall;
+				else if (my_grid [9][6] == visited)
+					my_grid [9][6] <= visited;
+			end
+			else if (packet[4:0] != 5'b100_10 || packet[4:0] != 5'b100_11) begin
+				if (my_grid [9][6] == wall)
+					my_grid [9][6] <= wall;
+				else if (my_grid [9][6] == visited)
+					my_grid [9][6] <= visited;
+			end
 		end
-		else if (packet[4:0] == 5'b000_00 || packet[4:0] == 5'b001_00) begin
-			if (my_grid [2][1] == wall)
-				my_grid [2][1] <= wall;
-			else if (my_grid [2][1] == visited)
-				my_grid [2][1] <= visited;
-		end
-		else if (packet[4:0] != 5'b000_00 || packet[4:0] != 5'b001_00) begin
-			if (my_grid [2][1] == wall)
-				my_grid [2][1] <= wall;
-			else if (my_grid [2][1] == visited)
-				my_grid [2][1] <= visited;
-		end
-		
-		//wall (4,1) based on (1,0), (2,0)
-		if ((packet[4:0] != 5'b001_00 || packet[4:0] != 5'b010_00) && my_grid [4][1] != wall && my_grid [4][1] != visited)
-			my_grid [4][1] <= unvisited;
-		else if ((packet[4:0] == 5'b001_00 || packet[4:0] == 5'b010_00) && my_grid [4][1] != wall && my_grid [4][1] != visited) begin
-			if (packet[8:0] == 9'b1xxx_001_00 || packet[8:0] == 9'bx1xx_010_00)
-				my_grid [4][1] <= wall;
-			else if (packet[8:0] == 9'b0xxx_001_00 || packet[8:0] == 9'bx0xx_010_00)
-				my_grid [4][1] <= visited;
-		end
-		else if (packet[4:0] == 5'b001_00 || packet[4:0] == 5'b010_00) begin
-			if (my_grid [4][1] == wall)
-				my_grid [4][1] <= wall;
-			else if (my_grid [4][1] == visited)
-				my_grid [4][1] <= visited;
-		end
-		else if (packet[4:0] != 5'b001_00 || packet[4:0] != 5'b010_00) begin
-			if (my_grid [4][1] == wall)
-				my_grid [4][1] <= wall;
-			else if (my_grid [4][1] == visited)
-				my_grid [4][1] <= visited;
-		end
-		
-		//wall (6,1) based on (2,0), (3,0)
-		if ((packet[4:0] != 5'b010_00 || packet[4:0] != 5'b011_00) && my_grid [6][1] != wall && my_grid [6][1] != visited)
-			my_grid [6][1] <= unvisited;
-		else if ((packet[4:0] == 5'b010_00 || packet[4:0] == 5'b011_00) && my_grid [6][1] != wall && my_grid [6][1] != visited) begin
-			if (packet[8:0] == 9'b1xxx_010_00 || packet[8:0] == 9'bx1xx_011_00)
-				my_grid [6][1] <= wall;
-			else if (packet[8:0] == 9'b0xxx_010_00 || packet[8:0] == 9'bx0xx_011_00)
-				my_grid [6][1] <= visited;
-		end
-		else if (packet[4:0] == 5'b010_00 || packet[4:0] == 5'b011_00) begin
-			if (my_grid [6][1] == wall)
-				my_grid [6][1] <= wall;
-			else if (my_grid [6][1] == visited)
-				my_grid [6][1] <= visited;
-		end
-		else if (packet[4:0] != 5'b010_00 || packet[4:0] != 5'b011_00) begin
-			if (my_grid [6][1] == wall)
-				my_grid [6][1] <= wall;
-			else if (my_grid [6][1] == visited)
-				my_grid [6][1] <= visited;
-		end
-		
-		//wall (8,1) based on (3,0), (4,0)
-		if ((packet[4:0] != 5'b011_00 || packet[4:0] != 5'b100_00) && my_grid [8][1] != wall && my_grid [8][1] != visited)
-			my_grid [8][1] <= unvisited;
-		else if ((packet[4:0] == 5'b011_00 || packet[4:0] == 5'b100_00) && my_grid [8][1] != wall && my_grid [8][1] != visited) begin
-			if (packet[8:0] == 9'b1xxx_011_00 || packet[8:0] == 9'bx1xx_100_00)
-				my_grid [8][1] <= wall;
-			else if (packet[8:0] == 9'b0xxx_011_00 || packet[8:0] == 9'bx0xx_100_00)
-				my_grid [8][1] <= visited;
-		end
-		else if (packet[4:0] == 5'b011_00 || packet[4:0] == 5'b100_00) begin
-			if (my_grid [8][1] == wall)
-				my_grid [8][1] <= wall;
-			else if (my_grid [8][1] == visited)
-				my_grid [8][1] <= visited;
-		end
-		else if (packet[4:0] != 5'b011_00 || packet[4:0] != 5'b100_00) begin
-			if (my_grid [8][1] == wall)
-				my_grid [8][1] <= wall;
-			else if (my_grid [8][1] == visited)
-				my_grid [8][1] <= visited;
-		end
-		
-		//wall (2,3) based on (0,1), (1,1)
-		if ((packet[4:0] != 5'b000_01 || packet[4:0] != 5'b001_01) && my_grid [2][3] != wall && my_grid [2][3] != visited)
-			my_grid [2][3] <= unvisited;
-		else if ((packet[4:0] == 5'b000_01 || packet[4:0] == 5'b001_01) && my_grid [2][3] != wall && my_grid [2][3] != visited) begin
-			if (packet[8:0] == 9'b1xxx_000_01 || packet[8:0] == 9'bx1xx_001_01)
-				my_grid [2][3] <= wall;
-			else if (packet[8:0] == 9'b0xxx_000_01 || packet[8:0] == 9'bx0xx_001_01)
-				my_grid [2][3] <= visited;
-		end
-		else if (packet[4:0] == 5'b000_01 || packet[4:0] == 5'b001_01) begin
-			if (my_grid [2][3] == wall)
-				my_grid [2][3] <= wall;
-			else if (my_grid [2][3] == visited)
-				my_grid [2][3] <= visited;
-		end
-		else if (packet[4:0] != 5'b000_01 || packet[4:0] != 5'b001_01) begin
-			if (my_grid [2][3] == wall)
-				my_grid [2][3] <= wall;
-			else if (my_grid [2][3] == visited)
-				my_grid [2][3] <= visited;
-		end
-		
-		//wall (4,3) based on (1,1), (2,1)
-		if ((packet[4:0] != 5'b001_01 || packet[4:0] != 5'b010_01) && my_grid [4][3] != wall && my_grid [4][3] != visited)
-			my_grid [4][3] <= unvisited;
-		else if ((packet[4:0] == 5'b001_01 || packet[4:0] == 5'b010_01) && my_grid [4][3] != wall && my_grid [4][3] != visited) begin
-			if (packet[8:0] == 9'b1xxx_001_01 || packet[8:0] == 9'bx1xx_010_01)
-				my_grid [4][3] <= wall;
-			else if (packet[8:0] == 9'b0xxx_001_01 || packet[8:0] == 9'bx0xx_010_01)
-				my_grid [4][3] <= visited;
-		end
-		else if (packet[4:0] == 5'b001_01 || packet[4:0] == 5'b010_01) begin
-			if (my_grid [4][3] == wall)
-				my_grid [4][3] <= wall;
-			else if (my_grid [4][3] == visited)
-				my_grid [4][3] <= visited;
-		end
-		else if (packet[4:0] != 5'b001_01 || packet[4:0] != 5'b010_01) begin
-			if (my_grid [4][3] == wall)
-				my_grid [4][3] <= wall;
-			else if (my_grid [4][3] == visited)
-				my_grid [4][3] <= visited;
-		end
-		
-		//wall (6,3) based on (2,1), (3,1)
-		if ((packet[4:0] != 5'b010_01 || packet[4:0] != 5'b011_01) && my_grid [6][3] != wall && my_grid [6][3] != visited)
-			my_grid [6][3] <= unvisited;
-		else if ((packet[4:0] == 5'b010_01 || packet[4:0] == 5'b011_01) && my_grid [6][3] != wall && my_grid [6][3] != visited) begin
-			if (packet[8:0] == 9'b1xxx_010_01 || packet[8:0] == 9'bx1xx_011_01)
-				my_grid [6][3] <= wall;
-			else if (packet[8:0] == 9'b0xxx_010_01 || packet[8:0] == 9'bx0xx_011_01)
-				my_grid [6][3] <= visited;
-		end
-		else if (packet[4:0] == 5'b010_01 || packet[4:0] == 5'b011_01) begin
-			if (my_grid [6][3] == wall)
-				my_grid [6][3] <= wall;
-			else if (my_grid [6][3] == visited)
-				my_grid [6][3] <= visited;
-		end
-		else if (packet[4:0] != 5'b010_01 || packet[4:0] != 5'b011_01) begin
-			if (my_grid [6][3] == wall)
-				my_grid [6][3] <= wall;
-			else if (my_grid [6][3] == visited)
-				my_grid [6][3] <= visited;
-		end
-		
-		//wall (8,3) based on (3,1), (4,1)
-		if ((packet[4:0] != 5'b011_01 || packet[4:0] != 5'b100_01) && my_grid [8][3] != wall && my_grid [8][3] != visited)
-			my_grid [8][3] <= unvisited;
-		else if ((packet[4:0] == 5'b011_01 || packet[4:0] == 5'b100_01) && my_grid [8][3] != wall && my_grid [8][3] != visited) begin
-			if (packet[8:0] == 9'b1xxx_011_01 || packet[8:0] == 9'bx1xx_100_01)
-				my_grid [8][3] <= wall;
-			else if (packet[8:0] == 9'b0xxx_011_01 || packet[8:0] == 9'bx0xx_100_01)
-				my_grid [8][3] <= visited;
-		end
-		else if (packet[4:0] == 5'b011_01 || packet[4:0] == 5'b100_01) begin
-			if (my_grid [8][3] == wall)
-				my_grid [8][3] <= wall;
-			else if (my_grid [8][3] == visited)
-				my_grid [8][3] <= visited;
-		end
-		else if (packet[4:0] != 5'b011_01 || packet[4:0] != 5'b100_01) begin
-			if (my_grid [8][3] == wall)
-				my_grid [8][3] <= wall;
-			else if (my_grid [8][3] == visited)
-				my_grid [8][3] <= visited;
-		end
-		
-		//wall (2,5) based on (0,2), (1,2)
-		if ((packet[4:0] != 5'b000_10 || packet[4:0] != 5'b001_10) && my_grid [2][5] != wall && my_grid [2][5] != visited)
-			my_grid [2][5] <= unvisited;
-		else if ((packet[4:0] == 5'b000_10 || packet[4:0] == 5'b001_10) && my_grid [2][5] != wall && my_grid [2][5] != visited) begin
-			if (packet[8:0] == 9'b1xxx_000_10 || packet[8:0] == 9'bx1xx_001_10)
-				my_grid [2][5] <= wall;
-			else if (packet[8:0] == 9'b0xxx_000_10 || packet[8:0] == 9'bx0xx_001_10)
-				my_grid [2][5] <= visited;
-		end
-		else if (packet[4:0] == 5'b000_10 || packet[4:0] == 5'b001_10) begin
-			if (my_grid [2][5] == wall)
-				my_grid [2][5] <= wall;
-			else if (my_grid [2][5] == visited)
-				my_grid [2][5] <= visited;
-		end
-		else if (packet[4:0] != 5'b000_10 || packet[4:0] != 5'b001_10) begin
-			if (my_grid [2][5] == wall)
-				my_grid [2][5] <= wall;
-			else if (my_grid [2][5] == visited)
-				my_grid [2][5] <= visited;
-		end
-		
-		//wall (4,5) based on (1,2), (2,2)
-		if ((packet[4:0] != 5'b001_10 || packet[4:0] != 5'b010_10) && my_grid [4][5] != wall && my_grid [4][5] != visited)
-			my_grid [4][5] <= unvisited;
-		else if ((packet[4:0] == 5'b001_10 || packet[4:0] == 5'b010_10) && my_grid [4][5] != wall && my_grid [4][5] != visited) begin
-			if (packet[8:0] == 9'b1xxx_001_10 || packet[8:0] == 9'bx1xx_010_10)
-				my_grid [4][5] <= wall;
-			else if (packet[8:0] == 9'b0xxx_001_10 || packet[8:0] == 9'bx0xx_010_10)
-				my_grid [4][5] <= visited;
-		end
-		else if (packet[4:0] == 5'b001_10 || packet[4:0] == 5'b010_10) begin
-			if (my_grid [4][5] == wall)
-				my_grid [4][5] <= wall;
-			else if (my_grid [4][5] == visited)
-				my_grid [4][5] <= visited;
-		end
-		else if (packet[4:0] != 5'b001_10 || packet[4:0] != 5'b010_10) begin
-			if (my_grid [4][5] == wall)
-				my_grid [4][5] <= wall;
-			else if (my_grid [4][5] == visited)
-				my_grid [4][5] <= visited;
-		end
-		
-		//wall (6,5) based on (2,2), (3,2)
-		if ((packet[4:0] != 5'b010_10 || packet[4:0] != 5'b011_10) && my_grid [6][5] != wall && my_grid [6][5] != visited)
-			my_grid [6][5] <= unvisited;
-		else if ((packet[4:0] == 5'b010_10 || packet[4:0] == 5'b011_10) && my_grid [6][5] != wall && my_grid [6][5] != visited) begin
-			if (packet[8:0] == 9'b1xxx_010_10 || packet[8:0] == 9'bx1xx_011_10)
-				my_grid [6][5] <= wall;
-			else if (packet[8:0] == 9'b0xxx_010_10 || packet[8:0] == 9'bx0xx_011_10)
-				my_grid [6][5] <= visited;
-		end
-		else if (packet[4:0] == 5'b010_10 || packet[4:0] == 5'b011_10) begin
-			if (my_grid [6][5] == wall)
-				my_grid [6][5] <= wall;
-			else if (my_grid [6][5] == visited)
-				my_grid [6][5] <= visited;
-		end
-		else if (packet[4:0] != 5'b010_10 || packet[4:0] != 5'b011_10) begin
-			if (my_grid [6][5] == wall)
-				my_grid [6][5] <= wall;
-			else if (my_grid [6][5] == visited)
-				my_grid [6][5] <= visited;
-		end
-		
-		//wall (8,5) based on (3,2), (4,2)
-		if ((packet[4:0] != 5'b011_10 || packet[4:0] != 5'b100_10) && my_grid [8][5] != wall && my_grid [8][5] != visited)
-			my_grid [8][5] <= unvisited;
-		else if ((packet[4:0] == 5'b011_10 || packet[4:0] == 5'b100_10) && my_grid [8][5] != wall && my_grid [8][5] != visited) begin
-			if (packet[8:0] == 9'b1xxx_011_10 || packet[8:0] == 9'bx1xx_100_10)
-				my_grid [8][5] <= wall;
-			else if (packet[8:0] == 9'b0xxx_011_10 || packet[8:0] == 9'bx0xx_100_10)
-				my_grid [8][5] <= visited;
-		end
-		else if (packet[4:0] == 5'b011_10 || packet[4:0] == 5'b100_10) begin
-			if (my_grid [8][5] == wall)
-				my_grid [8][5] <= wall;
-			else if (my_grid [8][5] == visited)
-				my_grid [8][5] <= visited;
-		end
-		else if (packet[4:0] != 5'b011_10 || packet[4:0] != 5'b100_10) begin
-			if (my_grid [8][5] == wall)
-				my_grid [8][5] <= wall;
-			else if (my_grid [8][5] == visited)
-				my_grid [8][5] <= visited;
-		end
-		
-		//wall (2,7) based on (0,3), (1,3)
-		if ((packet[4:0] != 5'b000_11 || packet[4:0] != 5'b001_11) && my_grid [2][7] != wall && my_grid [2][7] != visited)
-			my_grid [2][7] <= unvisited;
-		else if ((packet[4:0] == 5'b000_11 || packet[4:0] == 5'b001_11) && my_grid [2][7] != wall && my_grid [2][7] != visited) begin
-			if (packet[8:0] == 9'b1xxx_000_11 || packet[8:0] == 9'bx1xx_001_11)
-				my_grid [2][7] <= wall;
-			else if (packet[8:0] == 9'b0xxx_000_11 || packet[8:0] == 9'bx0xx_001_11)
-				my_grid [2][7] <= visited;
-		end
-		else if (packet[4:0] == 5'b000_11 || packet[4:0] == 5'b001_11) begin
-			if (my_grid [2][7] == wall)
-				my_grid [2][7] <= wall;
-			else if (my_grid [2][7] == visited)
-				my_grid [2][7] <= visited;
-		end
-		else if (packet[4:0] != 5'b000_11 || packet[4:0] != 5'b001_11) begin
-			if (my_grid [2][7] == wall)
-				my_grid [2][7] <= wall;
-			else if (my_grid [2][7] == visited)
-				my_grid [2][7] <= visited;
-		end
-		
-		//wall (4,7) based on (1,3), (2,3)
-		if ((packet[4:0] != 5'b001_11 || packet[4:0] != 5'b010_11) && my_grid [4][7] != wall && my_grid [4][7] != visited)
-			my_grid [4][7] <= unvisited;
-		else if ((packet[4:0] == 5'b001_11 || packet[4:0] == 5'b010_11) && my_grid [4][7] != wall && my_grid [4][7] != visited) begin
-			if (packet[8:0] == 9'b1xxx_001_11 || packet[8:0] == 9'bx1xx_010_11)
-				my_grid [4][7] <= wall;
-			else if (packet[8:0] == 9'b0xxx_001_11 || packet[8:0] == 9'bx0xx_010_11)
-				my_grid [4][7] <= visited;
-		end
-		else if (packet[4:0] == 5'b001_11 || packet[4:0] == 5'b010_11) begin
-			if (my_grid [4][7] == wall)
-				my_grid [4][7] <= wall;
-			else if (my_grid [4][7] == visited)
-				my_grid [4][7] <= visited;
-		end
-		else if (packet[4:0] != 5'b001_11 || packet[4:0] != 5'b010_11) begin
-			if (my_grid [4][7] == wall)
-				my_grid [4][7] <= wall;
-			else if (my_grid [4][7] == visited)
-				my_grid [4][7] <= visited;
-		end
-		
-		//wall (6,7) based on (2,3), (3,3)
-		if ((packet[4:0] != 5'b010_11 || packet[4:0] != 5'b011_11) && my_grid [6][7] != wall && my_grid [6][7] != visited)
-			my_grid [6][7] <= unvisited;
-		else if ((packet[4:0] == 5'b010_11 || packet[4:0] == 5'b011_11) && my_grid [6][7] != wall && my_grid [6][7] != visited) begin
-			if (packet[8:0] == 9'b1xxx_010_11 || packet[8:0] == 9'bx1xx_011_11)
-				my_grid [6][7] <= wall;
-			else if (packet[8:0] == 9'b0xxx_010_11 || packet[8:0] == 9'bx0xx_011_11)
-				my_grid [6][7] <= visited;
-		end
-		else if (packet[4:0] == 5'b010_11 || packet[4:0] == 5'b011_11) begin
-			if (my_grid [6][7] == wall)
-				my_grid [6][7] <= wall;
-			else if (my_grid [6][7] == visited)
-				my_grid [6][7] <= visited;
-		end
-		else if (packet[4:0] != 5'b010_11 || packet[4:0] != 5'b011_11) begin
-			if (my_grid [6][7] == wall)
-				my_grid [6][7] <= wall;
-			else if (my_grid [6][7] == visited)
-				my_grid [6][7] <= visited;
-		end
-		
-		//wall (8,7) based on (3,3), (4,3)
-		if ((packet[4:0] != 5'b011_11 || packet[4:0] != 5'b100_11) && my_grid [8][7] != wall && my_grid [8][7] != visited)
-			my_grid [8][7] <= unvisited;
-		else if ((packet[4:0] == 5'b011_11 || packet[4:0] == 5'b100_11) && my_grid [8][7] != wall && my_grid [8][7] != visited) begin
-			if (packet[8:0] == 9'b1xxx_011_11 || packet[8:0] == 9'bx1xx_100_11)
-				my_grid [8][7] <= wall;
-			else if (packet[8:0] == 9'b0xxx_011_11 || packet[8:0] == 9'bx0xx_100_11)
-				my_grid [8][7] <= visited;
-		end
-		else if (packet[4:0] == 5'b011_11 || packet[4:0] == 5'b100_11) begin
-			if (my_grid [8][7] == wall)
-				my_grid [8][7] <= wall;
-			else if (my_grid [8][7] == visited)
-				my_grid [8][7] <= visited;
-		end
-		else if (packet[4:0] != 5'b011_11 || packet[4:0] != 5'b100_11) begin
-			if (my_grid [8][7] == wall)
-				my_grid [8][7] <= wall;
-			else if (my_grid [8][7] == visited)
-				my_grid [8][7] <= visited;
-		end
-		
-		//wall (1,2) based on (0,0), (0,1)
-		if (packet[4:0] != 5'b000_00 && packet[4:0] != 5'b000_01 && my_grid[1][2] != wall && my_grid[1][2] != visited)
-			my_grid[1][2] <= unvisited;
-		else if ((packet[4:0] == 5'b000_00 || packet[4:0] == 5'b000_01) && my_grid[1][2] != wall && my_grid[1][2] != visited) begin
-			if ((packet[4:0] == 5'b000_00 && packet[5]==1'b1) || (packet[4:0]==5'b000_01 && packet[6]==1'b1))
-				my_grid[1][2] <= wall;
-			else
-				my_grid[1][2] <= visited;
-		end
-		//else if (packet[4:0] == 5'b000_00 || packet[4:0] == 5'b000_01) begin
-			//if (my_grid[1][2] == wall)
-				//my_grid[1][2] <= wall;
-			//else if (my_grid[1][2] == visited)
-				//my_grid[1][2] <= visited;
-		//end
-		//else if (packet[4:0] != 5'b000_00 || packet[4:0] != 5'b000_01) begin
-			//if (my_grid[1][2] == wall)
-				//my_grid[1][2] <= wall;
-			//else if (my_grid[1][2] == visited)
-				//my_grid[1][2] <= visited;
-		//end
-		
-		//wall (3,2) based on (1,0), (1,1)
-		if ((packet[4:0] != 5'b001_00 || packet[4:0] != 5'b001_01) && my_grid[3][2] != wall && my_grid[3][2] != visited)
-			my_grid[3][2] <= unvisited;
-		else if ((packet[4:0] == 5'b001_00 || packet[4:0] == 5'b001_01) && my_grid[3][2] != wall && my_grid[3][2] != visited) begin
-			if ((packet[4:0] == 5'b001_00 && packet[5]==1'b1) || (packet[4:0] == 5'b001_01 && packet[6]==1'b1))
-				my_grid[3][2] <= wall;
-			else
-				my_grid[3][2] <= visited;
-		end
-		else if (packet[4:0] == 5'b001_00 || packet[4:0] == 5'b001_01) begin
-			if (my_grid [3][2] == wall)
-				my_grid [3][2] <= wall;
-			else if (my_grid [3][2] == visited)
-				my_grid [3][2] <= visited;
-		end
-		else if (packet[4:0] != 5'b001_00 || packet[4:0] != 5'b001_01) begin
-			if (my_grid [3][2] == wall)
-				my_grid [3][2] <= wall;
-			else if (my_grid [3][2] == visited)
-				my_grid [3][2] <= visited;
-		end
-		
-		//wall (5,2) based on (2,0), (2,1)
-		if ((packet[4:0] != 5'b010_00 || packet[4:0] != 5'b010_01) && my_grid[5][2] != wall && my_grid[5][2] != visited)
-			my_grid[5][2] <= unvisited;
-		else if ((packet[4:0] == 5'b010_00 || packet[4:0] == 5'b010_01) && my_grid[5][2] != wall && my_grid[5][2] != visited) begin
-			if ((packet[4:0] == 5'b010_00 && packet[5]==1'b1) || (packet[4:0] == 5'b010_01 && packet[6]==1'b1))
-				my_grid[5][2] <= wall;
-			else
-				my_grid [5][2] <= visited;
-		end
-		
-		//wall (7,2) based on (3,0), (3,1)
-		if ((packet[4:0] != 5'b011_00 || packet[4:0] != 5'b011_01) && my_grid [7][2] != wall && my_grid [7][2] != visited)
-			my_grid [7][2] <= unvisited;
-		else if ((packet[4:0] == 5'b011_00 || packet[4:0] == 5'b011_01) && my_grid [7][2] != wall && my_grid [7][2] != visited) begin
-			if (packet[8:0] == 9'bxxx1_011_00 || packet[8:0] == 9'bxx1x_011_01)
-				my_grid [7][2] <= wall;
-			else if (packet[8:0] == 9'bxxx0_011_00 || packet[8:0] == 9'bxx0x_011_01)
-				my_grid [7][2] <= visited;
-		end
-		else if (packet[4:0] == 5'b011_00 || packet[4:0] == 5'b011_01) begin
-			if (my_grid [7][2] == wall)
-				my_grid [7][2] <= wall;
-			else if (my_grid [7][2] == visited)
-				my_grid [7][2] <= visited;
-		end
-		else if (packet[4:0] != 5'b011_00 || packet[4:0] != 5'b011_01) begin
-			if (my_grid [7][2] == wall)
-				my_grid [7][2] <= wall;
-			else if (my_grid [7][2] == visited)
-				my_grid [7][2] <= visited;
-		end
-		
-		//wall (9,2) based on (4,0), (4,1)
-		if ((packet[4:0] != 5'b100_00 || packet[4:0] != 5'b100_01) && my_grid [9][2] != wall && my_grid [9][2] != visited)
-			my_grid [9][2] <= unvisited;
-		else if ((packet[4:0] == 5'b100_00 || packet[4:0] == 5'b100_01) && my_grid [9][2] != wall && my_grid [9][2] != visited) begin
-			if (packet[8:0] == 9'bxxx1_100_00 || packet[8:0] == 9'bxx1x_100_01)
-				my_grid [9][2] <= wall;
-			else if (packet[8:0] == 9'bxxx0_100_00 || packet[8:0] == 9'bxx0x_100_01)
-				my_grid [9][2] <= visited;
-		end
-		else if (packet[4:0] == 5'b100_00 || packet[4:0] == 5'b100_01) begin
-			if (my_grid [9][2] == wall)
-				my_grid [9][2] <= wall;
-			else if (my_grid [9][2] == visited)
-				my_grid [9][2] <= visited;
-		end
-		else if (packet[4:0] != 5'b100_00 || packet[4:0] != 5'b100_01) begin
-			if (my_grid [9][2] == wall)
-				my_grid [9][2] <= wall;
-			else if (my_grid [9][2] == visited)
-				my_grid [9][2] <= visited;
-		end
-		
-		//wall (1,4) based on (0,1), (0,2)
-		if ((packet[4:0] != 5'b000_01 || packet[4:0] != 5'b000_10) && my_grid [1][4] != wall && my_grid [1][4] != visited)
-			my_grid [1][4] <= unvisited;
-		else if ((packet[4:0] == 5'b000_01 || packet[4:0] == 5'b000_10) && my_grid [1][4] != wall && my_grid [1][4] != visited) begin
-			if (packet[8:0] == 9'bxxx1_000_01 || packet[8:0] == 9'bxx1x_000_10)
-				my_grid [1][4] <= wall;
-			else if (packet[8:0] == 9'bxxx0_000_01 || packet[8:0] == 9'bxx0x_000_10)
-				my_grid [1][4] <= visited;
-		end
-		else if (packet[4:0] == 5'b000_01 || packet[4:0] == 5'b000_10) begin
-			if (my_grid [1][4] == wall)
-				my_grid [1][4] <= wall;
-			else if (my_grid [1][4] == visited)
-				my_grid [1][4] <= visited;
-		end
-		else if (packet[4:0] != 5'b000_01 || packet[4:0] != 5'b000_10) begin
-			if (my_grid [1][4] == wall)
-				my_grid [1][4] <= wall;
-			else if (my_grid [1][4] == visited)
-				my_grid [1][4] <= visited;
-		end
-		
-		//wall (3,4) based on (1,1), (1,2)
-		if ((packet[4:0] != 5'b001_01 || packet[4:0] != 5'b001_10) && my_grid [3][4] != wall && my_grid [3][4] != visited)
-			my_grid [3][4] <= unvisited;
-		else if ((packet[4:0] == 5'b001_01 || packet[4:0] == 5'b001_10) && my_grid [3][4] != wall && my_grid [3][4] != visited) begin
-			if (packet[8:0] == 9'bxxx1_001_01 || packet[8:0] == 9'bxx1x_001_10)
-				my_grid [3][4] <= wall;
-			else if (packet[8:0] == 9'bxxx0_001_01 || packet[8:0] == 9'bxx0x_001_10)
-				my_grid [3][4] <= visited;
-		end
-		else if (packet[4:0] == 5'b001_01 || packet[4:0] == 5'b001_10) begin
-			if (my_grid [3][4] == wall)
-				my_grid [3][4] <= wall;
-			else if (my_grid [3][4] == visited)
-				my_grid [3][4] <= visited;
-		end
-		else if (packet[4:0] != 5'b001_01 || packet[4:0] != 5'b001_10) begin
-			if (my_grid [3][4] == wall)
-				my_grid [3][4] <= wall;
-			else if (my_grid [3][4] == visited)
-				my_grid [3][4] <= visited;
-		end
-		
-		//wall (5,4) based on (2,1), (2,2)
-		if ((packet[4:0] != 5'b010_01 || packet[4:0] != 5'b010_10) && my_grid [5][4] != wall && my_grid [5][4] != visited)
-			my_grid [5][4] <= unvisited;
-		else if ((packet[4:0] == 5'b010_01 || packet[4:0] == 5'b010_10) && my_grid [5][4] != wall && my_grid [5][4] != visited) begin
-			if (packet[8:0] == 9'bxxx1_010_01 || packet[8:0] == 9'bxx1x_010_10)
-				my_grid [5][4] <= wall;
-			else if (packet[8:0] == 9'bxxx0_010_01 || packet[8:0] == 9'bxx0x_010_10)
-				my_grid [5][4] <= visited;
-		end
-		else if (packet[4:0] == 5'b010_01 || packet[4:0] == 5'b010_10) begin
-			if (my_grid [5][4] == wall)
-				my_grid [5][4] <= wall;
-			else if (my_grid [5][4] == visited)
-				my_grid [5][4] <= visited;
-		end
-		else if (packet[4:0] != 5'b010_01 || packet[4:0] != 5'b010_10) begin
-			if (my_grid [5][4] == wall)
-				my_grid [5][4] <= wall;
-			else if (my_grid [5][4] == visited)
-				my_grid [5][4] <= visited;
-		end
-		
-		//wall (7,4) based on (3,1), (3,2)
-		if ((packet[4:0] != 5'b011_01 || packet[4:0] != 5'b011_10) && my_grid [7][4] != wall && my_grid [7][4] != visited)
-			my_grid [7][4] <= unvisited;
-		else if ((packet[4:0] == 5'b011_01 || packet[4:0] == 5'b011_10) && my_grid [7][4] != wall && my_grid [7][4] != visited) begin
-			if (packet[8:0] == 9'bxxx1_011_01 || packet[8:0] == 9'bxx1x_011_10)
-				my_grid [7][4] <= wall;
-			else if (packet[8:0] == 9'bxxx0_011_01 || packet[8:0] == 9'bxx0x_011_10)
-				my_grid [7][4] <= visited;
-		end
-		else if (packet[4:0] == 5'b011_01 || packet[4:0] == 5'b011_10) begin
-			if (my_grid [7][4] == wall)
-				my_grid [7][4] <= wall;
-			else if (my_grid [7][4] == visited)
-				my_grid [7][4] <= visited;
-		end
-		else if (packet[4:0] != 5'b011_01 || packet[4:0] != 5'b011_10) begin
-			if (my_grid [7][4] == wall)
-				my_grid [7][4] <= wall;
-			else if (my_grid [7][4] == visited)
-				my_grid [7][4] <= visited;
-		end
-		
-		//wall (9,4) based on (4,1), (4,2)
-		if ((packet[4:0] != 5'b100_01 || packet[4:0] != 5'b100_10) && my_grid [9][4] != wall && my_grid [9][4] != visited)
-			my_grid [9][4] <= unvisited;
-		else if ((packet[4:0] == 5'b100_01 || packet[4:0] == 5'b100_10) && my_grid [9][4] != wall && my_grid [9][4] != visited) begin
-			if (packet[8:0] == 9'bxxx1_100_01 || packet[8:0] == 9'bxx1x_100_10)
-				my_grid [9][4] <= wall;
-			else if (packet[8:0] == 9'bxxx0_100_01 || packet[8:0] == 9'bxx0x_100_10)
-				my_grid [9][4] <= visited;
-		end
-		else if (packet[4:0] == 5'b100_01 || packet[4:0] == 5'b100_10) begin
-			if (my_grid [9][4] == wall)
-				my_grid [9][4] <= wall;
-			else if (my_grid [9][4] == visited)
-				my_grid [9][4] <= visited;
-		end
-		else if (packet[4:0] != 5'b100_01 || packet[4:0] != 5'b100_10) begin
-			if (my_grid [9][4] == wall)
-				my_grid [9][4] <= wall;
-			else if (my_grid [9][4] == visited)
-				my_grid [9][4] <= visited;
-		end
-		
-		//wall (1,6) based on (0,2), (0,3)
-		if ((packet[4:0] != 5'b000_10 || packet[4:0] != 5'b000_11) && my_grid [1][6] != wall && my_grid [1][6] != visited)
-			my_grid [1][6] <= unvisited;
-		else if ((packet[4:0] == 5'b000_10 || packet[4:0] == 5'b000_11) && my_grid [1][6] != wall && my_grid [1][6] != visited) begin
-			if (packet[8:0] == 9'bxxx1_000_10 || packet[8:0] == 9'bxx1x_000_11)
-				my_grid [1][6] <= wall;
-			else if (packet[8:0] == 9'bxxx0_000_10 || packet[8:0] == 9'bxx0x_000_11)
-				my_grid [1][6] <= visited;
-		end
-		else if (packet[4:0] == 5'b000_10 || packet[4:0] == 5'b000_11) begin
-			if (my_grid [1][6] == wall)
-				my_grid [1][6] <= wall;
-			else if (my_grid [1][6] == visited)
-				my_grid [1][6] <= visited;
-		end
-		else if (packet[4:0] != 5'b000_10 || packet[4:0] != 5'b000_11) begin
-			if (my_grid [1][6] == wall)
-				my_grid [1][6] <= wall;
-			else if (my_grid [1][6] == visited)
-				my_grid [1][6] <= visited;
-		end
-		
-		//wall (3,6) based on (1,2), (1,3)
-		if ((packet[4:0] != 5'b001_10 || packet[4:0] != 5'b001_11) && my_grid [3][6] != wall && my_grid [3][6] != visited)
-			my_grid [3][6] <= unvisited;
-		else if ((packet[4:0] == 5'b001_10 || packet[4:0] == 5'b001_11) && my_grid [3][6] != wall && my_grid [3][6] != visited) begin
-			if (packet[8:0] == 9'bxxx1_001_10 || packet[8:0] == 9'bxx1x_001_11)
-				my_grid [3][6] <= wall;
-			else if (packet[8:0] == 9'bxxx0_001_10 || packet[8:0] == 9'bxx0x_001_11)
-				my_grid [3][6] <= visited;
-		end
-		else if (packet[4:0] == 5'b001_10 || packet[4:0] == 5'b001_11) begin
-			if (my_grid [3][6] == wall)
-				my_grid [3][6] <= wall;
-			else if (my_grid [3][6] == visited)
-				my_grid [3][6] <= visited;
-		end
-		else if (packet[4:0] != 5'b001_10 || packet[4:0] != 5'b001_11) begin
-			if (my_grid [3][6] == wall)
-				my_grid [3][6] <= wall;
-			else if (my_grid [3][6] == visited)
-				my_grid [3][6] <= visited;
-		end
-		
-		//wall (5,6) based on (2,2), (2,3)
-		if ((packet[4:0] != 5'b010_10 || packet[4:0] != 5'b010_11) && my_grid [5][6] != wall && my_grid [5][6] != visited)
-			my_grid [5][6] <= unvisited;
-		else if ((packet[4:0] == 5'b010_10 || packet[4:0] == 5'b010_11) && my_grid [5][6] != wall && my_grid [5][6] != visited) begin
-			if (packet[8:0] == 9'bxxx1_010_10 || packet[8:0] == 9'bxx1x_010_11)
-				my_grid [5][6] <= wall;
-			else if (packet[8:0] == 9'bxxx0_010_10 || packet[8:0] == 9'bxx0x_010_11)
-				my_grid [5][6] <= visited;
-		end
-		else if (packet[4:0] == 5'b010_10 || packet[4:0] == 5'b010_11) begin
-			if (my_grid [5][6] == wall)
-				my_grid [5][6] <= wall;
-			else if (my_grid [5][6] == visited)
-				my_grid [5][6] <= visited;
-		end
-		else if (packet[4:0] != 5'b010_10 || packet[4:0] != 5'b010_11) begin
-			if (my_grid [5][6] == wall)
-				my_grid [5][6] <= wall;
-			else if (my_grid [5][6] == visited)
-				my_grid [5][6] <= visited;
-		end
-		
-		//wall (7,6) based on (3,2), (3,3)
-		if ((packet[4:0] != 5'b011_10 || packet[4:0] != 5'b011_11) && my_grid [7][6] != wall && my_grid [7][6] != visited)
-			my_grid [7][6] <= unvisited;
-		else if ((packet[4:0] == 5'b011_10 || packet[4:0] == 5'b011_11) && my_grid [7][6] != wall && my_grid [7][6] != visited) begin
-			if (packet[8:0] == 9'bxxx1_011_10 || packet[8:0] == 9'bxx1x_011_11)
-				my_grid [7][6] <= wall;
-			else if (packet[8:0] == 9'bxxx0_011_10 || packet[8:0] == 9'bxx0x_011_11)
-				my_grid [7][6] <= visited;
-		end
-		else if (packet[4:0] == 5'b011_10 || packet[4:0] == 5'b011_11) begin
-			if (my_grid [7][6] == wall)
-				my_grid [7][6] <= wall;
-			else if (my_grid [7][6] == visited)
-				my_grid [7][6] <= visited;
-		end
-		else if (packet[4:0] != 5'b011_10 || packet[4:0] != 5'b011_11) begin
-			if (my_grid [7][6] == wall)
-				my_grid [7][6] <= wall;
-			else if (my_grid [7][6] == visited)
-				my_grid [7][6] <= visited;
-		end
-		
-		//wall (9,6) based on (4,2), (4,3)
-		if ((packet[4:0] != 5'b100_10 || packet[4:0] != 5'b100_11) && my_grid [9][6] != wall && my_grid [9][6] != visited)
-			my_grid [9][6] <= unvisited;
-		else if ((packet[4:0] == 5'b100_10 || packet[4:0] == 5'b100_11) && my_grid [9][6] != wall && my_grid [9][6] != visited) begin
-			if (packet[8:0] == 9'bxxx1_100_10 || packet[8:0] == 9'bxx1x_100_11)
-				my_grid [9][6] <= wall;
-			else if (packet[8:0] == 9'bxxx0_100_10 || packet[8:0] == 9'bxx0x_100_11)
-				my_grid [9][6] <= visited;
-		end
-		else if (packet[4:0] == 5'b100_10 || packet[4:0] == 5'b100_11) begin
-			if (my_grid [9][6] == wall)
-				my_grid [9][6] <= wall;
-			else if (my_grid [9][6] == visited)
-				my_grid [9][6] <= visited;
-		end
-		else if (packet[4:0] != 5'b100_10 || packet[4:0] != 5'b100_11) begin
-			if (my_grid [9][6] == wall)
-				my_grid [9][6] <= wall;
-			else if (my_grid [9][6] == visited)
-				my_grid [9][6] <= visited;
-		end
-		
 	end
 	 
 	 assign GRID_DATA =  ((PIXEL_COORD_X <= 10'b0000000101) & (PIXEL_COORD_Y <= 10'b0000000101)) ? my_grid[10][0] : 
