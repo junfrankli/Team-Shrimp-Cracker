@@ -1,0 +1,95 @@
+/* This example shows how to use continuous mode to take
+  range measurements with the VL53L0X. It is based on
+  vl53l0x_ContinuousRanging_Example.c from the VL53L0X API.
+
+  The range readings are in units of mm. */
+
+#include <Wire.h>
+#include <VL53L0X.h>
+#include <DRV8835MotorShield.h>
+#include <QTRSensors.h>
+
+// Distance Sensors
+#define XSHUT_pinLeft 13
+#define XSHUT_pinCenter 12
+// default VL53L0x address 41
+#define sensorA_newAddress 42
+#define sensorB_newAddress 43
+VL53L0X sensorA, sensorB, sensorC;
+
+// Line Sensors
+#define NUM_SENSORS   6     // number of line sensors used
+#define TIMEOUT       2500  // waits for 2500 microseconds for sensor outputs to go low
+#define EMITTER_PIN   QTR_NO_EMITTER_PIN     // emitter is controlled by digital pin 2, jk not
+// sensors 0 through 7 are connected to digital pins 3 through 10, respectively
+QTRSensorsRC qtrrc((unsigned char[]) {
+  11, 6, 5, 4, 3, 2
+},
+NUM_SENSORS, TIMEOUT, EMITTER_PIN);
+unsigned int sensorValues[NUM_SENSORS];
+
+
+// Motor driver
+DRV8835MotorShield motors;
+unsigned short speed = 1000;
+// uses pins 10, 9, 8, 7
+
+int distLeft, distRight, distCenter;
+int state;
+
+
+void setup()
+{
+  Serial.begin(115200);
+  Wire.begin();
+  // wait 2 seconds
+  delay(2000);
+
+  pinMode(XSHUT_pinLeft, OUTPUT);
+  pinMode(XSHUT_pinCenter, OUTPUT);
+
+  sensorA.setAddress(sensorA_newAddress);
+  pinMode(XSHUT_pinLeft, INPUT);
+  delay(10);
+  sensorB.setAddress(sensorB_newAddress);
+  pinMode(XSHUT_pinCenter, INPUT);
+  delay(10);
+
+  sensorA.init();
+  sensorC.init();
+  sensorB.init();
+
+  sensorA.setTimeout(500);
+  sensorB.setTimeout(500);
+  sensorC.setTimeout(500);
+
+  sensorA.startContinuous();
+  sensorB.startContinuous();
+  sensorC.startContinuous();
+
+  // Motors
+  motors.flipM1(true);
+}
+
+void loop()
+{
+  qtrrc.read(sensorValues);
+
+  distLeft = sensorA.readRangeContinuousMillimeters();
+  distRight = sensorC.readRangeContinuousMillimeters();
+  distCenter = sensorB.readRangeContinuousMillimeters();
+
+//  if (distLeft > 50) {
+//    motors.setSpeeds(speed, speed);
+//  } else {
+//    motors.setSpeeds(speed, -speed);
+//  }
+
+Serial.print(distLeft);
+Serial.print(",");
+Serial.print(distCenter);
+Serial.print(",");
+Serial.print(distRight);
+Serial.println();
+
+}
