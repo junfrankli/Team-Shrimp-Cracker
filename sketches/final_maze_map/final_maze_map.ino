@@ -287,6 +287,10 @@ SQUARE * pop (SQUARE **head) {
 }
 
 //NEEDS TO BE UDPATED
+bool detectTone() {
+  //return true if tone is detected, false otherwise
+}
+
 bool detectWall(int dir) {
   if (dir == 2)
     return false;
