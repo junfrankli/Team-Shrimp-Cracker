@@ -308,3 +308,69 @@ void goForwardOneSquare() {}
 void turnRight() {}
 
 void turnLeft() {}
+
+
+//read from adc0 and do fft
+int fft() {
+    cli();  // UDRE interrupt slows this way down on arduino1.0
+    for (int i = 0 ; i < 512 ; i += 2) { // save 256 samples
+      while(!(ADCSRA & 0x10)); // wait for adc to be ready
+      ADCSRA = 0xf5; // restart adc
+      byte m = ADCL; // fetch adc data
+      byte j = ADCH;
+      int k = (j << 8) | m; // form into an int
+      k -= 0x0200; // form into a signed int
+      k <<= 6; // form into a 16b signed int
+      fft_input[i] = k; // put real data into even bins
+      fft_input[i+1] = 0; // set odd bins to 0
+    }
+    fft_window(); // window the data for better frequency response
+    fft_reorder(); // reorder the data before doing the fft
+    fft_run(); // process the data in the fft
+    fft_mag_log(); // take the output of the fft
+    sei(); // turns interrupts back on
+    return treasureDetect();
+}
+
+//treasure detection
+//return 0 if no treasure, 1 if 7kHz, 2 if 12kHz, 3 if 17kHz
+int treasureDetect() {
+  int treasure_7;
+  int treasure_12;
+  int treasure_17;
+  int max_7_bin = 0;
+  int threshold = 40;
+  for (int i = 0; i < 256; i++) {
+    Serial.println (i);
+    Serial.println ("DONE with fft");
+  }
+    for (int i = 46; i < 50; i++) {
+      int x = (int) fft_log_out[i];
+      if (x > max_7_bin)
+        max_7_bin = x;
+    }
+    int max_12_bin = 0;
+    for (int i = 80; i < 83; i++) {
+      int x = (int) fft_log_out[i];
+      if(x > max_12_bin) 
+        max_12_bin = x;
+    }
+    int max_17_bin = 0;
+    for (int i = 113; i < 116; i++) {
+      int x = (int) fft_log_out[i];
+      if (x > max_17_bin)
+        max_17_bin = x;
+    }
+    if (max_17_bin > max_12_bin && max_17_bin > max_7_bin) {
+      if (max_17_bin > threshold) 
+       return 3;
+    }
+    else if (max_12_bin > max_7_bin) {
+      if (max_12_bin > threshold)  
+       return 2;
+    }
+    else 
+      if (max_7_bin > threshold)
+        return 1;
+    return 0;
+}
