@@ -1,5 +1,5 @@
-int x0 = 0;
-int x1 = 1;
+int x0 = A5;
+int x1 = A4;
 int y0 = 2;
 int y1 = 3;
 int y2 = 4;
@@ -7,10 +7,10 @@ int rw = 5;
 int lw = 6;
 int dw = 7;
 int uw = 8;
-int t1 = A4;
-int t2 = A3;
-int t3 = A2;
-int done = A1;
+int t1 = A3;
+int t2 = A2;
+int t3 = A1;
+//int done = A1;
 int valid = A0; 
 
 void setup() {
@@ -27,7 +27,7 @@ void setup() {
   pinMode(t1,OUTPUT);
   pinMode(t2,OUTPUT);
   pinMode(t3,OUTPUT);
-  pinMode(done,OUTPUT);
+  //pinMode(done,OUTPUT);
   pinMode(valid,OUTPUT);
 }
 
@@ -44,7 +44,7 @@ void loop() {
   digitalWrite(t1,LOW);
   digitalWrite(t2,LOW);
   digitalWrite(t3,LOW);
-  digitalWrite(done,LOW);
+  //digitalWrite(done,LOW);
   digitalWrite(valid,LOW);
   delay(1000);
   digitalWrite(valid,HIGH);
@@ -107,7 +107,7 @@ void loop() {
   digitalWrite(y0,LOW);
   digitalWrite(uw,LOW);
   digitalWrite(dw,HIGH);
-  digitalWrite(done,HIGH);
+  //digitalWrite(done,HIGH);
   digitalWrite(valid,HIGH);
   delay(100);
   digitalWrite(valid,LOW);

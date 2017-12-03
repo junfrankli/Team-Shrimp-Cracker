@@ -2,8 +2,8 @@
 #include "nRF24L01.h"
 #include "RF24.h"
 
-int x0 = 0;
-int x1 = 1;
+int x0 = A5;
+int x1 = A4;
 int y0 = 2;
 int y1 = 3;
 int y2 = 4;
@@ -11,10 +11,9 @@ int rw = 5;
 int lw = 6;
 int dw = 7;
 int uw = 8;
-int t1 = A4;
-int t2 = A3;
-int t3 = A2;
-int done = A1;
+int t1 = A3;
+int t2 = A2;
+int t3 = A1;
 int valid = A0; 
 
 
@@ -48,8 +47,8 @@ void setup() {
   pinMode(t1,OUTPUT);
   pinMode(t2,OUTPUT);
   pinMode(t3,OUTPUT);
-  pinMode(done,OUTPUT);
   pinMode(valid,OUTPUT);
+  //pinMode(valid,OUTPUT);
 
 
   Serial.begin(115200);
@@ -97,16 +96,16 @@ void loop() {
       }
 
       // First, stop listening so we can send packet
-      radio.stopListening();
+      //radio.stopListening();
 
       // Send the final one back.
-        radio.write( &packet, sizeof(int) );
+      //radio.write( &packet, sizeof(int) );
       //printf("Sent response.\n\r");
 
       sendPacket(packet);
       
       // Now, resume listening so we catch the next packets.
-      radio.startListening();
+      //radio.startListening();
     } 
 }
 
@@ -137,26 +136,6 @@ void sendPacket(int packet) {
 }
 
 void setPins(int x, int y, int rwp, int lwp, int dwp, int uwp, int t1p, int t2p, int t3p, int donep) {
-  Serial.print("x ");
-  Serial.print(x);
-  Serial.print(" y ");
-  Serial.print(y);
-  Serial.print(" rw ");
-  Serial.print(rwp);
-  Serial.print(" lw ");
-  Serial.print(lwp);
-  Serial.print(" dw ");
-  Serial.print(dwp);
-  Serial.print(" uw ");
-  Serial.print(uwp);
-  Serial.print(" t1 ");
-  Serial.print(t1p);
-  Serial.print(" t2 ");
-  Serial.print(t2p);
-  Serial.print(" t3 ");
-  Serial.print(t3p);
-  Serial.print(" done ");
-  Serial.println(donep);
   if (x == 0) {
     digitalWrite(x0, LOW);
     digitalWrite(x1, LOW);
@@ -193,48 +172,50 @@ void setPins(int x, int y, int rwp, int lwp, int dwp, int uwp, int t1p, int t2p,
     digitalWrite(y0, LOW);
   }
 
-  if (rwp)
-    digitalWrite(rwp, HIGH);
+  if (rwp) {
+    digitalWrite(rw, HIGH);
+  }
   else
-    digitalWrite(rwp, LOW);
+    digitalWrite(rw, LOW);
   
   if (lwp)
-    digitalWrite(lwp, HIGH);
+    digitalWrite(lw, HIGH);
   else
-    digitalWrite(lwp, LOW);
+    digitalWrite(lw, LOW);
 
   if (dwp)
-    digitalWrite(dwp, HIGH);
+    digitalWrite(dw, HIGH);
   else
-    digitalWrite(dwp, LOW);
+    digitalWrite(dw, LOW);
 
   if (uwp)
-    digitalWrite(uwp, HIGH);
+    digitalWrite(uw, HIGH);
   else
-    digitalWrite(uwp, LOW);
+    digitalWrite(uw, LOW);
 
   if (t1p)
-   digitalWrite(t1p, HIGH);
+   digitalWrite(t1, HIGH);
   else
-    digitalWrite(t1p, LOW);
+    digitalWrite(t1, LOW);
 
   if (t2p)
-    digitalWrite(t2p, HIGH);
+    digitalWrite(t2, HIGH);
   else
-    digitalWrite(t2p, LOW);
+    digitalWrite(t2, LOW);
 
-  if (t3p)
-    digitalWrite(t3p, HIGH);
-  else
-    digitalWrite(t3p, LOW);
+  if (t3p) {
+    digitalWrite(t1, HIGH);
+    digitalWrite(t2, HIGH);
+  }
 
-  if (donep)
-    digitalWrite(done, HIGH);
-  else
-    digitalWrite(done, LOW);
+  if (donep) {
+    digitalWrite(y2, HIGH);
+    digitalWrite(y1, HIGH);
+    digitalWrite(y0, HIGH);
+  }
     
   digitalWrite(valid, HIGH);
-  delay(1000);
+  delay(100);
   digitalWrite(valid, LOW);
 }
 

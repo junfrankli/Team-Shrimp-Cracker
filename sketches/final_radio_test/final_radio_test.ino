@@ -59,22 +59,22 @@ void loop() {
   delay (1000);
   sendMazePacket (0, 1, 0, 0, 0, 0, 0, 0, 0, 0);
   delay (1000);
-  sendMazePacket (0, 2, 0, 0, 0, 0, 0, 0, 0, 0);
+  sendMazePacket (0, 2, 1, 1, 0, 0, 0, 0, 0, 0);
   delay (1000);
-  sendMazePacket (0, 3, 0, 0, 0, 0, 0, 1, 0, 0);
+  sendMazePacket (0, 3, 1, 1, 0, 0, 0, 1, 0, 0);
   delay (1000);
-  sendMazePacket (0, 4, 0, 0, 0, 0, 1, 0, 0, 0);
+  sendMazePacket (0, 4, 1, 1, 0, 0, 1, 0, 0, 0);
   delay (1000);
-  sendMazePacket (0, 3, 0, 0, 0, 0, 0, 0, 0, 0);
+  sendMazePacket (0, 3, 1, 1, 0, 0, 0, 1, 0, 0);
   delay (1000);
-  sendMazePacket (0, 2, 0, 0, 0, 0, 0, 0, 0, 0);
+  sendMazePacket (0, 2, 1, 1, 0, 0, 0, 0, 0, 0);
   delay (1000);
   sendMazePacket (0, 1, 0, 0, 0, 0, 0, 0, 0, 0);
   delay (1000);
-  sendMazePacket (1, 1, 0, 0, 0, 0, 0, 0, 0, 0);
+  sendMazePacket (1, 1, 1, 0, 0, 1, 0, 0, 0, 0);
   delay (1000);
-  sendMazePacket (1, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-  delay (10000);
+  sendMazePacket (1, 0, 1, 0, 0, 0, 0, 0, 0, 0);
+  delay (1000);
 }
 
 void sendMazePacket(int x, int y, int rw, int lw, int dw, int uw, int t1, int t2, int t3, int done) {
@@ -97,11 +97,12 @@ void sendRadioPacket(int packet) {
   bool ok = radio.write( &packet, sizeof(int));
   Serial.println("attempting to write a packet");
   if (!ok) {
-    //failed to send packet
-    Serial.println("failed");
+    //failed to send
+    sendRadioPacket(packet);
+    
   }
   //check for response
-  radio.startListening();
+  /*radio.startListening();
   unsigned long started_waiting_at = millis();
   bool timeout = false;
   while ( ! radio.available() && ! timeout )
@@ -113,6 +114,6 @@ void sendRadioPacket(int packet) {
     Serial.println("timeout");
     //sendRadioPacket(packet);
   }
-  radio.stopListening();
+  radio.stopListening();*/
 }
 
