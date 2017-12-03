@@ -8,7 +8,7 @@
 #include <VL53L0X.h>
 #include <DRV8835MotorShield.h>
 #include <QTRSensors.h>
-//#include <SPI.h>
+#include <SPI.h>
 //#include "nRF24L01.h"
 //#include "RF24.h"
 
@@ -43,57 +43,43 @@ DRV8835MotorShield motors;
 
 // global variables
 int distLeft, distRight, distCenter, pos;
-int leftSpeed, rightSpeed, lastPos, integral, power_difference;
-
-char state;
+int leftSpeed, rightSpeed, lastPos, integral;
 
 
 void setup()
-{ 
+{
   Wire.begin();
-    //Serial.println("wire");
 
   pinMode(XSHUT_pinA, OUTPUT);
-  digitalWrite(XSHUT_pinA, LOW);
   pinMode(XSHUT_pinB, OUTPUT);
-  digitalWrite(XSHUT_pinB, LOW);
-//  Serial.println("output mode");
 
-//  sensorA.setAddress(sensorA_newAddress);
-//  pinMode(XSHUT_pinA, INPUT);
-//  delay(10);
-//  sensorB.setAddress(sensorB_newAddress);
-//  pinMode(XSHUT_pinB, INPUT);
-//  delay(10);
-//    Serial.println("address swap");
+  sensorA.setAddress(sensorA_newAddress);
+  pinMode(XSHUT_pinA, INPUT);
+  delay(10);
+  sensorB.setAddress(sensorB_newAddress);
+  pinMode(XSHUT_pinB, INPUT);
+  delay(10);
 
-  
   Serial.begin(115200);
-  Serial.println("Initializing Serial");
   // wait 2 seconds
   delay(2000);
 
-
-//  sensorA.init();
-//  sensorB.init();
-    sensorC.init();
-    Serial.println("Init rangesensor");
-
+  sensorA.init();
+  sensorB.init();
+  sensorC.init();
 
   sensorA.setTimeout(500);
-  //sensorB.setTimeout(500);
+  sensorB.setTimeout(500);
   sensorC.setTimeout(500);
 
   sensorA.startContinuous();
-  //sensorB.startContinuous();
+  sensorB.startContinuous();
   sensorC.startContinuous();
-  Serial.println("Initializing Ranging Sensors");
 
   // Motors
   motors.flipM1(true);
   // use motors with motors.setSpeeds(rightSpeed, leftSpeed);
 }
-
 
 void loop()
 {
@@ -121,68 +107,92 @@ void loop()
   }
 
   // read distance sensors
-//distLeft = sensorB.readRangeContinuousMillimeters();
+  distLeft = sensorB.readRangeContinuousMillimeters();
   distRight = sensorA.readRangeContinuousMillimeters();
   distCenter = sensorC.readRangeContinuousMillimeters();
 
-
-
-  //  // state machine logic
-  //  switch (state) {
-  //    case 0:
-  //      // waiting for mic tone to start mapping
-  //      if (0) {
-  //        state++;
-  //      }
-  //      break;
-  //    case 1:
-  //      // mapping
-  //
-  //      break;
-  //
-  //  }
-}
-
-
-// DRIVE FORWARD ONE SQUARE
-void forwardOne() {
-
-  // calc PIDs
-  int derivative = pos - lastPos;
-  integral = constrain(integral + pos, -50, 50);
-  lastPos = pos;
-
-  power_difference = pos / 20 ; // + integral / 10000 + derivative * 1.5;
-
-  const int max = 200;
-  if (power_difference > max)
-    power_difference = max;
-  if (power_difference < -max)
-    power_difference = -max;
-
-  if (power_difference < 0) {
-    //motors.setSpeeds(max + power_difference, max);
-  }  else {
-    //motors.setSpeeds(max, max - power_difference);
-  }
-}
-
-// DEUGGING PRINT STATEMENTS
-void debug() {
   Serial.print("Left: ");
   Serial.print(distLeft);
   Serial.print("\t Center: ");
   Serial.print(distCenter);
   Serial.print("\t Right: ");
   Serial.print(distRight);
-  Serial.print("\t   RAW: ");
-  for (char i = 3; i >= 0; i--) {
-    Serial.print(sensorValues[i]);
-    Serial.print("\t");
-  }
   Serial.print("\t   POSITION: ");
   Serial.print(pos);
   Serial.print("\t   POWER: ");
   Serial.print(power_difference);
   Serial.println();
+  //  for (char i = 3; i >= 0; i--) {
+  //    Serial.print(sensorValues[i]);
+  //    Serial.print("\t");
+  //  }
+
+
+
+  //driveForward();
+  motors.setSpeeds(forwardFull, forwardFull);
+
 }
+
+//void turnRight() {
+//  while (state != 110) {
+//    qtrrc.read(sensorValues);
+//    state = (sensorValues[0] > THRESHOLD) + 10 * (sensorValues[1] > THRESHOLD) + 100 * (sensorValues[2] > THRESHOLD) + 1000 * (sensorValues[3] > THRESHOLD);
+//    motors.setSpeeds(-forwardMed, forwardFull);
+//    delay(2);
+//  }
+//}
+//
+//void turnLeft() {
+//  while (state != 110) {
+//    qtrrc.read(sensorValues);
+//    state = (sensorValues[0] > THRESHOLD) + 10 * (sensorValues[1] > THRESHOLD) + 100 * (sensorValues[2] > THRESHOLD) + 1000 * (sensorValues[3] > THRESHOLD);
+//    motors.setSpeeds(forwardFull, -forwardMed);
+//    delay(2);
+//  }
+//}
+//
+//void driveForward() {
+//  switch (state) {
+//    case 1111:
+//      if (distLeft > 200) {
+//        turnLeft();
+//      } else if (distCenter > 200) {
+//        // do nothing, continue straight
+//      } else { //  if(distRight > 200) {
+//        turnRight();
+//      }
+//      break;
+//    case 1:
+//      // hardest right
+//      motors.setSpeeds(forwardSlow, forwardFull);
+//      break;
+//    case 1000:
+//      // hardest left
+//      motors.setSpeeds(forwardFull, forwardSlow);
+//      break;
+//    case 11:
+//      // hard right
+//      motors.setSpeeds(forwardMed, forwardFull);
+//      break;
+//    case 1100:
+//      // hard left
+//      motors.setSpeeds(forwardFull, forwardMed);
+//      break;
+//    case 10:
+//      // slight right
+//      motors.setSpeeds(forwardAlmost, forwardFull);
+//      break;
+//    case 100:
+//      // slight left
+//      motors.setSpeeds(forwardFull, forwardAlmost);
+//      break;
+//    case 110:
+//      // go straight
+//      motors.setSpeeds(forwardFull, forwardFull);
+//      break;
+//      //    case 1111:
+//      //      turnRight();
+//      //      break;
+//  }
+//}

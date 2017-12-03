@@ -8,7 +8,7 @@
 #include <VL53L0X.h>
 #include <DRV8835MotorShield.h>
 #include <QTRSensors.h>
-//#include <SPI.h>
+#include <SPI.h>
 //#include "nRF24L01.h"
 //#include "RF24.h"
 
@@ -49,43 +49,36 @@ char state;
 
 
 void setup()
-{ 
-  Wire.begin();
-    //Serial.println("wire");
+{
 
-  pinMode(XSHUT_pinA, OUTPUT);
-  digitalWrite(XSHUT_pinA, LOW);
-  pinMode(XSHUT_pinB, OUTPUT);
-  digitalWrite(XSHUT_pinB, LOW);
-//  Serial.println("output mode");
-
-//  sensorA.setAddress(sensorA_newAddress);
-//  pinMode(XSHUT_pinA, INPUT);
-//  delay(10);
-//  sensorB.setAddress(sensorB_newAddress);
-//  pinMode(XSHUT_pinB, INPUT);
-//  delay(10);
-//    Serial.println("address swap");
-
-  
   Serial.begin(115200);
   Serial.println("Initializing Serial");
   // wait 2 seconds
   delay(2000);
 
+  
+  Wire.begin();
 
-//  sensorA.init();
-//  sensorB.init();
-    sensorC.init();
-    Serial.println("Init rangesensor");
+  pinMode(XSHUT_pinA, OUTPUT);
+  pinMode(XSHUT_pinB, OUTPUT);
 
+  sensorA.setAddress(sensorA_newAddress);
+  pinMode(XSHUT_pinA, INPUT);
+  delay(10);
+  sensorB.setAddress(sensorB_newAddress);
+  pinMode(XSHUT_pinB, INPUT);
+  delay(10);
+
+  sensorA.init();
+  sensorB.init();
+  sensorC.init();
 
   sensorA.setTimeout(500);
-  //sensorB.setTimeout(500);
+  sensorB.setTimeout(500);
   sensorC.setTimeout(500);
 
   sensorA.startContinuous();
-  //sensorB.startContinuous();
+  sensorB.startContinuous();
   sensorC.startContinuous();
   Serial.println("Initializing Ranging Sensors");
 
@@ -121,7 +114,7 @@ void loop()
   }
 
   // read distance sensors
-//distLeft = sensorB.readRangeContinuousMillimeters();
+  distLeft = sensorB.readRangeContinuousMillimeters();
   distRight = sensorA.readRangeContinuousMillimeters();
   distCenter = sensorC.readRangeContinuousMillimeters();
 

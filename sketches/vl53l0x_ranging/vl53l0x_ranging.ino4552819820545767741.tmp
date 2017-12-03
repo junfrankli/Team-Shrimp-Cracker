@@ -13,7 +13,7 @@
 // default VL53L0x address 41
 #define SensorLeft_newAddress 42
 #define SensorRight_newAddress 43
-VL53L0X sensorRight; //, sensorRight, sensorCenter;
+VL53L0X sensorLeft; //, sensorRight, sensorCenter;
 
 
 void setup()
@@ -22,8 +22,7 @@ void setup()
 //  pinMode(XSHUT_pinRight, OUTPUT);
   pinMode(XSHUT_pinCenter, OUTPUT);
 
-//delay(2000);
-//  Serial.begin(9600);
+  Serial.begin(9600);
   Wire.begin();
 
   //sensorLeft.setAddress(SensorLeft_newAddress);
@@ -34,23 +33,23 @@ void setup()
   //delay(10);
 
 //  sensorLeft.init();
-  sensorRight.init();
-//  sensorCenter.init();
+  //sensorRight.init();
+  sensorCenter.init();
 
 //  sensorLeft.setTimeout(500);
   sensorRight.setTimeout(500);
 //  sensorCenter.setTimeout(500);
 
 //  sensorLeft.startContinuous();
-  sensorRight.startContinuous();
+  //sensorRight.startContinuous();
 //  sensorCenter.startContinuous();
 }
 
 void loop()
 {
-//  Serial.println(sensorLeft.readRangeContinuousMillimeters());
+  Serial.println(sensorLeft.readRangeContinuousMillimeters());
   //Serial.print(",");              //seperator
   //Serial.print(sensorCenter.readRangeContinuousMillimeters());
-//  Serial.print(",");              //seperator
-  Serial.println(sensorRight.readRangeContinuousMillimeters());
+  Serial.print(",");              //seperator
+  //Serial.println(sensorRight.readRangeContinuousMillimeters());
 }
