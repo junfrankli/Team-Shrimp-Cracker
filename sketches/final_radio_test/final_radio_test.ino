@@ -2,6 +2,7 @@
 #include "nRF24L01.h"
 #include "RF24.h"
 
+// Radio pins
 RF24 radio(9,10);
 
 //
@@ -73,7 +74,17 @@ void loop() {
   delay (1000);
   sendMazePacket (1, 1, 1, 0, 0, 1, 0, 0, 0, 0);
   delay (1000);
-  sendMazePacket (1, 0, 1, 0, 0, 0, 0, 0, 0, 0);
+  sendMazePacket (1, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+  delay (1000);
+  sendMazePacket (2, 0, 1, 0, 0, 0, 0, 0, 0, 0);
+  delay (1000);
+  sendMazePacket (2, 1, 1, 0, 0, 0, 0, 0, 0, 0);
+  delay (1000);
+  sendMazePacket (2, 2, 1, 1, 0, 0, 0, 0, 0, 0);
+  delay (1000);
+  sendMazePacket (2, 3, 1, 1, 0, 1, 0, 0, 1, 0);
+  delay (1000);
+  sendMazePacket (2, 4, 1, 1, 0, 0, 0, 0, 0, 1);
   delay (1000);
 }
 

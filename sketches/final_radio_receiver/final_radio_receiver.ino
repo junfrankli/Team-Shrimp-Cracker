@@ -13,7 +13,7 @@ int dw = 7;
 int uw = 8;
 int t1 = A3;
 int t2 = A2;
-int t3 = A1;
+//int t3 = A1;
 int valid = A0; 
 
 
@@ -46,9 +46,10 @@ void setup() {
   pinMode(uw,OUTPUT);
   pinMode(t1,OUTPUT);
   pinMode(t2,OUTPUT);
-  pinMode(t3,OUTPUT);
+  //pinMode(t3,OUTPUT);
   pinMode(valid,OUTPUT);
   //pinMode(valid,OUTPUT);
+  digitalWrite (valid, LOW);
 
 
   Serial.begin(115200);
@@ -196,7 +197,7 @@ void setPins(int x, int y, int rwp, int lwp, int dwp, int uwp, int t1p, int t2p,
   if (t1p)
    digitalWrite(t1, HIGH);
   else
-    digitalWrite(t1, LOW);
+    digitalWrite(t1, LOW); 
 
   if (t2p)
     digitalWrite(t2, HIGH);
@@ -204,16 +205,24 @@ void setPins(int x, int y, int rwp, int lwp, int dwp, int uwp, int t1p, int t2p,
     digitalWrite(t2, LOW);
 
   if (t3p) {
+    Serial.println("here");
     digitalWrite(t1, HIGH);
     digitalWrite(t2, HIGH);
   }
 
   if (donep) {
-    digitalWrite(y2, HIGH);
-    digitalWrite(y1, HIGH);
+    digitalWrite(x0, HIGH);
+    digitalWrite(x1, HIGH);
     digitalWrite(y0, HIGH);
+    digitalWrite(y1, HIGH);
+    digitalWrite(y2, HIGH);
+    digitalWrite(rw, HIGH);
+    digitalWrite(lw, HIGH);
+    digitalWrite(uw, HIGH);
+    digitalWrite(dw, HIGH);
+    digitalWrite(t1, HIGH);
+    digitalWrite(t2, HIGH);
   }
-    
   digitalWrite(valid, HIGH);
   delay(100);
   digitalWrite(valid, LOW);
