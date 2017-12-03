@@ -69,13 +69,26 @@ void loop() {
   
   visited = push(visited, 0, 0);
   path = push(path, 0, 0);
-  if (!detectWall(3))
+  wall3 = detectWall(3);
+  wall0 = detectWall(0);
+  if (!wall3)
     frontier = push(frontier, 1, 0); 
-  if (!detectWall(0)) 
+  if (!wall0) 
     frontier = push(frontier, 0, 1);
 
   //check for treasures
+  int treasure = detect_treasure ();
+  int t1 = 0;
+  int t2 = 0;
+  int t3 = 0;
+  if (treasure == 1)
+    t1 = 1;
+  else if (treasure == 2)
+    t2 = 1;
+  else if (treasure == 3)
+    t3 = 1;
   //send maze packet
+  sendMazePacket(0, 0, wall3, 1, 1, wall0, t1, t2, t3, 0);
   //DFS 
   while (frontier != NULL) {
     SQUARE* frontier_loc = pop(&frontier);
@@ -222,6 +235,16 @@ void loop() {
           frontier = push(frontier, goalX, goalY);
       } 
       //check for treasures
+      int treasure = detect_treasure ();
+      int t1 = 0;
+      int t2 = 0;
+      int t3 = 0;
+      if (treasure == 1)
+        t1 = 1;
+      else if (treasure == 2)
+        t2 = 1;
+      else if (treasure == 3)
+        t3 = 1;
       //send maze packet
       int rw = 0;
       int lw = 0;
@@ -254,11 +277,12 @@ void loop() {
           uw = wall3;
           break;
       }
-      
+      sendMazePacket(curX, curY, rw, lw, dw, uw, t1, t2, t3, 0);
       //free memory
       free(frontier_loc);
     }
   }
+  sendMazePacket(0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
 }
 
 //moves robot one square based on current position and heading
@@ -420,9 +444,13 @@ void turnRight() {}
 
 void turnLeft() {}
 
-
+//checks for treasures
+//return 0 if no treasure, 1 if 7kHz, 2 if 12kHz, 3 if 17kHz
+int detect_treasure() {
+  
+}
 //read from adc0 and do fft
-int fft() {
+/*int fft() {
     cli();  // UDRE interrupt slows this way down on arduino1.0
     for (int i = 0 ; i < 512 ; i += 2) { // save 256 samples
       while(!(ADCSRA & 0x10)); // wait for adc to be ready
@@ -484,4 +512,4 @@ int treasureDetect() {
       if (max_7_bin > threshold)
         return 1;
     return 0;
-}
+}*'/
