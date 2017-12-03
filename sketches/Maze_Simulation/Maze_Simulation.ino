@@ -7,11 +7,11 @@ int rw = 5;
 int lw = 6;
 int dw = 7;
 int uw = 8;
-int t1 = 9;
-int t2 = 10;
-int t3 = 11;
-int done = 12;
-int valid = 13; 
+int t1 = A4;
+int t2 = A3;
+int t3 = A2;
+int done = A1;
+int valid = A0; 
 
 void setup() {
   // put your setup code here, to run once:

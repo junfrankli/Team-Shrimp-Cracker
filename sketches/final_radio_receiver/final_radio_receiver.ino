@@ -11,14 +11,15 @@ int rw = 5;
 int lw = 6;
 int dw = 7;
 int uw = 8;
-int t1 = 9;
-int t2 = 10;
-int t3 = 11;
-int done = 12;
-int valid = 13; 
+int t1 = A4;
+int t2 = A3;
+int t3 = A2;
+int done = A1;
+int valid = A0; 
 
-//set up radio on A0 and A1
-RF24 radio(A0, A1);
+
+//set up radio on 9 and 10
+RF24 radio(9,10);
 
 // Topology
 
@@ -49,8 +50,9 @@ void setup() {
   pinMode(t3,OUTPUT);
   pinMode(done,OUTPUT);
   pinMode(valid,OUTPUT);
-  digitalWrite(valid, LOW);
 
+
+  Serial.begin(115200);
    //
   // Setup and configure rf radio
   //
@@ -70,7 +72,7 @@ void setup() {
 
   //role is role_pong_back
   radio.openWritingPipe(pipes[1]);
-  radio.openReadingPipe(1,pipes[0]);
+  radio.openReadingPipe(1, pipes[0]);
 
   radio.startListening();
 }
@@ -105,6 +107,7 @@ void loop() {
       
       // Now, resume listening so we catch the next packets.
       radio.startListening();
+    } 
 }
 
 void sendPacket(int packet) {
@@ -119,7 +122,7 @@ void sendPacket(int packet) {
   int t3;
   int done;
 
-  x = (packet & (3 << 16)) >> 16;
+  x = (packet & (3 << 12)) >> 12;
   y = (packet & (7 << 8)) >> 8;
   rw = (packet & (1 << 7)) >> 7;
   lw = (packet & (1 << 6)) >> 6;
@@ -134,6 +137,26 @@ void sendPacket(int packet) {
 }
 
 void setPins(int x, int y, int rwp, int lwp, int dwp, int uwp, int t1p, int t2p, int t3p, int donep) {
+  Serial.print("x ");
+  Serial.print(x);
+  Serial.print(" y ");
+  Serial.print(y);
+  Serial.print(" rw ");
+  Serial.print(rwp);
+  Serial.print(" lw ");
+  Serial.print(lwp);
+  Serial.print(" dw ");
+  Serial.print(dwp);
+  Serial.print(" uw ");
+  Serial.print(uwp);
+  Serial.print(" t1 ");
+  Serial.print(t1p);
+  Serial.print(" t2 ");
+  Serial.print(t2p);
+  Serial.print(" t3 ");
+  Serial.print(t3p);
+  Serial.print(" done ");
+  Serial.println(donep);
   if (x == 0) {
     digitalWrite(x0, LOW);
     digitalWrite(x1, LOW);
@@ -178,7 +201,7 @@ void setPins(int x, int y, int rwp, int lwp, int dwp, int uwp, int t1p, int t2p,
   if (lwp)
     digitalWrite(lwp, HIGH);
   else
-    digitalWrite(rwp, LOW);
+    digitalWrite(lwp, LOW);
 
   if (dwp)
     digitalWrite(dwp, HIGH);
@@ -191,7 +214,7 @@ void setPins(int x, int y, int rwp, int lwp, int dwp, int uwp, int t1p, int t2p,
     digitalWrite(uwp, LOW);
 
   if (t1p)
-    digitalWrite(t1p, HIGH);
+   digitalWrite(t1p, HIGH);
   else
     digitalWrite(t1p, LOW);
 
@@ -211,7 +234,7 @@ void setPins(int x, int y, int rwp, int lwp, int dwp, int uwp, int t1p, int t2p,
     digitalWrite(done, LOW);
     
   digitalWrite(valid, HIGH);
-  delay(1);
+  delay(1000);
   digitalWrite(valid, LOW);
 }
 
