@@ -3,7 +3,7 @@
 #include "RF24.h"
 
 // Radio pins
-RF24 radio(9,10);
+RF24 radio(4,3);
 
 //
 // Topology
@@ -109,6 +109,7 @@ void sendRadioPacket(int packet) {
   Serial.println("attempting to write a packet");
   if (!ok) {
     //failed to send
+    Serial.println ("failed");
     sendRadioPacket(packet);
     
   }
