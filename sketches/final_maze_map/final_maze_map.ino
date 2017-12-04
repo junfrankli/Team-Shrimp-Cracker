@@ -5,17 +5,18 @@
 #include <SPI.h>
 #include "nRF24L01.h"
 #include "RF24.h"
-#include <FFT.h> 
+#define LOG_OUT 1 // use the log output function
+#define FFT_N 256 // set to 256 point fft
+
+#include <FFT.h>
 
 //turns
 #define turn90 325
 #define turn180 750
-//Treasure detection 
-#define LOG_OUT 1 // use the log output function
-#define FFT_N 256 // set to 256 point fft
+//Treasure detection
 
 //speeds
-#define MAXSPEED 300
+#define MAXSPEED 600
 
 // Distance Sensors
 #define XSHUT_pinA 6
@@ -40,9 +41,9 @@ int pos;
 int leftSpeed, rightSpeed, lastPos, integral, power_difference;
 
 char state, numonline, go;
-  
+
 // Radio pins
-RF24 radio(4,3);
+RF24 radio(4, 3);
 
 // Motor driver
 DRV8835MotorShield motors;
@@ -82,12 +83,8 @@ void setup() {
 
   Serial.begin(115200);
 
-  //Treasure setup
-  /*TIMSK0 = 0; // turn off timer0 for lower jitter
-  ADCSRA = 0xe5; // set the adc to free running mode
-  ADMUX = 0x40; // use adc0
-  DIDR0 = 0x01; // turn off the digital input for adc0*/
-  
+  pinMode(A4, INPUT);
+
   pinMode(XSHUT_pinA, OUTPUT);
   digitalWrite(XSHUT_pinA, LOW);
   pinMode(XSHUT_pinB, OUTPUT);
@@ -101,7 +98,7 @@ void setup() {
   pinMode(XSHUT_pinB, INPUT);
   delay(10);
 
-  
+
   Serial.println("Initializing Serial");
   // wait 2 seconds
   delay(2000);
@@ -129,7 +126,7 @@ void setup() {
   radio.begin();
 
   // optionally, increase the delay between retries & # of retries
-  radio.setRetries(15,15);
+  radio.setRetries(15, 15);
   radio.setAutoAck(true);
   // set the channel
   radio.setChannel(0x50);
@@ -141,7 +138,7 @@ void setup() {
 
   //set up for ping out
   radio.openWritingPipe(pipes[0]);
-  radio.openReadingPipe(1,pipes[1]);
+  radio.openReadingPipe(1, pipes[1]);
 }
 
 void loop() {
@@ -156,7 +153,7 @@ void loop() {
   int curX = 0;
   int curY = 0;
   int heading = 0;
-  
+
   visited = push(visited, 0, 0);
   path = push(path, 0, 0);
   int wall1 = detectWall(1);
@@ -166,8 +163,8 @@ void loop() {
   //Serial.print("Wall 0: ");
   //Serial.println(wall0);
   if (!wall1)
-    frontier = push(frontier, 1, 0); 
-  if (!wall0) 
+    frontier = push(frontier, 1, 0);
+  if (!wall0)
     frontier = push(frontier, 0, 1);
 
   //check for treasures
@@ -183,7 +180,7 @@ void loop() {
     t3 = 1;
   //send maze packet
   sendMazePacket(0, 0, 1, wall1, 1, wall0, t1, t2, t3, 0);
-  //DFS 
+  //DFS
   while (frontier != NULL) {
     SQUARE* frontier_loc = pop(&frontier);
     if (!findsquare(visited, frontier_loc->xPos, frontier_loc->yPos)) {
@@ -192,12 +189,12 @@ void loop() {
         //need to backtrack
         //pop from current path
         SQUARE *next = pop(&path);
-        
+
         //move along current path
         int dir = moveAdjacent(curX, curY, heading, next->xPos, next->yPos);
-        
+
         //update state
-        if (dir == 0) 
+        if (dir == 0)
           curY = curY + 1;
         else if (dir == 1)
           curX = curX + 1;
@@ -205,22 +202,22 @@ void loop() {
           curY = curY - 1;
         else if (dir == 3)
           curX = curX - 1;
-  
+
         sendMazePacket(curX, curY, 0, 0, 0, 0, 0, 0, 0, 0);
         if (dir != -1)
           heading = dir;
-          
+
         //push frontier_loc back
         frontier = frontier_loc;
-        
+
         //free memory
         free(next);
       } else {
         //update current position and heading
-        
+
         //add current position to current path
         path = push(path, curX, curY);
-        
+
         heading = dir;
         if (heading == 0)
           curY = curY + 1;
@@ -230,14 +227,14 @@ void loop() {
           curY = curY - 1;
         else if (heading == 3)
           curX = curX - 1;
-  
+
         Serial.print("Adding to visited: ");
         Serial.print(curX);
         Serial.print(" ");
         Serial.println(curY);
         //add current position to visited
         visited = push(visited, curX, curY);
-        
+
         //detect possible places to go -- if not in visited add to frontier
         int goalX;
         int goalY;
@@ -254,22 +251,22 @@ void loop() {
         Serial.print("Wall 0: ");
         Serial.println(wall0);
         if (!wall3) {
-          switch(heading) {
+          switch (heading) {
             case 0:
-              goalX = curX-1;
+              goalX = curX - 1;
               goalY = curY;
               break;
             case 1:
               goalX = curX;
-              goalY = curY+1;
+              goalY = curY + 1;
               break;
             case 2:
-              goalX = curX+1;
+              goalX = curX + 1;
               goalY = curY;
               break;
             case 3:
               goalX = curX;
-              goalY = curY-1;
+              goalY = curY - 1;
               break;
           }
           if (!findsquare(visited, goalX, goalY)) {
@@ -280,22 +277,22 @@ void loop() {
             frontier = push(frontier, goalX, goalY);
           }
         }
-        if (!wall2){
-          switch(heading) {
+        if (!wall2) {
+          switch (heading) {
             case 0:
               goalX = curX;
-              goalY = curY-1;
+              goalY = curY - 1;
               break;
             case 1:
-              goalX = curX-1;
+              goalX = curX - 1;
               goalY = curY;
               break;
             case 2:
               goalX = curX;
-              goalY = curY+1;
+              goalY = curY + 1;
               break;
             case 3:
-              goalX = curX+1;
+              goalX = curX + 1;
               goalY = curY;
               break;
           }
@@ -306,25 +303,25 @@ void loop() {
             Serial.println(goalY);
             frontier = push(frontier, goalX, goalY);
           }
-          
+
         }
         if (!wall1) {
-          switch(heading) {
+          switch (heading) {
             case 0:
-              goalX = curX+1;
+              goalX = curX + 1;
               goalY = curY;
               break;
             case 1:
               goalX = curX;
-              goalY = curY-1;
+              goalY = curY - 1;
               break;
             case 2:
-              goalX = curX-1;
+              goalX = curX - 1;
               goalY = curY;
               break;
             case 3:
               goalX = curX;
-              goalY = curY+1;
+              goalY = curY + 1;
               break;
           }
           if (!findsquare(visited, goalX, goalY)) {
@@ -336,21 +333,21 @@ void loop() {
           }
         }
         if (!wall0) {
-          switch(heading) {
+          switch (heading) {
             case 0:
               goalX = curX;
-              goalY = curY+1;
+              goalY = curY + 1;
               break;
             case 1:
-              goalX = curX+1;
+              goalX = curX + 1;
               goalY = curY;
               break;
             case 2:
               goalX = curX;
-              goalY = curY-1;
+              goalY = curY - 1;
               break;
             case 3:
-              goalX = curX-1;
+              goalX = curX - 1;
               goalY = curY;
               break;
           }
@@ -361,7 +358,7 @@ void loop() {
             Serial.print(" ");
             Serial.println(goalY);
           }
-        } 
+        }
         //check for treasures
         int treasure = 0; //detect_treasure ();
         int t1 = 0;
@@ -378,8 +375,8 @@ void loop() {
         int lw = 0;
         int dw = 0;
         int uw = 0;
-  
-        switch(heading) {
+
+        switch (heading) {
           case 0:
             rw = wall3;
             lw = wall1;
@@ -408,13 +405,13 @@ void loop() {
         sendMazePacket(curX, curY, rw, lw, dw, uw, t1, t2, t3, 0);
         free(frontier_loc);
       }
-    } else 
-       //free memory
-       free(frontier_loc);
+    } else
+      //free memory
+      free(frontier_loc);
   }
   sendMazePacket(0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
   Serial.println("DONE");
-  delay(1000);
+  while(1);
 }
 
 //moves robot one square based on current position and heading
@@ -428,7 +425,7 @@ int moveAdjacent(int curX, int curY, int heading, int goalX, int goalY) {
   int distY = goalY - curY;
   int dir = -1;
   if (distX == 0) {
-    if (distY == 1) 
+    if (distY == 1)
       dir = 0;
     else if (distY == -1)
       dir = 2;
@@ -448,7 +445,7 @@ int moveAdjacent(int curX, int curY, int heading, int goalX, int goalY) {
           case 1:
             turnLeft(turn90);
             break;
-          case 2: 
+          case 2:
             turnLeft(turn180);
             break;
           case 3:
@@ -461,7 +458,7 @@ int moveAdjacent(int curX, int curY, int heading, int goalX, int goalY) {
           case 0:
             turnRight(turn90);
             break;
-          case 2: 
+          case 2:
             turnLeft(turn90);
             break;
           case 3:
@@ -469,12 +466,12 @@ int moveAdjacent(int curX, int curY, int heading, int goalX, int goalY) {
             break;
         }
         break;
-      case 2: 
+      case 2:
         switch (dir) {
           case 1:
             turnRight(turn90);
             break;
-          case 0: 
+          case 0:
             turnLeft(turn180);
             break;
           case 3:
@@ -487,7 +484,7 @@ int moveAdjacent(int curX, int curY, int heading, int goalX, int goalY) {
           case 1:
             turnLeft(turn180);
             break;
-          case 0: 
+          case 0:
             turnLeft(turn90);
             break;
           case 2:
@@ -497,7 +494,7 @@ int moveAdjacent(int curX, int curY, int heading, int goalX, int goalY) {
         break;
     }
   }
-  
+
   goForwardOneSquare();
   return dir;
 }
@@ -516,7 +513,7 @@ bool findsquare(SQUARE *head, int x, int y) {
     head = head->next;
   }
   return false;
-  
+
 }
 
 SQUARE * push (SQUARE *head, int x, int y) {
@@ -536,7 +533,7 @@ SQUARE * pop (SQUARE **head) {
 //RADIO CODE
 void sendMazePacket(int x, int y, int rw, int lw, int dw, int uw, int t1, int t2, int t3, int done) {
   int packet = 0;
-  packet = packet | ((3-x) << 12);
+  packet = packet | ((3 - x) << 12);
   packet = packet | (y << 8);
   packet = packet | (rw << 7);
   packet = packet | (lw << 6);
@@ -563,18 +560,39 @@ void sendRadioPacket(int packet) {
 //NEEDS TO BE UDPATED
 bool detectTone() {
   //return true if tone is detected and robot should start, false otherwise
-  return 1;
+  //  while(1) {
+  cli();
+  for (int i = 0 ; i < 512 ; i += 2) {
+    fft_input[i] = analogRead(A5); // <-- NOTE THIS LINE
+    fft_input[i + 1] = 0;
+  }
+  fft_window();
+  fft_reorder();
+  fft_run();
+  fft_mag_log();
+  sei();
+  Serial.println("start");
+  for (byte i = 18 ; i < 21 ; i++) {
+    if (fft_log_out[i] > 35) {
+      return true;
+    }
+  }
+  if (analogRead(A4) > 800) {
+    return true;
+  }
+  return false;
+  //  }
 }
 
 bool detectWall(int dir) {
   if (dir == 2)
     return false;
-  //returns true if there is a wall in the specified direction 
+  //returns true if there is a wall in the specified direction
   //directions: 0 for forward, 1 for left, 3 for right
   int wallDist = 0;
   if (dir == 0) {
     for (int i = 0; i < 2; i++) {
-      wallDist += sensorC.readRangeSingleMillimeters(); 
+      wallDist += sensorC.readRangeSingleMillimeters();
     }
   }
   else if (dir == 1) {
@@ -584,14 +602,14 @@ bool detectWall(int dir) {
   }
   else if (dir == 3) {
     for (int i = 0; i < 2; i++) {
-      wallDist += sensorA.readRangeSingleMillimeters(); 
+      wallDist += sensorA.readRangeSingleMillimeters();
     }
   }
   Serial.print("Checking wall ");
   Serial.print(dir);
   Serial.print(" ");
   Serial.println(wallDist);
-  return (wallDist < 1750/5);
+  return (wallDist < 1750 / 5);
 }
 
 void goForwardOneSquare() {
@@ -665,7 +683,7 @@ void goForwardOneSquare() {
         motors.setSpeeds(max, max - power_difference);
       }
     } else {
-      if (numonline < 5) 
+      if (numonline < 5)
         started = 1;
       else {
         motors.setSpeeds(max, max);
@@ -698,14 +716,14 @@ void turnRight(int time) {
   motors.setSpeeds(0, 0);
 }
 /*
-int detect_treasure() {
+  int detect_treasure() {
   int threshold = 50;
   for (int i = 0; i < 10; i++) {
-    
+
   }
-}
-//read from adc0 and do fft
-int fft() {
+  }
+  //read from adc0 and do fft
+  int fft() {
     cli();  // UDRE interrupt slows this way down on arduino1.0
     for (int i = 0 ; i < 512 ; i += 2) { // save 256 samples
       while(!(ADCSRA & 0x10)); // wait for adc to be ready
@@ -723,11 +741,11 @@ int fft() {
     fft_run(); // process the data in the fft
     fft_mag_log(); // take the output of the fft
     sei(); // turns interrupts back on
-}
+  }
 
-//treasure detection
-//return 0 if no treasure, 1 if 7kHz, 2 if 12kHz, 3 if 17kHz
-/*int treasureDetect() {
+  //treasure detection
+  //return 0 if no treasure, 1 if 7kHz, 2 if 12kHz, 3 if 17kHz
+  /*int treasureDetect() {
   int treasure_7;
   int treasure_12;
   int treasure_17;
@@ -745,7 +763,7 @@ int fft() {
     int max_12_bin = 0;
     for (int i = 80; i < 83; i++) {
       int x = (int) fft_log_out[i];
-      if(x > max_12_bin) 
+      if(x > max_12_bin)
         max_12_bin = x;
     }
     int max_17_bin = 0;
@@ -755,15 +773,15 @@ int fft() {
         max_17_bin = x;
     }
     if (max_17_bin > max_12_bin && max_17_bin > max_7_bin) {
-      if (max_17_bin > threshold) 
+      if (max_17_bin > threshold)
        return 3;
     }
     else if (max_12_bin > max_7_bin) {
-      if (max_12_bin > threshold)  
+      if (max_12_bin > threshold)
        return 2;
     }
-    else 
+    else
       if (max_7_bin > threshold)
         return 1;
     return 0;
-}*/
+  }*/
