@@ -31,7 +31,7 @@ int leftSpeed, rightSpeed, lastPos, integral, power_difference;
 char state, numonline, go;
   
 // Radio pins
-RF24 radio(3,4);
+RF24 radio(4,3);
 
 // Motor driver
 DRV8835MotorShield motors;
@@ -502,7 +502,7 @@ void sendMazePacket(int x, int y, int rw, int lw, int dw, int uw, int t1, int t2
   packet = packet | (t3 << 1);
   packet = packet | done;
 
-  //sendRadioPacket(packet);
+  sendRadioPacket(packet);
 }
 
 void sendRadioPacket(int packet) {
@@ -510,6 +510,7 @@ void sendRadioPacket(int packet) {
   Serial.println("attempting to write a packet");
   if (!ok) {
     //failed to send
+    Serial.println("failed to send a packet");
     //sendRadioPacket(packet);
     
   }
@@ -619,7 +620,7 @@ Serial.println("going forward");
       motors.setSpeeds(max, max - power_difference);
     }
     //    }
-    for (char i = 5; i >= 0; i--) {
+    /*for (char i = 5; i >= 0; i--) {
       Serial.print(sensorValues[i]);
       Serial.print("  ");
     }
@@ -627,7 +628,7 @@ Serial.println("going forward");
     Serial.print(pos);
     Serial.print("\t   OUT: ");
     Serial.print(power_difference);
-    Serial.println();
+    Serial.println();*/
   }
   
   while (goforward) {
@@ -689,7 +690,7 @@ Serial.println("going forward");
       motors.setSpeeds(max, max - power_difference);
     }
     //    }
-    for (char i = 5; i >= 0; i--) {
+    /*for (char i = 5; i >= 0; i--) {
       Serial.print(sensorValues[i]);
       Serial.print("  ");
     }
@@ -697,7 +698,7 @@ Serial.println("going forward");
     Serial.print(pos);
     Serial.print("\t   OUT: ");
     Serial.print(power_difference);
-    Serial.println();
+    Serial.println();*/
   }
   motors.setSpeeds(0, 0);
 }
