@@ -71,7 +71,7 @@ void setup()
   pinMode(XSHUT_pinB, INPUT);
   delay(10);
 
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("Initializing Serial");
   // wait 2 seconds
   delay(2000);
@@ -102,17 +102,18 @@ void setup()
 void loop()
 {
   goForwardOneSquare();
-  turnLeft(300);
+  delay(1000);
   goForwardOneSquare();
-  turnLeft(750);
-  goForwardOneSquare();
-  turnRight(300);
+  delay(1000);
+  //turnLeft(300);
+  //goForwardOneSquare();
+  //turnLeft(750);
+  //goForwardOneSquare();
+  //turnRight(300);
 }
+/*void goForwardOneSquare() {
 
-// DRIVE FORWARD ONE SQUARE
-void goForwardOneSquare() {
-
-  int online, goforward = 1, started, lastRead;
+  int online, goforward = 0, started, lastRead;
 
   unsigned char i, on_line = 0;
   unsigned long avg;
@@ -120,6 +121,208 @@ void goForwardOneSquare() {
 
   int max = 200;
 
+  while(!goforward) {
+    // read line sensors
+    qtrrc.read(sensorValues);
+
+    lastRead = pos;
+    avg = 0;
+    sum = 0;
+    on_line = 0;
+    numonline = 0;
+    for (i = 0; i < NUM_SENSORS; i++) {
+      int value = sensorValues[i];
+      // keep track of whether we see the line at all
+      if (value > 350) {
+        on_line = 1;
+        numonline++;
+      }
+
+      // only average in values that are above a noise threshold
+      if (value > 50) {
+        avg += (long)(value) * (i * 2500);
+        sum += value;
+      }
+    } 
+    if (!on_line)
+    {
+      // If it last read to the left of center, return 0.
+      if (lastRead < (NUM_SENSORS - 1) * 1000 / 2) {
+        pos =  -2500;
+        // If it last read to the right of center, return the max.
+      } else {
+        pos = (NUM_SENSORS - 1) * 1000 - 2500;
+      }
+    } else {
+
+      // calculate position
+      pos = .4 * avg / sum - 2500;
+    }
+
+    // calc PIDs
+    int derivative = pos - lastPos;
+    integral = integral + pos;
+    lastPos = pos;
+
+    power_difference = pos / 15 + integral / 10000 + derivative * .5;
+
+    const int max = 200;
+    if (power_difference > max)
+      power_difference = max;
+    if (power_difference < -max)
+      power_difference = -max;
+    if (numonline < 5 ) {
+      goforward = 1;
+    }
+    else if (power_difference < 0) {
+      motors.setSpeeds(max + power_difference, max);
+    }  else {
+      motors.setSpeeds(max, max - power_difference);
+    }
+  }
+
+  while (goforward) {
+    // read line sensors
+    qtrrc.read(sensorValues);
+
+    lastRead = pos;
+    avg = 0;
+    sum = 0;
+    on_line = 0;
+    numonline = 0;
+    for (i = 0; i < NUM_SENSORS; i++) {
+      int value = sensorValues[i];
+      // keep track of whether we see the line at all
+      if (value > 350) {
+        on_line = 1;
+        numonline++;
+      }
+
+      // only average in values that are above a noise threshold
+      if (value > 50) {
+        avg += (long)(value) * (i * 2500);
+        sum += value;
+      }
+    }
+    if (!on_line)
+    {
+      // If it last read to the left of center, return 0.
+      if (lastRead < (NUM_SENSORS - 1) * 1000 / 2) {
+        pos =  -2500;
+        // If it last read to the right of center, return the max.
+      } else {
+        pos = (NUM_SENSORS - 1) * 1000 - 2500;
+      }
+    } else {
+
+      // calculate position
+      pos = .4 * avg / sum - 2500;
+    }
+
+    // calc PIDs
+    int derivative = pos - lastPos;
+    integral = integral + pos;
+    lastPos = pos;
+
+    power_difference = pos / 15 + integral / 10000 + derivative * .5;
+
+    const int max = 200;
+    if (power_difference > max)
+      power_difference = max;
+    if (power_difference < -max)
+      power_difference = -max;
+    if (numonline >= 5 ) {
+      goforward = 0;
+    }
+    else if (power_difference < 0) {
+      motors.setSpeeds(max + power_difference, max);
+    }  else {
+      motors.setSpeeds(max, max - power_difference);
+    }
+  }
+  //motors.setSpeeds(0, 0);
+}*/
+// DRIVE FORWARD ONE SQUARE
+void goForwardOneSquare() {
+  Serial.println("going forward");
+  int online, goforward = 0, started, lastRead;
+
+  unsigned char i, on_line = 0;
+  unsigned long avg;
+  unsigned int sum;
+
+  int max = 200;
+  
+  while (goforward == 0) {
+    // read line sensors
+    qtrrc.read(sensorValues);
+
+    lastRead = pos;
+    avg = 0;
+    sum = 0;
+    on_line = 0;
+    numonline = 0;
+    for (i = 0; i < NUM_SENSORS; i++) {
+      int value = sensorValues[i];
+      // keep track of whether we see the line at all
+      if (value > 350) {
+        on_line = 1;
+        numonline++;
+      }
+
+      // only average in values that are above a noise threshold
+      if (value > 50) {
+        avg += (long)(value) * (i * 2500);
+        sum += value;
+      }
+    }
+    if (!on_line)
+    {
+      // If it last read to the left of center, return 0.
+      if (lastRead < (NUM_SENSORS - 1) * 1000 / 2) {
+        pos =  -2500;
+        // If it last read to the right of center, return the max.
+      } else {
+        pos = (NUM_SENSORS - 1) * 1000 - 2500;
+      }
+    } else {
+
+      // calculate position
+      pos = .4 * avg / sum - 2500;
+    }
+
+    // calc PIDs
+    int derivative = pos - lastPos;
+    integral = integral + pos;
+    lastPos = pos;
+
+    power_difference = pos / 15 + integral / 10000 + derivative * .5;
+
+    const int max = 200;
+    if (power_difference > max)
+      power_difference = max;
+    if (power_difference < -max)
+      power_difference = -max;
+    if (numonline < 5 ) {
+      goforward = 1;
+    }
+    else if (power_difference < 0) {
+      motors.setSpeeds(max + power_difference, max);
+    }  else {
+      motors.setSpeeds(max, max - power_difference);
+    }
+    //    }
+    for (char i = 5; i >= 0; i--) {
+      Serial.print(sensorValues[i]);
+      Serial.print("  ");
+    }
+    Serial.print("\t   POS: ");
+    Serial.print(pos);
+    Serial.print("\t   OUT: ");
+    Serial.print(power_difference);
+    Serial.println();
+  }
+  
   while (goforward) {
     // read line sensors
     qtrrc.read(sensorValues);

@@ -1,3 +1,5 @@
+
+#include <VL53L0X.h>
 /* This example shows how to use continuous mode to take
   range measurements with the VL53L0X. It is based on
   vl53l0x_ContinuousRanging_Example.c from the VL53L0X API.
@@ -5,7 +7,6 @@
   The range readings are in units of mm. */
 
 #include <Wire.h>
-#include <VL53L0X.h>
 #include <DRV8835MotorShield.h>
 #include <QTRSensors.h>
 #include <SPI.h>
@@ -76,10 +77,13 @@ void setup()
   // wait 2 seconds
   delay(2000);
 
-
+  Serial.println ("here");
+  Serial.println("test");
   sensorA.init();
-  sensorB.init();
-  sensorC.init();
+  Serial.println("test2");
+  Serial.println (sensorA.init());
+  Serial.println (sensorB.init());
+  Serial.println (sensorC.init());
   Serial.println("Init rangesensor");
 
 

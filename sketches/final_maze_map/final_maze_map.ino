@@ -1,9 +1,41 @@
+#include <Wire.h>
+#include <VL53L0X.h>
+#include <DRV8835MotorShield.h>
+#include <QTRSensors.h>
 #include <SPI.h>
 #include "nRF24L01.h"
 #include "RF24.h"
 
+// Distance Sensors
+#define XSHUT_pinA 6
+#define XSHUT_pinB 5
+#define sensorA_newAddress 42
+#define sensorB_newAddress 43
+VL53L0X sensorA, sensorB, sensorC;
+
+// Line Sensors
+#define NUM_SENSORS   6     // number of line sensors used
+#define TIMEOUT       2500  // waits for 2500 microseconds for sensor outputs to go low
+#define EMITTER_PIN   QTR_NO_EMITTER_PIN     // emitter is controlled by digital pin 2, jk not
+#define THRESHOLD     1000   // line sensor threshold
+QTRSensorsRC qtrrc((unsigned char[]) {
+  32, 30, 28, 26, 24, 22
+},
+NUM_SENSORS, TIMEOUT, EMITTER_PIN);
+unsigned int sensorValues[NUM_SENSORS];
+
+//global variables
+int pos;
+int leftSpeed, rightSpeed, lastPos, integral, power_difference;
+
+char state, numonline, go;
+  
 // Radio pins
-RF24 radio(9,10);
+RF24 radio(3,4);
+
+// Motor driver
+DRV8835MotorShield motors;
+// uses pins 10, 9, 8, 7
 
 //
 // Topology
@@ -35,7 +67,47 @@ typedef struct square {
 
 void setup() {
   // put your setup code here, to run once:
+  Wire.begin();
+
+  Serial.begin(115200);
   
+  pinMode(XSHUT_pinA, OUTPUT);
+  digitalWrite(XSHUT_pinA, LOW);
+  pinMode(XSHUT_pinB, OUTPUT);
+  digitalWrite(XSHUT_pinB, LOW);
+  Serial.println("output mode");
+  //
+  sensorA.setAddress(sensorA_newAddress);
+  pinMode(XSHUT_pinA, INPUT);
+  delay(10);
+  sensorB.setAddress(sensorB_newAddress);
+  pinMode(XSHUT_pinB, INPUT);
+  delay(10);
+
+  
+  Serial.println("Initializing Serial");
+  // wait 2 seconds
+  delay(2000);
+
+
+  sensorA.init();
+  sensorB.init();
+  sensorC.init();
+  Serial.println("Init rangesensor");
+
+
+  sensorA.setTimeout(500);
+  sensorB.setTimeout(500);
+  sensorC.setTimeout(500);
+
+  //sensorA.startContinuous();
+  //sensorB.startContinuous();
+  //sensorC.startContinuous();
+  Serial.println("Initializing Ranging Sensors");
+
+  // Motors
+  motors.flipM1(true);
+  motors.flipM2(true);
   // Radio setup
   radio.begin();
 
@@ -57,8 +129,10 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  while (!detectTone()); // wait to start
-  
+  while (!detectTone()) {
+    Serial.println(detectTone());; // wait to start
+  }
+  Serial.println("Started");
   SQUARE *visited = NULL;
   SQUARE *frontier = NULL;
   SQUARE *path = NULL;
@@ -68,9 +142,13 @@ void loop() {
   
   visited = push(visited, 0, 0);
   path = push(path, 0, 0);
-  wall3 = detectWall(3);
-  wall0 = detectWall(0);
-  if (!wall3)
+  int wall1 = detectWall(1);
+  int wall0 = detectWall(0);
+  Serial.print("Wall 1: ");
+  Serial.println(wall1);
+  Serial.print("Wall 0: ");
+  Serial.println(wall0);
+  if (!wall1)
     frontier = push(frontier, 1, 0); 
   if (!wall0) 
     frontier = push(frontier, 0, 1);
@@ -87,7 +165,7 @@ void loop() {
   else if (treasure == 3)
     t3 = 1;
   //send maze packet
-  sendMazePacket(0, 0, wall3, 1, 1, wall0, t1, t2, t3, 0);
+  sendMazePacket(0, 0, 1, wall1, 1, wall0, t1, t2, t3, 0);
   //DFS 
   while (frontier != NULL) {
     SQUARE* frontier_loc = pop(&frontier);
@@ -104,11 +182,11 @@ void loop() {
       if (dir == 0) 
         curY = curY + 1;
       else if (dir == 1)
-        curX = curX - 1;
+        curX = curX + 1;
       else if (dir == 2)
         curY = curY - 1;
       else if (dir == 3)
-        curX = curX + 1;
+        curX = curX - 1;
 
       if (dir != -1)
         heading = dir;
@@ -128,11 +206,11 @@ void loop() {
       if (heading == 0)
         curY = curY + 1;
       else if (heading == 1)
-        curX = curX - 1;
+        curX = curX + 1;
       else if (heading == 2)
         curY = curY - 1;
       else if (heading == 3)
-        curX = curX + 1;
+        curX = curX - 1;
       
       //add current position to visited
       visited = push(visited, curX, curY);
@@ -144,10 +222,18 @@ void loop() {
       int wall2 = detectWall(2);
       int wall1 = detectWall(1);
       int wall0 = detectWall(0);
+      Serial.print("Wall 3: ");
+      Serial.println(wall3);
+      Serial.print("Wall 2: ");
+      Serial.println(wall2);
+      Serial.print("Wall 1: ");
+      Serial.println(wall1);
+      Serial.print("Wall 0: ");
+      Serial.println(wall0);
       if (!wall3) {
         switch(heading) {
           case 0:
-            goalX = curX+1;
+            goalX = curX-1;
             goalY = curY;
             break;
           case 1:
@@ -155,7 +241,7 @@ void loop() {
             goalY = curY+1;
             break;
           case 2:
-            goalX = curX-1;
+            goalX = curX+1;
             goalY = curY;
             break;
           case 3:
@@ -173,7 +259,7 @@ void loop() {
             goalY = curY-1;
             break;
           case 1:
-            goalX = curX+1;
+            goalX = curX-1;
             goalY = curY;
             break;
           case 2:
@@ -181,7 +267,7 @@ void loop() {
             goalY = curY+1;
             break;
           case 3:
-            goalX = curX-1;
+            goalX = curX+1;
             goalY = curY;
             break;
         }
@@ -192,7 +278,7 @@ void loop() {
       if (!wall1) {
         switch(heading) {
           case 0:
-            goalX = curX-1;
+            goalX = curX+1;
             goalY = curY;
             break;
           case 1:
@@ -200,7 +286,7 @@ void loop() {
             goalY = curY-1;
             break;
           case 2:
-            goalX = curX+1;
+            goalX = curX-1;
             goalY = curY;
             break;
           case 3:
@@ -218,7 +304,7 @@ void loop() {
             goalY = curY+1;
             break;
           case 1:
-            goalX = curX-1;
+            goalX = curX+1;
             goalY = curY;
             break;
           case 2:
@@ -226,7 +312,7 @@ void loop() {
             goalY = curY-1;
             break;
           case 3:
-            goalX = curX+1;
+            goalX = curX-1;
             goalY = curY;
             break;
         }
@@ -282,11 +368,21 @@ void loop() {
     }
   }
   sendMazePacket(0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
+  Serial.println("DONE");
+  delay(1000);
 }
 
 //moves robot one square based on current position and heading
 //returns heading if robot is able to move to specified square, -1 otherwise
 int moveAdjacent(int curX, int curY, int heading, int goalX, int goalY) {
+  Serial.print("Moving from ");
+  Serial.print(curX);
+  Serial.print(" ");
+  Serial.print(curY);
+  Serial.print(" to ");
+  Serial.print(goalX);
+  Serial.print(" ");
+  Serial.println(goalY);
   int distX = goalX - curX;
   int distY = goalY - curY;
   int dir = -1;
@@ -297,9 +393,9 @@ int moveAdjacent(int curX, int curY, int heading, int goalX, int goalY) {
       dir = 2;
   } else if (distY == 0) {
     if (distX == 1)
-      dir = 3;
-    else if (distX == -1)
       dir = 1;
+    else if (distX == -1)
+      dir = 3;
   }
   if (dir == -1)
     return dir;
@@ -309,56 +405,52 @@ int moveAdjacent(int curX, int curY, int heading, int goalX, int goalY) {
       case 0:
         switch (dir) {
           case 1:
-            turnLeft();
+            turnLeft(300);
             break;
           case 2: 
-            turnLeft();
-            turnLeft();
+            turnLeft(750);
             break;
           case 3:
-            turnRight();
+            turnRight(300);
             break;
         }
         break;
       case 1:
         switch (dir) {
           case 0:
-            turnRight();
+            turnRight(300);
             break;
           case 2: 
-            turnLeft();
+            turnLeft(300);
             break;
           case 3:
-            turnRight();
-            turnRight();
+            turnRight(750);
             break;
         }
         break;
       case 2: 
         switch (dir) {
           case 1:
-            turnRight();
+            turnRight(300);
             break;
           case 0: 
-            turnLeft();
-            turnLeft();
+            turnLeft(750);
             break;
           case 3:
-            turnLeft();
+            turnLeft(300);
             break;
         }
         break;
       case 3:
         switch (dir) {
           case 1:
-            turnLeft();
-            turnLeft();
+            turnLeft(750);
             break;
           case 0: 
-            turnLeft();
+            turnLeft(300);
             break;
           case 2:
-            turnRight();
+            turnRight(300);
             break;
         }
         break;
@@ -399,7 +491,7 @@ SQUARE * pop (SQUARE **head) {
 //RADIO CODE
 void sendMazePacket(int x, int y, int rw, int lw, int dw, int uw, int t1, int t2, int t3, int done) {
   int packet = 0;
-  packet = packet | (x << 12);
+  packet = packet | ((3-x) << 12);
   packet = packet | (y << 8);
   packet = packet | (rw << 7);
   packet = packet | (lw << 6);
@@ -410,7 +502,7 @@ void sendMazePacket(int x, int y, int rw, int lw, int dw, int uw, int t1, int t2
   packet = packet | (t3 << 1);
   packet = packet | done;
 
-  sendRadioPacket(packet);
+  //sendRadioPacket(packet);
 }
 
 void sendRadioPacket(int packet) {
@@ -418,7 +510,7 @@ void sendRadioPacket(int packet) {
   Serial.println("attempting to write a packet");
   if (!ok) {
     //failed to send
-    sendRadioPacket(packet);
+    //sendRadioPacket(packet);
     
   }
 }
@@ -427,6 +519,7 @@ void sendRadioPacket(int packet) {
 //NEEDS TO BE UDPATED
 bool detectTone() {
   //return true if tone is detected and robot should start, false otherwise
+  return 1;
 }
 
 bool detectWall(int dir) {
@@ -434,19 +527,205 @@ bool detectWall(int dir) {
     return false;
   //returns true if there is a wall in the specified direction 
   //directions: 0 for forward, 1 for left, 3 for right
-  //only called at intersection 
+  int wallDist = 0;
+  if (dir == 0) {
+    for (int i = 0; i < 10; i++) {
+      wallDist += sensorC.readRangeSingleMillimeters(); 
+    }
+  }
+  else if (dir == 1) {
+    for (int i = 0; i < 10; i++) {
+      wallDist += sensorB.readRangeSingleMillimeters();
+    }
+  }
+  else if (dir == 3) {
+    for (int i = 0; i < 10; i++) {
+      wallDist += sensorA.readRangeSingleMillimeters(); 
+    }
+  }
+  Serial.print("Checking wall ");
+  Serial.print(dir);
+  Serial.print(" ");
+  Serial.println(wallDist);
+  return (wallDist < 1750);
 }
 
-void goForwardOneSquare() {}
+void goForwardOneSquare() {
+Serial.println("going forward");
+  int online, goforward = 0, started, lastRead;
 
-void turnRight() {}
+  unsigned char i, on_line = 0;
+  unsigned long avg;
+  unsigned int sum;
 
-void turnLeft() {}
-
-//checks for treasures
-//return 0 if no treasure, 1 if 7kHz, 2 if 12kHz, 3 if 17kHz
-int detect_treasure() {
+  int max = 200;
   
+  while (goforward == 0) {
+    // read line sensors
+    qtrrc.read(sensorValues);
+
+    lastRead = pos;
+    avg = 0;
+    sum = 0;
+    on_line = 0;
+    numonline = 0;
+    for (i = 0; i < NUM_SENSORS; i++) {
+      int value = sensorValues[i];
+      // keep track of whether we see the line at all
+      if (value > 350) {
+        on_line = 1;
+        numonline++;
+      }
+
+      // only average in values that are above a noise threshold
+      if (value > 50) {
+        avg += (long)(value) * (i * 2500);
+        sum += value;
+      }
+    }
+    if (!on_line)
+    {
+      // If it last read to the left of center, return 0.
+      if (lastRead < (NUM_SENSORS - 1) * 1000 / 2) {
+        pos =  -2500;
+        // If it last read to the right of center, return the max.
+      } else {
+        pos = (NUM_SENSORS - 1) * 1000 - 2500;
+      }
+    } else {
+
+      // calculate position
+      pos = .4 * avg / sum - 2500;
+    }
+
+    // calc PIDs
+    int derivative = pos - lastPos;
+    integral = integral + pos;
+    lastPos = pos;
+
+    power_difference = pos / 15 + integral / 10000 + derivative * .5;
+
+    const int max = 200;
+    if (power_difference > max)
+      power_difference = max;
+    if (power_difference < -max)
+      power_difference = -max;
+    if (numonline < 5 ) {
+      goforward = 1;
+    }
+    else if (power_difference < 0) {
+      motors.setSpeeds(max + power_difference, max);
+    }  else {
+      motors.setSpeeds(max, max - power_difference);
+    }
+    //    }
+    for (char i = 5; i >= 0; i--) {
+      Serial.print(sensorValues[i]);
+      Serial.print("  ");
+    }
+    Serial.print("\t   POS: ");
+    Serial.print(pos);
+    Serial.print("\t   OUT: ");
+    Serial.print(power_difference);
+    Serial.println();
+  }
+  
+  while (goforward) {
+    // read line sensors
+    qtrrc.read(sensorValues);
+
+    lastRead = pos;
+    avg = 0;
+    sum = 0;
+    on_line = 0;
+    numonline = 0;
+    for (i = 0; i < NUM_SENSORS; i++) {
+      int value = sensorValues[i];
+      // keep track of whether we see the line at all
+      if (value > 350) {
+        on_line = 1;
+        numonline++;
+      }
+
+      // only average in values that are above a noise threshold
+      if (value > 50) {
+        avg += (long)(value) * (i * 2500);
+        sum += value;
+      }
+    }
+    if (!on_line)
+    {
+      // If it last read to the left of center, return 0.
+      if (lastRead < (NUM_SENSORS - 1) * 1000 / 2) {
+        pos =  -2500;
+        // If it last read to the right of center, return the max.
+      } else {
+        pos = (NUM_SENSORS - 1) * 1000 - 2500;
+      }
+    } else {
+
+      // calculate position
+      pos = .4 * avg / sum - 2500;
+    }
+
+    // calc PIDs
+    int derivative = pos - lastPos;
+    integral = integral + pos;
+    lastPos = pos;
+
+    power_difference = pos / 15 + integral / 10000 + derivative * .5;
+
+    const int max = 200;
+    if (power_difference > max)
+      power_difference = max;
+    if (power_difference < -max)
+      power_difference = -max;
+    if (numonline >= 5 ) {
+      goforward = 0;
+    }
+    else if (power_difference < 0) {
+      motors.setSpeeds(max + power_difference, max);
+    }  else {
+      motors.setSpeeds(max, max - power_difference);
+    }
+    //    }
+    for (char i = 5; i >= 0; i--) {
+      Serial.print(sensorValues[i]);
+      Serial.print("  ");
+    }
+    Serial.print("\t   POS: ");
+    Serial.print(pos);
+    Serial.print("\t   OUT: ");
+    Serial.print(power_difference);
+    Serial.println();
+  }
+  motors.setSpeeds(0, 0);
+}
+
+void turnLeft(int time) {
+  int online, turnleft = 1, started, lastRead;
+
+  unsigned char i, on_line = 0;
+  unsigned long avg;
+  unsigned int sum;
+
+  int max = 200;
+
+  motors.setSpeeds(max, -max);
+  delay(time);
+  motors.setSpeeds(0, 0);
+}
+
+void turnRight(int time) {
+  int max = 200;
+
+  motors.setSpeeds(-max, max);
+  delay(time);
+  motors.setSpeeds(0, 0);
+}
+
+int detect_treasure() {
+  return 0;
 }
 //read from adc0 and do fft
 /*int fft() {
@@ -511,4 +790,4 @@ int treasureDetect() {
       if (max_7_bin > threshold)
         return 1;
     return 0;
-}*'/
+}*/
