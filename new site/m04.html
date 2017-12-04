@@ -1,0 +1,283 @@
+<!DOCTYPE HTML>
+<!--
+	Linear by TEMPLATED
+    templated.co @templatedco
+    Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+	<head>
+		<title>Milestone04</title>
+        <link href="shrimp.ico" rel="icon">
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="description" content="" />
+		<meta name="keywords" content="" />
+        <link href="https://fonts.googleapis.com/css?family=Roboto:100" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+        <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+		<script src="js/skel.min.js"></script>
+		<script src="js/skel-panels.min.js"></script>
+		<script src="js/init.js"></script>
+		<noscript>
+			<link rel="stylesheet" href="css/skel-noscript.css" />
+			<link rel="stylesheet" href="css/style.css" />
+			<link rel="stylesheet" href="css/style-desktop.css" />
+		</noscript>
+        <style>
+            h3 {
+                font-size:150%;
+                margin-bottom:1%;
+            }
+        </style>
+	</head>
+	<body>
+
+	<!-- Header -->
+		<div id="header">
+			<div id="nav-wrapper"> 
+				<!-- Nav -->
+				<nav id="nav">
+					<ul>
+                        <li><a href="index.html">Homepage</a></li>
+						<li><a href="about.html">About</a></li>
+						<li><a href="team-contract.html">Team Contract</a></li>
+						<li><a href="meeting-minutes.html">Meeting Minutes</a></li>
+					</ul>
+				</nav>
+			</div>
+			<div class="container"> 
+				
+				<!-- Logo -->
+				<div id="logo" style="font-family: Ubuntu; font-weight: normal">
+					<h1><a href="index.html">team-shrimp-cracker</a></h1>
+					<span class="tag">A robotics team dedicated to jamming the most flavor in a little robot.</span>
+				</div>
+			</div>
+		</div>
+	<!-- Header --> 
+
+	<!-- Main -->
+		<div id="main">
+			<div class="container">
+				<div class="row">
+
+					<!-- Sidebar -->
+					<div id="sidebar" style="width: 20%;" class="4u">
+						<section>
+							<header>
+								<h2>LABWORK</h2>
+							</header>
+							<div class="row">
+								<section class="6u">
+									<ul class="default">
+                                        <li><a href="lab01.html">Lab01</a></li>
+										<li><a href="lab02.html">Lab02</a></li>
+										<li><a href="lab03.html">Lab03</a></li>
+                                        <li><a href="lab04.html">Lab04</a></li>
+										<li><a href="m01.html">Milestone01</a></li>
+										<li><a href="m02.html">Milestone02</a></li>
+										<li><a href="m03.html">Milestone03</a></li>
+                                        <li><a href="m04.html">Milestone04</a></li>
+									</ul>
+								</section>
+							</div>
+						</section>
+			</div>
+					
+					<!-- Content -->
+					<div id="content" class="8u skel-cell-important" style="width:75%;">
+						<section>
+							<header style="margin-bottom:5%; ">
+				            <h2>MILESTONE04</h2>
+							</header>
+                            <div class="grey">
+                            <h2 style="font-size:200%; margin-bottom: 2%;">Objectives</h2>
+							<ul>
+                                <li>1. &nbsp;&nbsp;System that successfully displays the walls in a maze as the robot finds them</li>
+                                <li>2. &nbsp;&nbsp;System that successfully displays treasures in a maze as the robot finds them</li>
+                                <li>3. &nbsp;&nbsp;Robot that successfully signals ‘done’ on the screen when the maze has been mapped</li>
+                                <li>4. &nbsp;&nbsp;Robot that successfully plays ‘done’ on the speaker when the maze has been mapped</li>
+                            </ul>
+                            </div>
+                            <p>This <a href="https://drive.google.com/file/d/13MYQIdu7I58t4C0PYVKPzFHC8Ulnxn15/view?usp=sharing">video</a> shows our robot mapping out the maze.</p>
+                            
+                            <div class="white">
+                            <h2 style="font-size:200%; margin-bottom: 2%;">Mapping The Walls &nbsp;
+<!--                                <a href="/code/m02_1.ino" download>-->
+                                    <i class="fa fa-download" aria-hidden="true" style="color:#e89093;"></i>
+<!--                                </a>--> 
+                            </h2>
+                            <div style="width:50%; display: inline; float:right;">
+                                <img src="images/temp.png" style="width:100%; border: 2px solid #f2f2f2;">
+                                <img src="https://i.imgur.com/FvvO4oY.png" style="width:100%;">
+                            </div>
+                                
+                            <div style="width:45%;">
+                            <p>Mapping the walls was fairly easy. We decided to stick with parallel configuration regarding the GUI. In order to remedy the potential timing issues, we have a write bit. The FPGA only writes after if the write bit is active high. This ensures that when the maze information is encoded in parallel digital signals, that the FPGA clock doesn’t encode partial information onto the VGA monitor. Specifially for walls, there are four bits of information that handle walls. The robot detects walls using short-range IR sensors. To detect walls, we just have a threshhold for which we measured before to determine the appropriate distance that we record a wall. Once the robot itself detects a wall, it updates the maze grid in the arduino code dependent on the heading of the robot. For example, if the front wall sensor sensed a wall, that doesn’t necessarilly mean that there is a wall in the up direction from the current position. If the heading is to the right, then the wall is to the right of the current position. Once this data is encoded and sent over radio, we then decode the information on the receiver arduino into a readable packet and send it to the FPGA.</p>
+                            </div>
+                            
+<!--
+                            <div style="width:50%; display: inline; float:right;">
+                                <img src="https://i.imgur.com/FvvO4oY.png" style="width:100%;">
+                            </div>
+-->
+                            <div style="width:45%;">   
+                            <p>For the FPGA GUI, we added walls by increasing the maze size. The logic is the same as the Java simulation. Instead of a 5 by 4 grid, we now encode a 11 by 9 grid.</p>
+                            <p>This is because each actual tile has a potential wall between them. Including the walls on the outside of the maze, there are 6 positions for horizontal walls and 5 positions for the vertical walls. We hardcode in the outside walls. For the inner walls, the arduino sends the packet which lists the wall bits. The FPGA then just writes in the walls following simple logic regarding those bits. If there isn’t a wall, our implemenation fills the wall with the visited color as a stylistic choice. The following is a snippet of the verilog logic.</p>
+                            </div>
+                            <pre>
+                                <code>'
+                                
+if (packet[4:0] != 5'b000_00 &amp;&amp; packet[4:0] != 5'b000_01 &amp;&amp; my_grid[1][2] 
+    != wall &amp;&amp; my_grid[1][2] != visited)
+        my_grid[1][2] &lt;= unvisited;
+else if ((packet[4:0] == 5'b000_00 || packet[4:0] == 5'b000_01) &amp;&amp; my_grid[1][2] 
+    != wall &amp;&amp; my_grid[1][2] != visited) 
+    begin
+        if ((packet[4:0] == 5'b000_00 &amp;&amp; packet[5]==1'b1) 
+            || (packet[4:0]==5'b000_01 &amp;&amp; packet[6]==1'b1))
+            my_grid[1][2] &lt;= wall;
+        else
+            my_grid[1][2] &lt;= visited;
+    end
+                                </code>
+                            </pre>
+                            <p>The picture of the mapped maze in the GUI is shown in the next section.</p>
+                            </div>
+                            
+                            <div class="grey">
+                            <h2 style="font-size:200%; margin-bottom: 2%;">Treasure Detection &nbsp;
+<!--                                <a href="/code/m02_1.ino" download>-->
+                                    <i class="fa fa-download" aria-hidden="true" style="color:#e89093;"></i>
+<!--                                </a>-->
+                            </h2>
+                            <p>For the most part, our treasure detection was similar to the procedure we had used in Lab 2. We left the FFT code the same. However, since the positioning of the IR sensor was slightly different than we had anticipated in Lab 2 (ie. we did not have to detect treasures from as far away), the threshold we used in this milestone were different. We chose to slightly increase the threshold but decrease the time integration in order to speed up the treasure detection. While our treasure detection is able to detect the presence of a treasure most of the time, we occasionally have a false positive. However, since we plan to have a new robot for the final competition, we did not think it worth it to spend a lot of time getting the thresholds just right because the threshold will change based on the position of the sensor on the final robot.</p>
+                            <p>The following code shows the FFT and our time integration to determine if there is a treasure. The time integration consists of reading from the ADC pin A0 five times, computing the FFT, and determining the presence of a treasure based on the results. Our algorithm checks the return value of the fft function - if it’s 0 for no treasure, 1 for 7kHz treasure, 2 for 12kHz, and 3 for 17.</p>
+                            <pre>
+                                <code>
+int fft() {
+   int sum = 0;
+   ADCSRA = 0xe5;
+   for (int i = 0; i < 10; i++) {
+    cli();  // UDRE interrupt slows this way down on arduino1
+    for (int i = 0 ; i < 512 ; i += 2) { // save 256 samples
+      while(!(ADCSRA & 0x10)); // wait for adc to be ready
+      ADCSRA = 0xf5; // restart adc
+      byte m = ADCL; // fetch adc data
+      byte j = ADCH;
+      int k = (j << 8) | m; // form into an int
+      k -= 0x0200; // form into a signed int
+      k <<= 6; // form into a 16b signed int
+      fft_input[i] = k; // put real data into even bins
+      fft_input[i+1] = 0; // set odd bins to 0
+    }
+    fft_window(); // window the data for better frequency response
+    fft_reorder(); // reorder the data before doing the fft
+    fft_run(); // process the data in the fft
+    fft_mag_log(); // take the output of the fft
+    sei(); // turns interrupts back on
+    int x = treasureDetect();
+    Serial.println(x);
+    sum = sum + x;
+   }
+   ADCSRA = adc_state;
+   Serial.println("sum");
+   Serial.println(sum);
+   if (sum < 5)
+    return 0;
+   else if (sum < 15)
+    return 1;
+   else if (sum < 25)
+    return 2;
+   else return 3; 
+}
+
+//treasure detection
+int treasureDetect() {
+  int treasure_7;
+  int treasure_12;
+  int treasure_17;
+  int max_7_bin = 0;
+  for (int i = 0; i < 256; i++) {
+    Serial.println (i);
+    Serial.println ("DONE with fft");
+  }
+    for (int i = 46; i < 50; i++) {
+      int x = (int) fft_log_out[i];
+      if (x > max_7_bin)
+        max_7_bin = x;
+    }
+    int max_12_bin = 0;
+    for (int i = 80; i < 83; i++) {
+      int x = (int) fft_log_out[i];
+      if(x > max_12_bin) 
+        max_12_bin = x;
+    }
+    int max_17_bin = 0;
+    for (int i = 113; i < 116; i++) {
+      int x = (int) fft_log_out[i];
+      if (x > max_17_bin)
+        max_17_bin = x;
+    }
+    if (max_17_bin > max_12_bin && max_17_bin > max_7_bin) {
+      if (max_17_bin > threshold) 
+       return 3;
+    }
+    else if (max_12_bin > max_7_bin) {
+      if (max_12_bin > threshold)  
+       return 2;
+    }
+    else 
+      if (max_7_bin > threshold)
+        return 1;
+    return 0;
+}
+                                </code>
+                            </pre>
+                            
+                            <p>We currently check for treasures when we are stopped at an intersection. The intersections are at small enough intervals such that our IR sensor will not miss a treasure. Furthermore, because the FFT is computationally expensive, we do not want to check for treasures while trying to follow the line to move from one intersection to another.</p>
+                            <p>The treasure detection is then displayed on the GUI by the FPGA, with the color depending on the frequency of the treasure.</p>
+                            <p>Here is a picture of the GUI once the robot has mapped out the maze, with a white square representing a 7 kHz treasure:</p>
+                            
+                            <img src="https://i.imgur.com/W9JX4er.jpg" width=600>
+                            </div>
+                            
+                            <div class="white">
+                            <h2 style="font-size:200%; margin-bottom: 2%;">Done Signal</h2>
+                            <h3>How the robot realizes it’s done</h3>
+                            <p>The algorithm we use to map the maze is DFS. At every intersection, our robot checks the stack of frontier nodes (nodes it has detected as possible to visit but not yet visited). If the stack is empty, the robot realizes it has visited all the reachable nodes in the maze. The robot then sends the done signal.</p>
+                            <p>The MSB of the 13bits “packet” is for the done signal. We assigned that bit to GPIO_0_D[32] of the FPGA. When the robot finished mapping the maze, the arduino in the robot would send an encoded message to the arduino with FPGA which would decode the message to have the 13th bit to be 1 indicating it’s done.</p>
+                            
+                            <h3>Screen</h3>
+                            <p>When receiving a done signal, the screen would become as the following picture shows.</p>
+                            <img src="https://i.imgur.com/W9JX4er.jpg" width=600>
+                            
+                            <h3>Speaker</h3>
+                            <p>When the robot is done mapping the maze, it would play a tone as this <a href="https://drive.google.com/file/d/11ATn1BG49dfNDevyFK9cVMs7KJPBo8y0/view?usp=sharing">video</a> shows.</p>
+                            </div>
+						</section>
+					</div>
+				</div>
+			</div>
+		</div>
+	<!-- /Main -->
+
+	<!-- Tweet -->
+		<div id="tweet">
+			<div class="container">
+				<section>
+					<blockquote style="font-family:Ubuntu; letter-spacing: 2px;">no bad robots</blockquote>
+				</section>
+			</div>
+		</div>
+
+	<!-- Copyright -->
+		<div id="copyright">
+			<div class="container">
+				website design from <a href="http://templated.co">TEMPLATED</a>
+                <br>
+			</div>
+		</div>
+
+	</body>
+</html>

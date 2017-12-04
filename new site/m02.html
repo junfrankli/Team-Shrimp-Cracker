@@ -1,0 +1,270 @@
+<!DOCTYPE HTML>
+<!--
+	Linear by TEMPLATED
+    templated.co @templatedco
+    Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+	<head>
+		<title>Milestone02</title>
+        <link href="shrimp.ico" rel="icon">
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="description" content="" />
+		<meta name="keywords" content="" />
+        <link href="https://fonts.googleapis.com/css?family=Roboto:100" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+        <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+		<script src="js/skel.min.js"></script>
+		<script src="js/skel-panels.min.js"></script>
+		<script src="js/init.js"></script>
+		<noscript>
+			<link rel="stylesheet" href="css/skel-noscript.css" />
+			<link rel="stylesheet" href="css/style.css" />
+			<link rel="stylesheet" href="css/style-desktop.css" />
+		</noscript>
+	</head>
+	<body>
+
+	<!-- Header -->
+		<div id="header">
+			<div id="nav-wrapper"> 
+				<!-- Nav -->
+				<nav id="nav">
+					<ul>
+                        <li><a href="index.html">Homepage</a></li>
+						<li><a href="about.html">About</a></li>
+						<li><a href="team-contract.html">Team Contract</a></li>
+						<li><a href="meeting-minutes.html">Meeting Minutes</a></li>
+					</ul>
+				</nav>
+			</div>
+			<div class="container"> 
+				
+				<!-- Logo -->
+				<div id="logo" style="font-family: Ubuntu; font-weight: normal">
+					<h1><a href="index.html">team-shrimp-cracker</a></h1>
+					<span class="tag">A robotics team dedicated to jamming the most flavor in a little robot.</span>
+				</div>
+			</div>
+		</div>
+	<!-- Header --> 
+
+	<!-- Main -->
+		<div id="main">
+			<div class="container">
+				<div class="row">
+
+					<!-- Sidebar -->
+					<div id="sidebar" style="width: 20%;" class="4u">
+						<section>
+							<header>
+								<h2>LABWORK</h2>
+							</header>
+							<div class="row">
+								<section class="6u">
+									<ul class="default">
+                                        <li><a href="lab01.html">Lab01</a></li>
+										<li><a href="lab02.html">Lab02</a></li>
+										<li><a href="lab03.html">Lab03</a></li>
+                                        <li><a href="lab04.html">Lab04</a></li>
+										<li><a href="m01.html">Milestone01</a></li>
+										<li><a href="m02.html">Milestone02</a></li>
+										<li><a href="m03.html">Milestone03</a></li>
+                                        <li><a href="m04.html">Milestone04</a></li>
+									</ul>
+								</section>
+							</div>
+						</section>
+			</div>
+					
+					<!-- Content -->
+					<div id="content" class="8u skel-cell-important" style="width:75%;">
+						<section>
+							<header style="margin-bottom:5%; ">
+								<h2>MILESTONE02</h2>
+							</header>
+                            
+                            <div class="grey">
+                            <h2 style="font-size:200%; margin-bottom: 2%;">Objective</h2>
+							<p>The purpose of this milestone was to spice up our robot with that sweet wall detection and differentiation between treasures.</p>
+                            </div>
+                            
+                            <div class="white">
+                            <h2 style="font-size:200%; margin-bottom: 2%;">Wall Detection &nbsp;
+                                <a href="/code/m02_1.ino" download>
+                                    <i class="fa fa-download" aria-hidden="true"></i>
+                                </a>
+                            </h2>
+                            <p>We used the short range IR sensor <a href="https://www.pololu.com/product/2464">SHARP 0A41SK</a> to detect the distance between the sensor and the wall.</p>
+                                
+                            <div style="width:50%; display: inline; float:right;">
+                            <p>The following video shows the code in action, as the sensor moves an increasing distance from the table until it is out of range:</p>
+                            <iframe src='https://gfycat.com/ifr/SpottedElasticCatbird' frameborder='0' scrolling='no' width='270' height='476' allowfullscreen style="margin-left:15%;"></iframe>
+                            </div>
+                                
+                            <div style="width:45%;">
+                            <p>The following code measures the distance between the sensor and an object:</p>
+                            
+                            <pre>
+                                <code>
+int dis=0;
+void loop() {
+    // Read sensor value for analog pin A0
+    float SensorValue = analogRead(A0);
+    
+    // SensorValue to Distance conversion
+    float dis = 2076/(SensorValue - 11);
+    
+    if (dis &lt; 4 || dis &gt;30) {
+        Serial.print( "Out of Range.\n");
+    }
+    else {
+        Serial.print(dis);
+        Serial.print(" cm\n");
+    }
+    delay(500);
+}
+
+                                </code>
+                            </pre>
+                            </div>
+                            <br>
+                            <p>To detect the wall, we can change the code to the following:</p>
+                            <pre>
+                                <code>
+void loop() {
+    float SensorValue = analogRead(A0);     // Read sensor value for analog pin A0
+    float dis = 2076/(SensorValue - 11);    // SensorValue to Distance conversion
+    if (dis &lt; 15 &amp;&amp; dis &gt; 13) {
+        // do turning
+        delay(1000);
+    }
+    delay(500);
+}
+                                </code>
+                            </pre>
+                            <p>Therefore, when the distance between the sensor on the robot and the wall falls into the 13 to 15 cm range, the robot will turn left or right accordingly to avoid the wall. The distance measurements will delay longer to finish the turning.</p>
+                            </div>
+                            
+                            <div class="grey">
+                            <h2 style="font-size:200%; margin-bottom: 2%;">Treasure Detection &nbsp;
+<!--                                <a href="/code/m02_1.ino" download>-->
+                                    <i class="fa fa-download" aria-hidden="true" style="color:#e89093;"></i>
+<!--                                </a>-->
+                            </h2>    
+                            <p>In order to differentiate between the three frequencies of treasures, we needed to modify our FFT code from Lab 2 for optical detection. As a unit test, we first checked to see which bins corresponded to the different treasure frequencies.</p>
+                            <img src="images/lab02_graph.png" style="width:100%;">
+                            <p>Since our analog circuitry was still in progress, we had to rely on just our software to differentiate between the frequencies for this milestone. We were then faced with the problem of how to make our software sensitive enough to detect the treasure farther away, but also able to differentiate between the three frequencies of treasure. This resulted from harmonics in the FFT - when a treasure of one frequency triggered the sensor, there would also be a spike in the relevant bins of other frequencies.</p>
+                            <p>We solved this problem by comparing the relevant bins and determining which frequency had the highest magnitude. If the maximum magnitude was greater than the threshold, we reported that the treasure was detected.</p>
+                            
+                            <div style="width:50%; display: inline; float:right;">
+                            <p>This video shows detection of a single treasure, moving it in and out of range of our sensor: <br>
+                            It's hard to see in the video, but the printing of "7 kHz Treasure!" begins when the treasure is in range (close to the robot), and stops when the treasure is moved out of range. </p>
+                            <iframe src='https://gfycat.com/ifr/GoodnaturedImpeccableGuernseycow' frameborder='0' scrolling='no' width='338' height='600' allowfullscreen style="margin-left:10%;"></iframe>
+                            </div>
+                                
+                            <div style="width:45%;">
+                            <p>Here is our code for determining which frequency treasure the sensor detected:</p>
+                            <pre>
+                                <code>
+int max_7_bin = 0;
+for (int i = 46; i &lt; 50; i++) {
+    int x = (int) fft_log_out[i];
+    if (x &gt; max_7_bin)
+        max_7_bin = x;
+}
+int max_12_bin = 0;
+for (int i = 80; i &lt; 83; i++) {
+    int x = (int) fft_log_out[i];
+    if(x &gt; max_12_bin) 
+        max_12_bin = x;
+}
+int max_17_bin = 0;
+for (int i = 113; i &lt; 116; i++) {
+    int x = (int) fft_log_out[i];
+    if (x &gt; max_17_bin)
+        max_17_bin = x;
+}
+if (max_17_bin &gt; max_12_bin &amp;&amp; 
+    max_17_bin &gt; max_7_bin) {
+    if (max_17_bin &gt; threshold) 
+        treasure_17++; //Detected 17kHz treasure
+} else if (max_12_bin &gt; max_7_bin) {
+    if (max_12_bin &gt; threshold)  
+        treasure_12++; //Detected 12kHz treasure
+} else {
+    if (max_7_bin &gt; threshold)
+        treasure_7++; //Detected 7kHz treasure
+}
+                                </code>
+                            </pre>
+                            </div>
+                                
+                            <p>We found, however, that using this method sometimes resulted in false detection of treasure. Our software was extremely sensitive and could not filter out noise. The program also misidentified some of the frequencies. To solve both of these problems, we decided to add time integration.</p>
+                            <p>We checked to see whether treasure of the same frequency had been detected for several iterations. Only when our robot had detected the treasure for more iterations than our cycle threshold did it report a treasure being detected. We found that adding the cycle threshold enabled our robot to filter out noise as well as correctly identify the frequency of treasure each time.</p>
+                                
+                            <div style="width:50%; display: inline; float:right;"> 
+                            <p>The following video shows our code recognizing the correct treasure frequencies: </p>
+                            <iframe src='https://gfycat.com/ifr/BlackFluidCalf' frameborder='0' scrolling='no' width='338' height='600' allowfullscreen style="margin-left:10%;"></iframe>
+                            </div>    
+                                
+                                
+                            <div style="width:45%;">
+                            <p>Here is our code for time integration:</p>
+                            <pre>
+                                <code>
+if (treasure_7 &gt; time_threshold) {
+    // Report treasure detection 
+    Serial.write("7 kHz treasure!\n"); 
+    treasure_7 = 0; // Reset relevant counter
+}
+else if (treasure_12 &gt; time_threshold) {
+    Serial.write ("12 kHz treasure!\n");
+    treasure_12 = 0;
+}
+else if (treasure_17 &gt; time_threshold) {
+    Serial.write ("17 kHz treasure!\n");
+    treasure_17 = 0;
+}
+                                </code>
+                            </pre>
+                            <p>Note: We did not reset the counters if the treasure of a particular frequency was not detected that iteration. We chose not to do this to keep the number of instructions low. We thought this was an acceptable trade off as our code worked correctly even without this reset</p>
+                            <p>Note 2: It was hard to get computer screen focused and the robot and treasures in frame, so the video pans between our robot-treasure setup and the screen. We first show that our code can detect different frequencies, then we show ourselves switching the treasures.</p>
+                            <br>
+                            </div>
+
+                            </div>
+                            
+                            <div class="white">
+                            <h2 style="font-size:200%; margin-bottom: 2%;">Looking Ahead</h2>   
+                            <p>For our final robot, we plan to modify our treasure detection based on our final analog circuitry. We plan to add an op-amp as well as band pass filtering in order to amplify the output of the sensor and filter out noise. As a result, we will not have to make our software as sensitive, and we will be able to make it much more efficient.</p>
+                            </div>
+                            
+						</section>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	<!-- /Main -->
+
+	<!-- Tweet -->
+		<div id="tweet">
+			<div class="container">
+				<section>
+					<blockquote style="font-family:Ubuntu; letter-spacing: 2px;">no bad robots</blockquote>
+				</section>
+			</div>
+		</div>
+
+	<!-- Copyright -->
+		<div id="copyright">
+			<div class="container">
+				website design from <a href="http://templated.co">TEMPLATED</a>
+                <br>
+			</div>
+		</div>
+
+	</body>
+</html>
