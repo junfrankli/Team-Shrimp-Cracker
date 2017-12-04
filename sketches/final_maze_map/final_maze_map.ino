@@ -15,7 +15,7 @@
 #define FFT_N 256 // set to 256 point fft
 
 //speeds
-#define MAXSPEED 250
+#define MAXSPEED 300
 
 // Distance Sensors
 #define XSHUT_pinA 6
@@ -135,7 +135,7 @@ void setup() {
   radio.setChannel(0x50);
   // set the power
   // RF24_PA_MIN=-18dBm, RF24_PA_LOW=-12dBm, RF24_PA_MED=-6dBM, and RF24_PA_HIGH=0dBm.
-  radio.setPALevel(RF24_PA_MIN);
+  radio.setPALevel(RF24_PA_HIGH);
   //RF24_250KBPS for 250kbs, RF24_1MBPS for 1Mbps, or RF24_2MBPS for 2Mbps
   radio.setDataRate(RF24_250KBPS);
 
@@ -147,7 +147,7 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   while (!detectTone()) {
-    Serial.println(detectTone());; // wait to start
+    // wait to start
   }
   Serial.println("Started");
   SQUARE *visited = NULL;
@@ -161,10 +161,10 @@ void loop() {
   path = push(path, 0, 0);
   int wall1 = detectWall(1);
   int wall0 = detectWall(0);
-  Serial.print("Wall 1: ");
-  Serial.println(wall1);
-  Serial.print("Wall 0: ");
-  Serial.println(wall0);
+  //Serial.print("Wall 1: ");
+  //Serial.println(wall1);
+  //Serial.print("Wall 0: ");
+  //Serial.println(wall0);
   if (!wall1)
     frontier = push(frontier, 1, 0); 
   if (!wall0) 
@@ -186,204 +186,231 @@ void loop() {
   //DFS 
   while (frontier != NULL) {
     SQUARE* frontier_loc = pop(&frontier);
-    int dir = moveAdjacent(curX, curY, heading, frontier_loc->xPos, frontier_loc->yPos);
-    if (dir == -1) {
-      //need to backtrack
-      //pop from current path
-      SQUARE *next = pop(&path);
-      
-      //move along current path
-      int dir = moveAdjacent(curX, curY, heading, next->xPos, next->yPos);
-      
-      //update state
-      if (dir == 0) 
-        curY = curY + 1;
-      else if (dir == 1)
-        curX = curX + 1;
-      else if (dir == 2)
-        curY = curY - 1;
-      else if (dir == 3)
-        curX = curX - 1;
-
-      sendMazePacket(curX, curY, 0, 0, 0, 0, 0, 0, 0, 0);
-      if (dir != -1)
+    if (!findsquare(visited, frontier_loc->xPos, frontier_loc->yPos)) {
+      int dir = moveAdjacent(curX, curY, heading, frontier_loc->xPos, frontier_loc->yPos);
+      if (dir == -1) {
+        //need to backtrack
+        //pop from current path
+        SQUARE *next = pop(&path);
+        
+        //move along current path
+        int dir = moveAdjacent(curX, curY, heading, next->xPos, next->yPos);
+        
+        //update state
+        if (dir == 0) 
+          curY = curY + 1;
+        else if (dir == 1)
+          curX = curX + 1;
+        else if (dir == 2)
+          curY = curY - 1;
+        else if (dir == 3)
+          curX = curX - 1;
+  
+        sendMazePacket(curX, curY, 0, 0, 0, 0, 0, 0, 0, 0);
+        if (dir != -1)
+          heading = dir;
+          
+        //push frontier_loc back
+        frontier = frontier_loc;
+        
+        //free memory
+        free(next);
+      } else {
+        //update current position and heading
+        
+        //add current position to current path
+        path = push(path, curX, curY);
+        
         heading = dir;
+        if (heading == 0)
+          curY = curY + 1;
+        else if (heading == 1)
+          curX = curX + 1;
+        else if (heading == 2)
+          curY = curY - 1;
+        else if (heading == 3)
+          curX = curX - 1;
+  
+        Serial.print("Adding to visited: ");
+        Serial.print(curX);
+        Serial.print(" ");
+        Serial.println(curY);
+        //add current position to visited
+        visited = push(visited, curX, curY);
         
-      //push frontier_loc back
-      frontier = frontier_loc;
-      
-      //free memory
-      free(next);
-    } else {
-      //update current position and heading
-      
-      //add current position to current path
-      path = push(path, curX, curY);
-      
-      heading = dir;
-      if (heading == 0)
-        curY = curY + 1;
-      else if (heading == 1)
-        curX = curX + 1;
-      else if (heading == 2)
-        curY = curY - 1;
-      else if (heading == 3)
-        curX = curX - 1;
-      
-      //add current position to visited
-      visited = push(visited, curX, curY);
-      
-      //detect possible places to go -- if not in visited add to frontier
-      int goalX;
-      int goalY;
-      int wall3 = detectWall(3);
-      int wall2 = detectWall(2);
-      int wall1 = detectWall(1);
-      int wall0 = detectWall(0);
-      Serial.print("Wall 3: ");
-      Serial.println(wall3);
-      Serial.print("Wall 2: ");
-      Serial.println(wall2);
-      Serial.print("Wall 1: ");
-      Serial.println(wall1);
-      Serial.print("Wall 0: ");
-      Serial.println(wall0);
-      if (!wall3) {
+        //detect possible places to go -- if not in visited add to frontier
+        int goalX;
+        int goalY;
+        int wall3 = detectWall(3);
+        int wall2 = detectWall(2);
+        int wall1 = detectWall(1);
+        int wall0 = detectWall(0);
+        Serial.print("Wall 3: ");
+        Serial.println(wall3);
+        Serial.print("Wall 2: ");
+        Serial.println(wall2);
+        Serial.print("Wall 1: ");
+        Serial.println(wall1);
+        Serial.print("Wall 0: ");
+        Serial.println(wall0);
+        if (!wall3) {
+          switch(heading) {
+            case 0:
+              goalX = curX-1;
+              goalY = curY;
+              break;
+            case 1:
+              goalX = curX;
+              goalY = curY+1;
+              break;
+            case 2:
+              goalX = curX+1;
+              goalY = curY;
+              break;
+            case 3:
+              goalX = curX;
+              goalY = curY-1;
+              break;
+          }
+          if (!findsquare(visited, goalX, goalY)) {
+            Serial.print("adding to frontier: ");
+            Serial.print(goalX);
+            Serial.print(" ");
+            Serial.println(goalY);
+            frontier = push(frontier, goalX, goalY);
+          }
+        }
+        if (!wall2){
+          switch(heading) {
+            case 0:
+              goalX = curX;
+              goalY = curY-1;
+              break;
+            case 1:
+              goalX = curX-1;
+              goalY = curY;
+              break;
+            case 2:
+              goalX = curX;
+              goalY = curY+1;
+              break;
+            case 3:
+              goalX = curX+1;
+              goalY = curY;
+              break;
+          }
+          if (!findsquare(visited, goalX, goalY)) {
+            Serial.print("adding to frontier: ");
+            Serial.print(goalX);
+            Serial.print(" ");
+            Serial.println(goalY);
+            frontier = push(frontier, goalX, goalY);
+          }
+          
+        }
+        if (!wall1) {
+          switch(heading) {
+            case 0:
+              goalX = curX+1;
+              goalY = curY;
+              break;
+            case 1:
+              goalX = curX;
+              goalY = curY-1;
+              break;
+            case 2:
+              goalX = curX-1;
+              goalY = curY;
+              break;
+            case 3:
+              goalX = curX;
+              goalY = curY+1;
+              break;
+          }
+          if (!findsquare(visited, goalX, goalY)) {
+            Serial.print("adding to frontier: ");
+            Serial.print(goalX);
+            Serial.print(" ");
+            Serial.println(goalY);
+            frontier = push(frontier, goalX, goalY);
+          }
+        }
+        if (!wall0) {
+          switch(heading) {
+            case 0:
+              goalX = curX;
+              goalY = curY+1;
+              break;
+            case 1:
+              goalX = curX+1;
+              goalY = curY;
+              break;
+            case 2:
+              goalX = curX;
+              goalY = curY-1;
+              break;
+            case 3:
+              goalX = curX-1;
+              goalY = curY;
+              break;
+          }
+          if (!findsquare(visited, goalX, goalY)) {
+            frontier = push(frontier, goalX, goalY);
+            Serial.print("adding to frontier: ");
+            Serial.print(goalX);
+            Serial.print(" ");
+            Serial.println(goalY);
+          }
+        } 
+        //check for treasures
+        int treasure = 0; //detect_treasure ();
+        int t1 = 0;
+        int t2 = 0;
+        int t3 = 0;
+        if (treasure == 1)
+          t1 = 1;
+        else if (treasure == 2)
+          t2 = 1;
+        else if (treasure == 3)
+          t3 = 1;
+        //send maze packet
+        int rw = 0;
+        int lw = 0;
+        int dw = 0;
+        int uw = 0;
+  
         switch(heading) {
           case 0:
-            goalX = curX-1;
-            goalY = curY;
+            rw = wall3;
+            lw = wall1;
+            dw = wall2;
+            uw = wall0;
             break;
           case 1:
-            goalX = curX;
-            goalY = curY+1;
+            rw = wall2;
+            lw = wall0;
+            dw = wall1;
+            uw = wall3;
             break;
           case 2:
-            goalX = curX+1;
-            goalY = curY;
+            rw = wall1;
+            lw = wall3;
+            dw = wall0;
+            uw = wall2;
             break;
           case 3:
-            goalX = curX;
-            goalY = curY-1;
+            rw = wall0;
+            lw = wall2;
+            dw = wall3;
+            uw = wall1;
             break;
         }
-        if (!findsquare(visited, goalX, goalY) && !findsquare(frontier, goalX, goalY)) 
-          frontier = push(frontier, goalX, goalY);
+        sendMazePacket(curX, curY, rw, lw, dw, uw, t1, t2, t3, 0);
+        free(frontier_loc);
       }
-      if (!wall2){
-        switch(heading) {
-          case 0:
-            goalX = curX;
-            goalY = curY-1;
-            break;
-          case 1:
-            goalX = curX-1;
-            goalY = curY;
-            break;
-          case 2:
-            goalX = curX;
-            goalY = curY+1;
-            break;
-          case 3:
-            goalX = curX+1;
-            goalY = curY;
-            break;
-        }
-        if (!findsquare(visited, goalX, goalY) && !findsquare(frontier, goalX, goalY)) 
-          frontier = push(frontier, goalX, goalY);
-        
-      }
-      if (!wall1) {
-        switch(heading) {
-          case 0:
-            goalX = curX+1;
-            goalY = curY;
-            break;
-          case 1:
-            goalX = curX;
-            goalY = curY-1;
-            break;
-          case 2:
-            goalX = curX-1;
-            goalY = curY;
-            break;
-          case 3:
-            goalX = curX;
-            goalY = curY+1;
-            break;
-        }
-        if (!findsquare(visited, goalX, goalY) && !findsquare(frontier, goalX, goalY))
-          frontier = push(frontier, goalX, goalY);
-      }
-      if (!wall0) {
-        switch(heading) {
-          case 0:
-            goalX = curX;
-            goalY = curY+1;
-            break;
-          case 1:
-            goalX = curX+1;
-            goalY = curY;
-            break;
-          case 2:
-            goalX = curX;
-            goalY = curY-1;
-            break;
-          case 3:
-            goalX = curX-1;
-            goalY = curY;
-            break;
-        }
-        if (!findsquare(visited, goalX, goalY) && !findsquare(frontier, goalX, goalY)) 
-          frontier = push(frontier, goalX, goalY);
-      } 
-      //check for treasures
-      int treasure = 0; //detect_treasure ();
-      int t1 = 0;
-      int t2 = 0;
-      int t3 = 0;
-      if (treasure == 1)
-        t1 = 1;
-      else if (treasure == 2)
-        t2 = 1;
-      else if (treasure == 3)
-        t3 = 1;
-      //send maze packet
-      int rw = 0;
-      int lw = 0;
-      int dw = 0;
-      int uw = 0;
-
-      switch(heading) {
-        case 0:
-          rw = wall3;
-          lw = wall1;
-          dw = wall2;
-          uw = wall0;
-          break;
-        case 1:
-          rw = wall2;
-          lw = wall0;
-          dw = wall1;
-          uw = wall3;
-          break;
-        case 2:
-          rw = wall1;
-          lw = wall3;
-          dw = wall0;
-          uw = wall2;
-          break;
-        case 3:
-          rw = wall0;
-          lw = wall2;
-          dw = wall3;
-          uw = wall1;
-          break;
-      }
-      sendMazePacket(curX, curY, rw, lw, dw, uw, t1, t2, t3, 0);
-      //free memory
-      free(frontier_loc);
-    }
+    } else 
+       //free memory
+       free(frontier_loc);
   }
   sendMazePacket(0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
   Serial.println("DONE");
@@ -393,11 +420,7 @@ void loop() {
 //moves robot one square based on current position and heading
 //returns heading if robot is able to move to specified square, -1 otherwise
 int moveAdjacent(int curX, int curY, int heading, int goalX, int goalY) {
-  Serial.print("Moving from ");
-  Serial.print(curX);
-  Serial.print(" ");
-  Serial.print(curY);
-  Serial.print(" to ");
+  Serial.print("Moving: ");
   Serial.print(goalX);
   Serial.print(" ");
   Serial.println(goalY);
@@ -481,6 +504,10 @@ int moveAdjacent(int curX, int curY, int heading, int goalX, int goalY) {
 
 // stack functions
 bool findsquare(SQUARE *head, int x, int y) {
+  Serial.print("Looking for square: ");
+  Serial.print(x);
+  Serial.print(" ");
+  Serial.println(y);
   while (head != NULL) {
     if (head->xPos == x) {
       if (head->yPos == y)
@@ -525,14 +552,10 @@ void sendMazePacket(int x, int y, int rw, int lw, int dw, int uw, int t1, int t2
 
 void sendRadioPacket(int packet) {
   bool ok = radio.write( &packet, sizeof(int));
-  Serial.println("attempting to write a packet");
-  if (!ok) {
-    //failed to send
-    Serial.println("failed to send a packet");
-    //sendRadioPacket(packet);
-    bool ok2 = radio.write( &packet, sizeof(int));
-    if (!ok2)
-      radio.write(&packet, sizeof(int));
+  for (int i = 0; i < 10; i++) {
+    if (ok)
+      break;
+    ok = radio.write( &packet, sizeof(int));
   }
 }
 
@@ -624,7 +647,7 @@ void goForwardOneSquare() {
     integral = integral + pos;
     lastPos = pos;
 
-    power_difference = pos / 15 + integral / 10000 + derivative * .5;
+    power_difference = pos / 12 + integral / 11000 + derivative * .5;
 
     const int max = 200;
     if (power_difference > max)

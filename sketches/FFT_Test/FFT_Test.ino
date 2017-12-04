@@ -13,8 +13,7 @@
 
 #include <FFT.h> // include the library
 
-int threshold = 40;
-int time_threshold = 10;
+int threshold = 20;
 int treasure_7 = 0;
 int treasure_12 = 0;
 int treasure_17 = 0;
@@ -32,7 +31,7 @@ void loop() {
   while (1) { // reduces jitter
     cli();  // UDRE interrupt slows this way down on arduino1.0
     for (int i = 0 ; i < 512 ; i += 2) {
-      fft_input[i] = analogRead(A5); // <-- NOTE THIS LINE
+      fft_input[i] = analogRead(A3); // <-- NOTE THIS LINE
       fft_input[i + 1] = 0;
     }
     fft_window(); // window the data for better frequency response
@@ -51,50 +50,44 @@ void loop() {
     for (byte i = 0 ; i < FFT_N / 2 ; i++) {
       Serial.println(fft_log_out[i]);
     }
+    if (treasureDetect() == 1)
+      Serial.println("7");
+    if (treasureDetect() == 2)
+      Serial.println("12");
+    if (treasureDetect() == 3)
+      Serial.println("17");
+    if (treasureDetect() == 0)
+      Serial.println("no treasure");
   }
 }
 
-void treasureDetect() {
+int treasureDetect() {
   int max_7_bin = 0;
-  for (int i = 46; i < 50; i++) {
+  for (int i = 45; i < 56; i++) {
     int x = (int) fft_log_out[i];
     if (x > max_7_bin)
       max_7_bin = x;
   }
   int max_12_bin = 0;
-  for (int i = 80; i < 83; i++) {
+  for (int i = 80; i < 90; i++) {
     int x = (int) fft_log_out[i];
     if (x > max_12_bin)
       max_12_bin = x;
   }
   int max_17_bin = 0;
-  for (int i = 113; i < 116; i++) {
+  for (int i = 110; i < 120; i++) {
     int x = (int) fft_log_out[i];
     if (x > max_17_bin)
       max_17_bin = x;
   }
-  if (max_17_bin > max_12_bin && max_17_bin > max_7_bin) {
-    if (max_17_bin > threshold)
-      treasure_17++;
-  }
-  else if (max_12_bin > max_7_bin) {
-    if (max_12_bin > threshold)
-      treasure_12++;
-  }
-  else if (max_7_bin > threshold)
-    treasure_7++;
-  if (treasure_7 > time_threshold) {
-    Serial.write("7 kHz treasure!\n");
-    treasure_7 = 0;
-  }
-  else if (treasure_12 > time_threshold) {
-    Serial.write ("12 kHz treasure!\n");
-    treasure_12 = 0;
-  }
-  else if (treasure_17 > time_threshold) {
-    Serial.write ("17 kHz treasure!\n");
-    treasure_17 = 0;
-  }
+  if (max_17_bin > threshold)
+      return 3;
+  else if (max_12_bin > threshold)
+      return 2;
+  else if (max_7_bin > 30)
+    return 1;
+  else 
+    return 0;
 }
 
 void toneDetect() {
