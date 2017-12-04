@@ -5,6 +5,17 @@
 #include <SPI.h>
 #include "nRF24L01.h"
 #include "RF24.h"
+#include <FFT.h> 
+
+//turns
+#define turn90 325
+#define turn180 750
+//Treasure detection 
+#define LOG_OUT 1 // use the log output function
+#define FFT_N 256 // set to 256 point fft
+
+//speeds
+#define MAXSPEED 250
 
 // Distance Sensors
 #define XSHUT_pinA 6
@@ -70,6 +81,12 @@ void setup() {
   Wire.begin();
 
   Serial.begin(115200);
+
+  //Treasure setup
+  /*TIMSK0 = 0; // turn off timer0 for lower jitter
+  ADCSRA = 0xe5; // set the adc to free running mode
+  ADMUX = 0x40; // use adc0
+  DIDR0 = 0x01; // turn off the digital input for adc0*/
   
   pinMode(XSHUT_pinA, OUTPUT);
   digitalWrite(XSHUT_pinA, LOW);
@@ -154,7 +171,7 @@ void loop() {
     frontier = push(frontier, 0, 1);
 
   //check for treasures
-  int treasure = detect_treasure ();
+  int treasure = 0; //detect_treasure ();
   int t1 = 0;
   int t2 = 0;
   int t3 = 0;
@@ -177,7 +194,7 @@ void loop() {
       
       //move along current path
       int dir = moveAdjacent(curX, curY, heading, next->xPos, next->yPos);
-          
+      
       //update state
       if (dir == 0) 
         curY = curY + 1;
@@ -188,6 +205,7 @@ void loop() {
       else if (dir == 3)
         curX = curX - 1;
 
+      sendMazePacket(curX, curY, 0, 0, 0, 0, 0, 0, 0, 0);
       if (dir != -1)
         heading = dir;
         
@@ -198,7 +216,7 @@ void loop() {
       free(next);
     } else {
       //update current position and heading
-
+      
       //add current position to current path
       path = push(path, curX, curY);
       
@@ -320,7 +338,7 @@ void loop() {
           frontier = push(frontier, goalX, goalY);
       } 
       //check for treasures
-      int treasure = detect_treasure ();
+      int treasure = 0; //detect_treasure ();
       int t1 = 0;
       int t2 = 0;
       int t3 = 0;
@@ -344,10 +362,10 @@ void loop() {
           uw = wall0;
           break;
         case 1:
-          rw = wall0;
-          lw = wall2;
-          dw = wall3;
-          uw = wall1;
+          rw = wall2;
+          lw = wall0;
+          dw = wall1;
+          uw = wall3;
           break;
         case 2:
           rw = wall1;
@@ -356,10 +374,10 @@ void loop() {
           uw = wall2;
           break;
         case 3:
-          rw = wall2;
-          lw = wall0;
-          dw = wall1;
-          uw = wall3;
+          rw = wall0;
+          lw = wall2;
+          dw = wall3;
+          uw = wall1;
           break;
       }
       sendMazePacket(curX, curY, rw, lw, dw, uw, t1, t2, t3, 0);
@@ -405,52 +423,52 @@ int moveAdjacent(int curX, int curY, int heading, int goalX, int goalY) {
       case 0:
         switch (dir) {
           case 1:
-            turnLeft(300);
+            turnLeft(turn90);
             break;
           case 2: 
-            turnLeft(750);
+            turnLeft(turn180);
             break;
           case 3:
-            turnRight(300);
+            turnRight(turn90);
             break;
         }
         break;
       case 1:
         switch (dir) {
           case 0:
-            turnRight(300);
+            turnRight(turn90);
             break;
           case 2: 
-            turnLeft(300);
+            turnLeft(turn90);
             break;
           case 3:
-            turnRight(750);
+            turnRight(turn180);
             break;
         }
         break;
       case 2: 
         switch (dir) {
           case 1:
-            turnRight(300);
+            turnRight(turn90);
             break;
           case 0: 
-            turnLeft(750);
+            turnLeft(turn180);
             break;
           case 3:
-            turnLeft(300);
+            turnLeft(turn90);
             break;
         }
         break;
       case 3:
         switch (dir) {
           case 1:
-            turnLeft(750);
+            turnLeft(turn180);
             break;
           case 0: 
-            turnLeft(300);
+            turnLeft(turn90);
             break;
           case 2:
-            turnRight(300);
+            turnRight(turn90);
             break;
         }
         break;
@@ -512,7 +530,9 @@ void sendRadioPacket(int packet) {
     //failed to send
     Serial.println("failed to send a packet");
     //sendRadioPacket(packet);
-    
+    bool ok2 = radio.write( &packet, sizeof(int));
+    if (!ok2)
+      radio.write(&packet, sizeof(int));
   }
 }
 
@@ -530,17 +550,17 @@ bool detectWall(int dir) {
   //directions: 0 for forward, 1 for left, 3 for right
   int wallDist = 0;
   if (dir == 0) {
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 2; i++) {
       wallDist += sensorC.readRangeSingleMillimeters(); 
     }
   }
   else if (dir == 1) {
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 2; i++) {
       wallDist += sensorB.readRangeSingleMillimeters();
     }
   }
   else if (dir == 3) {
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 2; i++) {
       wallDist += sensorA.readRangeSingleMillimeters(); 
     }
   }
@@ -548,89 +568,19 @@ bool detectWall(int dir) {
   Serial.print(dir);
   Serial.print(" ");
   Serial.println(wallDist);
-  return (wallDist < 1750);
+  return (wallDist < 1750/5);
 }
 
 void goForwardOneSquare() {
-Serial.println("going forward");
-  int online, goforward = 0, started, lastRead;
-
+  Serial.println("going forward");
+  int numonline, goforward = 1, lastRead;
+  int started = 0;
   unsigned char i, on_line = 0;
   unsigned long avg;
   unsigned int sum;
 
-  int max = 200;
-  
-  while (goforward == 0) {
-    // read line sensors
-    qtrrc.read(sensorValues);
+  int max = MAXSPEED;
 
-    lastRead = pos;
-    avg = 0;
-    sum = 0;
-    on_line = 0;
-    numonline = 0;
-    for (i = 0; i < NUM_SENSORS; i++) {
-      int value = sensorValues[i];
-      // keep track of whether we see the line at all
-      if (value > 350) {
-        on_line = 1;
-        numonline++;
-      }
-
-      // only average in values that are above a noise threshold
-      if (value > 50) {
-        avg += (long)(value) * (i * 2500);
-        sum += value;
-      }
-    }
-    if (!on_line)
-    {
-      // If it last read to the left of center, return 0.
-      if (lastRead < (NUM_SENSORS - 1) * 1000 / 2) {
-        pos =  -2500;
-        // If it last read to the right of center, return the max.
-      } else {
-        pos = (NUM_SENSORS - 1) * 1000 - 2500;
-      }
-    } else {
-
-      // calculate position
-      pos = .4 * avg / sum - 2500;
-    }
-
-    // calc PIDs
-    int derivative = pos - lastPos;
-    integral = integral + pos;
-    lastPos = pos;
-
-    power_difference = pos / 15 + integral / 10000 + derivative * .5;
-
-    const int max = 200;
-    if (power_difference > max)
-      power_difference = max;
-    if (power_difference < -max)
-      power_difference = -max;
-    if (numonline < 5 ) {
-      goforward = 1;
-    }
-    else if (power_difference < 0) {
-      motors.setSpeeds(max + power_difference, max);
-    }  else {
-      motors.setSpeeds(max, max - power_difference);
-    }
-    //    }
-    /*for (char i = 5; i >= 0; i--) {
-      Serial.print(sensorValues[i]);
-      Serial.print("  ");
-    }
-    Serial.print("\t   POS: ");
-    Serial.print(pos);
-    Serial.print("\t   OUT: ");
-    Serial.print(power_difference);
-    Serial.println();*/
-  }
-  
   while (goforward) {
     // read line sensors
     qtrrc.read(sensorValues);
@@ -681,27 +631,27 @@ Serial.println("going forward");
       power_difference = max;
     if (power_difference < -max)
       power_difference = -max;
-    if (numonline >= 5 ) {
-      goforward = 0;
+
+    if (started) {
+      if (numonline >= 5 ) {
+        goforward = 0;
+      }
+      if (power_difference < 0) {
+        motors.setSpeeds(max + power_difference, max);
+      }  else {
+        motors.setSpeeds(max, max - power_difference);
+      }
+    } else {
+      if (numonline < 5) 
+        started = 1;
+      else {
+        motors.setSpeeds(max, max);
+      }
     }
-    else if (power_difference < 0) {
-      motors.setSpeeds(max + power_difference, max);
-    }  else {
-      motors.setSpeeds(max, max - power_difference);
-    }
-    //    }
-    /*for (char i = 5; i >= 0; i--) {
-      Serial.print(sensorValues[i]);
-      Serial.print("  ");
-    }
-    Serial.print("\t   POS: ");
-    Serial.print(pos);
-    Serial.print("\t   OUT: ");
-    Serial.print(power_difference);
-    Serial.println();*/
   }
   motors.setSpeeds(0, 0);
 }
+
 
 void turnLeft(int time) {
   int online, turnleft = 1, started, lastRead;
@@ -724,12 +674,15 @@ void turnRight(int time) {
   delay(time);
   motors.setSpeeds(0, 0);
 }
-
+/*
 int detect_treasure() {
-  return 0;
+  int threshold = 50;
+  for (int i = 0; i < 10; i++) {
+    
+  }
 }
 //read from adc0 and do fft
-/*int fft() {
+int fft() {
     cli();  // UDRE interrupt slows this way down on arduino1.0
     for (int i = 0 ; i < 512 ; i += 2) { // save 256 samples
       while(!(ADCSRA & 0x10)); // wait for adc to be ready
@@ -747,12 +700,11 @@ int detect_treasure() {
     fft_run(); // process the data in the fft
     fft_mag_log(); // take the output of the fft
     sei(); // turns interrupts back on
-    return treasureDetect();
 }
 
 //treasure detection
 //return 0 if no treasure, 1 if 7kHz, 2 if 12kHz, 3 if 17kHz
-int treasureDetect() {
+/*int treasureDetect() {
   int treasure_7;
   int treasure_12;
   int treasure_17;
