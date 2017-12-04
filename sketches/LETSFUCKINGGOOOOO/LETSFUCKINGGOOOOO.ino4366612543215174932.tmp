@@ -51,7 +51,7 @@ DRV8835MotorShield motors;
 int distLeft, distRight, distCenter, pos;
 int leftSpeed, rightSpeed, lastPos, integral, power_difference;
 
-char state, numonline, go;
+char state, numonline;
 
 
 void setup()
@@ -63,7 +63,7 @@ void setup()
   pinMode(XSHUT_pinB, OUTPUT);
   digitalWrite(XSHUT_pinB, LOW);
   Serial.println("output mode");
-  //
+
   sensorA.setAddress(sensorA_newAddress);
   pinMode(XSHUT_pinA, INPUT);
   delay(10);
@@ -163,31 +163,10 @@ void loop()
 
   debug();
 
-  if (go < 2) {
-
-    // calc PIDs
-    int derivative = pos - lastPos;
-    integral = constrain(integral + pos, -50, 50);
-    lastPos = pos;
-
-    power_difference = pos / 10 + integral / 10000 + derivative * 1.5;
-
-    const int max = 200;
-    if (power_difference > max)
-      power_difference = max;
-    if (power_difference < -max)
-      power_difference = -max;
-    if (numonline == 6) {
-      go++;
-    }
-    else if (power_difference < 0) {
-      motors.setSpeeds(max + power_difference, max);
-    }  else {
-      motors.setSpeeds(max, max - power_difference);
-    }
-  } else{
-      motors.setSpeeds(0, 0);
+  for (int i = 0; i < 3; i++) {
+    //forwardOne();
   }
+
 
   //  // state machine logic
   //  switch (state) {
@@ -222,8 +201,7 @@ void forwardOne() {
   if (power_difference < -max)
     power_difference = -max;
   if (numonline == 6) {
-    motors.setSpeeds(0, 0);
-    go++;
+    motors.setSpeeds(max + power_difference, max);
   }
   else if (power_difference < 0) {
     motors.setSpeeds(max + power_difference, max);

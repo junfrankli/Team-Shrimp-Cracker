@@ -101,6 +101,14 @@ void setup()
 
 void loop()
 {
+  forwardOne();
+  delay(1000);
+}
+
+
+// DRIVE FORWARD ONE SQUARE
+void forwardOne() {
+
   // read line sensors
   qtrrc.read(sensorValues);
   unsigned char i, on_line = 0;
@@ -187,48 +195,6 @@ void loop()
     }
   } else{
       motors.setSpeeds(0, 0);
-  }
-
-  //  // state machine logic
-  //  switch (state) {
-  //    case 0:
-  //      // waiting for mic tone to start mapping
-  //      if (0) {
-  //        state++;
-  //      }
-  //      break;
-  //    case 1:
-  //      // mapping
-  //
-  //      break;
-  //
-  //  }
-}
-
-
-// DRIVE FORWARD ONE SQUARE
-void forwardOne() {
-
-  // calc PIDs
-  int derivative = pos - lastPos;
-  integral = constrain(integral + pos, -50, 50);
-  lastPos = pos;
-
-  power_difference = pos / 10 + integral / 10000 + derivative * 1.5;
-
-  const int max = 100;
-  if (power_difference > max)
-    power_difference = max;
-  if (power_difference < -max)
-    power_difference = -max;
-  if (numonline == 6) {
-    motors.setSpeeds(0, 0);
-    go++;
-  }
-  else if (power_difference < 0) {
-    motors.setSpeeds(max + power_difference, max);
-  }  else {
-    motors.setSpeeds(max, max - power_difference);
   }
 }
 

@@ -9,11 +9,11 @@
 
 // Distance Sensors
 #define XSHUT_pinLeft 6
-#define XSHUT_pinCenter 0
+#define XSHUT_pinCenter 5
 // default VL53L0x address 41
 #define SensorLeft_newAddress 42
 #define SensorRight_newAddress 43
-VL53L0X sensorRight; //, sensorRight, sensorCenter;
+VL53L0X sensorLeft, sensorRight, sensorCenter;
 
 
 void setup()
@@ -22,35 +22,35 @@ void setup()
 //  pinMode(XSHUT_pinRight, OUTPUT);
   pinMode(XSHUT_pinCenter, OUTPUT);
 
-//delay(2000);
-//  Serial.begin(9600);
+delay(2000);
+  Serial.begin(9600);
   Wire.begin();
 
-  //sensorLeft.setAddress(SensorLeft_newAddress);
-  //pinMode(XSHUT_pinLeft, INPUT);
-  //delay(10);
-  //sensorRight.setAddress(SensorRight_newAddress);
-  //pinMode(XSHUT_pinRight, INPUT);
-  //delay(10);
+  sensorLeft.setAddress(SensorLeft_newAddress);
+  pinMode(XSHUT_pinLeft, INPUT);
+  delay(10);
+  sensorRight.setAddress(SensorRight_newAddress);
+  pinMode(XSHUT_pinCenter, INPUT);
+  delay(10);
 
-//  sensorLeft.init();
+  sensorLeft.init();
   sensorRight.init();
-//  sensorCenter.init();
+  sensorCenter.init();
 
-//  sensorLeft.setTimeout(500);
+  sensorLeft.setTimeout(500);
   sensorRight.setTimeout(500);
-//  sensorCenter.setTimeout(500);
+  sensorCenter.setTimeout(500);
 
-//  sensorLeft.startContinuous();
+  sensorLeft.startContinuous();
   sensorRight.startContinuous();
-//  sensorCenter.startContinuous();
+  sensorCenter.startContinuous();
 }
 
 void loop()
 {
-//  Serial.println(sensorLeft.readRangeContinuousMillimeters());
-  //Serial.print(",");              //seperator
-  //Serial.print(sensorCenter.readRangeContinuousMillimeters());
-//  Serial.print(",");              //seperator
+  Serial.println(sensorLeft.readRangeContinuousMillimeters());
+  Serial.print(",");              //seperator
+  Serial.print(sensorCenter.readRangeContinuousMillimeters());
+  Serial.print(",");              //seperator
   Serial.println(sensorRight.readRangeContinuousMillimeters());
 }
