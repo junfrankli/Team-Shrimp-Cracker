@@ -1,0 +1,359 @@
+<!DOCTYPE HTML>
+<!--
+	Linear by TEMPLATED
+    templated.co @templatedco
+    Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+	<head>
+		<title>Lab03</title>
+        <link href="shrimp.ico" rel="icon">
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="description" content="" />
+		<meta name="keywords" content="" />
+        <link href="https://fonts.googleapis.com/css?family=Roboto:100" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+        <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+		<script src="js/skel.min.js"></script>
+		<script src="js/skel-panels.min.js"></script>
+		<script src="js/init.js"></script>
+		<noscript>
+			<link rel="stylesheet" href="css/skel-noscript.css" />
+			<link rel="stylesheet" href="css/style.css" />
+			<link rel="stylesheet" href="css/style-desktop.css" />
+		</noscript>
+        <style>
+            h3 {
+                font-size:150%;
+                margin-bottom:1%;
+            }
+        </style>
+	</head>
+	<body>
+
+	<!-- Header -->
+		<div id="header">
+			<div id="nav-wrapper"> 
+				<!-- Nav -->
+				<nav id="nav">
+					<ul>
+                        <li><a href="index.html">Homepage</a></li>
+						<li><a href="about.html">About</a></li>
+						<li><a href="team-contract.html">Team Contract</a></li>
+						<li><a href="meeting-minutes.html">Meeting Minutes</a></li>
+                        <li><a href="ethics.html">Ethics Case Study</a></li>
+					</ul>
+				</nav>
+			</div>
+			<div class="container"> 
+				
+				<!-- Logo -->
+				<div id="logo" style="font-family: Ubuntu; font-weight: normal">
+				    <h1><a href="index.html">team-shrimp-cracker</a></h1>
+					<span class="tag">A robotics team dedicated to jamming the most flavor in a little robot.</span>
+				</div>
+			</div>
+		</div>
+	<!-- Header --> 
+
+	<!-- Main -->
+		<div id="main">
+			<div class="container">
+				<div class="row">
+
+					<!-- Sidebar -->
+					<div id="sidebar" style="width: 20%;" class="4u">
+						<section>
+							<header>
+								<h2>LABWORK</h2>
+							</header>
+							<div class="row">
+								<section class="6u">
+									<ul class="default">
+                                        <li><a href="lab01.html">Lab01</a></li>
+										<li><a href="lab02.html">Lab02</a></li>
+										<li><a href="lab03.html">Lab03</a></li>
+                                        <li><a href="lab04.html">Lab04</a></li>
+										<li><a href="m01.html">Milestone01</a></li>
+										<li><a href="m02.html">Milestone02</a></li>
+										<li><a href="m03.html">Milestone03</a></li>
+                                        <li><a href="m04.html">Milestone04</a></li>
+                                        <li><a href="competition.html">Competition</a></li>
+									</ul>
+								</section>
+							</div>
+						</section>
+			</div>
+					
+					<!-- Content -->
+					<div id="content" class="8u skel-cell-important" style="width:75%;">
+						<section>
+							<header>
+                                <h2 style="margin-bottom:2%;">LAB03: FPGA VIDEO CONTROLLER AND</h2> 
+                                <h2 style="margin-bottom:5%;">SOUND GENERATION</h2>
+							</header>
+                            
+                            <img src="images/header-graphics.png" style="width:100%;">
+                            <img src="images/header-middle.png" style="width:100%;">
+                            <img src="images/header-bottom.png" style="width:100%;">
+
+                            <div class="grey">
+                            <h2 style="font-size:200%; margin-bottom: 2%;">Objective</h2>
+							<p>In this lab, we begin building the basic graphics that will be used to display the maze later on.</p>
+                            <p style="font-size:120%; margin-bottom:0;">Equipment</p>
+                            <ul style="margin-left:5%;">
+                                <li>* 1 FPGA Dev Board</li>
+                                <li>* 1 VGA screen</li>
+                                <li>* 1 VGA cable</li>
+                                <li>* 1 VGA connector</li>
+                                <li>* 1 VGA switch</li>
+                                <li>* Various resistors</li>
+                            </ul>
+                            </div>
+                            
+                            <div class="white">
+                            <h2 style="font-size:200%; margin-bottom: 2%;">Pre-Lab</h2>
+                            <p>Looking at the VGA DAC, the specific resistor values for the DAC can be determined by the colors on each resistor. For both the three red digital bits, one goes through a resistor of value 240 ohms, another through a resistor of value 510 ohms, and the third through a resistor of value 1000 ohms. The same goes for the three green digital bit. Lastly, the blue signal only consists of two bits of which one goes through a resistor of 150 ohms and the other through a resistor of 330 ohms. </p>
+                            <img src="https://i.imgur.com/2api4Aj.png" height=340>
+                            <img src="https://i.imgur.com/Kqc7OfG.png" height=340>
+                            <p>So why exactly do we need a DAC? The most basic answer is that the actual VGA input to the monitor takes three analog signals from 0-1V to determine the intensity of the components of the RGB color. The FPGA outputs 8 digital bits to represent color that are 3.3V. So for one, we need to step down the voltage. Another is that we need to put the three bit information in an actual analog intensity that represents the digital bits. So with three digital bits, we can only represent eight different intensities of green or red. So the resistors are chosen in order to give a max voltage of 1V even if all digital outputs are at 3.3V. They are also chosen to give certain digital bits more weight. For the MSB, the output has the least resistor value for a reason. </p>
+                            <img src="https://i.imgur.com/hFyyKhf.png" style="width:100%;">
+                            <p>Running the simulation of the circuit, we see that indeed when all sources are at 3.3V, the monitor has a voltage drop of 867.04mV. The following table lists the voltage drop values in the monitor depending on the digital signal bits.</p>
+                            <div style="width:50%; display: inline; float:right;">
+                                <img src="https://i.imgur.com/KHpm94r.png" style="width:100%;">
+                            </div>
+                            <div style="width:45%;">
+                            <p>Even though the steps down in voltage aren’t exactly even, it's close enough. Because each subsequent bit should have a higher weight of exactly two compared to the bit before it, the resistors are approximately doubled. The blue digital signal resistors were chosen with the same logic in mind but just for two bits. With both digital outputs active, the resistor values are high enough to drop the voltage values to below 1V. The MSB carries twice the weight so it has a resistor of almost half of the LSB's resistor.</p>
+                                <br>
+                            </div>
+                            
+                            <div class="grey">
+                            <h2 style="font-size:200%; margin-bottom: 2%;">Understanding the Challenge &nbsp;
+                                <a href="/code/DE0_NANO.v" download>
+                                    <i class="fa fa-download" aria-hidden="true"></i>
+                                </a>
+                            </h2>    
+                            <img src="https://i.imgur.com/PGmzSZr.png" style="width:100%;">
+                            <p>After reading and running the code into the FPGA, it seemed pretty simple on how the modules were suppossed to work together to create an image. The only thing that we really needed to create was how we would divide the pixels into workable blocks to display maze information. Because we are tasked with mapping a 4 by 5 maze, it seemed simple to make our map up of a 4 by 5 grid. We decided to make our each grid size 50 by 50 pixels as it seemed like a good size. Next, we needed to determine what pixel was located in what grid. The following code is the logic used to determine grid location.</p>
+                            
+<!--
+                                NOTE: draw a diagram to explain this
+                                      shorten the code
+-->
+                                
+                            <pre style="overflow:auto; margin-left:2%;">
+                                <code>
+assign GRID_DATA = 
+    ((PIXEL_COORD_X &lt;= 10'b0000110010) &amp; (PIXEL_COORD_Y &lt;= 10'b0000110010)) ? my_grid[0][0] : 
+    (((PIXEL_COORD_X &lt;= 10'b0000110010) &amp; (PIXEL_COORD_Y &lt;= 10'b0001100100)) ? my_grid[1][0] : 
+    (((PIXEL_COORD_X &lt;= 10'b0000110010) &amp; (PIXEL_COORD_Y &lt;= 10'b0010010110)) ? my_grid[2][0] : 
+    (((PIXEL_COORD_X &lt;= 10'b0000110010) &amp; (PIXEL_COORD_Y &lt;= 10'b0011001000)) ? my_grid[3][0] : 
+    ((PIXEL_COORD_X &lt;= 10'b0001100100) &amp; (PIXEL_COORD_Y &lt;= 10'b0000110010)) ? my_grid[0][1] : 
+    (((PIXEL_COORD_X &lt;= 10'b0001100100) &amp; (PIXEL_COORD_Y &lt;= 10'b0001100100)) ? my_grid[1][1] : 
+    (((PIXEL_COORD_X &lt;= 10'b0001100100) &amp; (PIXEL_COORD_Y &lt;= 10'b0010010110)) ? my_grid[2][1] :
+    (((PIXEL_COORD_X &lt;= 10'b0001100100) &amp; (PIXEL_COORD_Y &lt;= 10'b0011001000)) ? my_grid[3][1] : 
+    ((PIXEL_COORD_X &lt;= 10'b0010010110) &amp; (PIXEL_COORD_Y &lt;= 10'b0000110010)) ? my_grid[0][2] : 
+    (((PIXEL_COORD_X &lt;= 10'b0010010110) &amp; (PIXEL_COORD_Y &lt;= 10'b0001100100)) ? my_grid[1][2] : 
+    (((PIXEL_COORD_X &lt;= 10'b0010010110) &amp; (PIXEL_COORD_Y &lt;= 10'b0010010110)) ? my_grid[2][2] : 
+    (((PIXEL_COORD_X &lt;= 10'b0010010110) &amp; (PIXEL_COORD_Y &lt;= 10'b0011001000)) ? my_grid[3][2] : 
+    ((PIXEL_COORD_X &lt;= 10'b0011001000) &amp; (PIXEL_COORD_Y &lt;= 10'b0000110010)) ? my_grid[0][3] : 
+    (((PIXEL_COORD_X &lt;= 10'b0011001000) &amp; (PIXEL_COORD_Y &lt;= 10'b0001100100)) ? my_grid[1][3] : 
+    (((PIXEL_COORD_X &lt;= 10'b0011001000) &amp; (PIXEL_COORD_Y &lt;= 10'b0010010110)) ? my_grid[2][3] : 
+    (((PIXEL_COORD_X &lt;= 10'b0011001000) &amp; (PIXEL_COORD_Y &lt;= 10'b0011001000)) ? my_grid[3][3] : 
+    ((PIXEL_COORD_X &lt;= 10'b0011111010) &amp; (PIXEL_COORD_Y &lt;= 10'b0000110010)) ? my_grid[0][4] : 
+    (((PIXEL_COORD_X &lt;= 10'b0011111010) &amp; (PIXEL_COORD_Y &lt;= 10'b0001100100)) ? my_grid[1][4] : 
+    (((PIXEL_COORD_X &lt;= 10'b0011111010) &amp; (PIXEL_COORD_Y &lt;= 10'b0010010110)) ? my_grid[2][4] : 
+    (((PIXEL_COORD_X &lt;= 10'b0011111010) &amp; (PIXEL_COORD_Y &lt;= 10'b0011001000)) ? my_grid[3][4] : 
+    2'b0)))))))))))))));</code>
+                            </pre>
+                                <br>
+                            <p>Each grid has a 2-bit register which records what color it should contain. With this, we can program each square in the grid to contain a different color as shown. </p>
+                            <img src="https://i.imgur.com/4S4WF6M.png" style="width:100%;">
+                            </div>
+                                
+                            <div class="white">
+                            <h2 style="font-size:200%; margin-bottom: 2%; margin-top:2%;">Interfacing with the Arduino</h2>   
+                            <p>To connect the Arduino to the FPGA, we need to create a voltage divider since the digital pins on the Arduino output up to 5V, while the GPIO pins on the FPGA have a range of 0-3.3V. </p>
+
+                            <h3>Voltage Divider Circuit</h3>   
+                            <div style="width:50%; display: inline; float:right;">
+                                 <img src="https://i.imgur.com/LH74Sl6.png" style="width:90%;">
+                            </div>
+                            <div style="width:45%;">
+                            <p>The simplest voltage divider involves two resistors, and for our purposes, we chose resistor values of 3.3 kOhms and 1.7 kOhms. We also grounded the FPGA and the Arduino together. The following circuit diagram shows our voltage divider and how it connects to the arduino pin and the FPGA GPIO pin. </p>
+                            
+                            <p>After that, we had a very basic arduino protocal that turned on and off a digital signal every second and connected this signal to the FPGA. The FPGA then used the signal to change the color of a particular grid as shown below.</p>
+                            </div>
+                            <br>
+                            <div style="width:50%; display: inline; float:right;">
+                                <iframe src='https://gfycat.com/ifr/HighFluffyAmericancrow' frameborder='0' scrolling='no' height='230'  allowfullscreen style="width:100%;"></iframe>
+                            </div>
+                            <div style="width:45%;">
+                                <p>The following code used to implement the logic is as follows.</p>
+                            <pre>
+                                <code>
+// reset when KEY0 is pressed
+assign reset = ~KEY[0]; 
+always @(posedge CLOCK_25) begin
+    my_grid[0][0] &lt;= (GPIO_0_D[30] == 1) 
+        ? 2'b1 : 2'b0;
+    // all other grid colors remain unchanged
+end                        
+                                </code>
+                            </pre>
+                            </div>
+                            </div>
+                            
+                            <img src="images/header-acoustic.png" style="width:100%;">
+                            <img src="images/header-middle.png" style="width:100%;">
+                            <img src="images/header-bottom.png" style="width:100%;">
+                                
+                            <div class="grey">
+                            <h2 style="font-size:200%; margin-bottom: 2%;">Objective</h2>
+							<p>The goal of this lab was to generate a short tune using the FPGA, to be played once the done signal is recieved from the Arduino.</p>
+                            <p style="font-size:120%; margin-bottom:0;">Equipment</p>
+                            <ul style="margin-left:5%;">
+                                <li>* Lab speaker</li>
+                                <li>* Stereo phone jack socket</li>
+                                <li>* 8-bit R2R DAC</li>
+                            </ul>
+                            </div>
+                            
+                            <div class="white">
+                            <h2 style="font-size:200%; margin-bottom: 2%;">Generating a Square Wave &nbsp;
+                                <a href="/code/SQUARE_WAVE.v" download>
+                                    <i class="fa fa-download" aria-hidden="true"></i>
+                                </a>
+                            </h2>
+                            <p>We first choose to generate a square wave with a frequency of 440Hz. This can be accomplished simply and without the DAC by toggling a GPIO pin digitally on and off. Since the clock of the state machine we used is 25 MHz. Therefore the period of the 440Hz on the state machine is 25MHz/440Hz = 56818 cycles. Since one whole period is equally devided into low and high signal, the square pulse should toggle every 56818/2 = 28409 cycles. </p>
+                            
+                            <div style="width:50%; display: inline; float:right;">
+                                <p>The square wave we achieved is displayed by the oscilloscope as shown below: </p>
+                                <img src="https://i.imgur.com/ySxtBhZ.jpg" style="width:100%;">
+                            </div>
+                            <div style="width:45%;">
+                            <p>The code snippet used for generating square wave is included in the main DE0_NANO.v file and is represented below:</p>
+                            <pre>
+                                <code>
+localparam toggle = 25_000_000/440/2;
+    reg [14:0] counter;
+    reg SOUND_OUT;
+    assign GPIO_1_D[10] = SOUND_OUT;
+    
+    always @(posedge CLOCK_25) begin
+      if (counter == toggle) begin
+        counter &lt;= 0;
+	    SOUND_OUT &lt;= ~SOUND_OUT;
+  	  end else
+        counter $lt;= counter + 1;
+    end
+                                </code>
+                            </pre>
+                            <br>
+                            </div>
+                            
+                            <div class="grey">
+                            <h2 style="font-size:200%; margin-bottom: 2%; margin-top:2%;">Creating a Sine Table &nbsp;
+                                <a href="/code/SINE_WAVE.v" download>
+                                    <i class="fa fa-download" aria-hidden="true"></i>
+                                </a>
+                            </h2>    
+                            <p>The DAC that we are using to convert digital signals to analog voltage is an eight bit resistor network, it will allow us to have 256 steps of output voltage.</p>
+                            <p>Before we can play our sine wave with the FPGA, we need to generate a table of digital output values that match up with the levels of the DAC. This look up table will sit in memory and reduce the computational load on the FPGA. This is known as Direct Digital Synthesis. Our FPGA now only needs to iterate through these points at the chosen frequency to play our wave.</p>
+                            <p>We used MATLAB to generate these 256 data points, convert them to 8-bit binary format, and output the correct syntax lines to be copy-pasted into our verilog file.</p>
+                            <p>Here’s the generation script:</p>
+                            <pre>
+                                <code>
+out = zeros(256);
+for t = 1:256
+    out(t) = 128 + 128*sind((t-1) * 360 / 255);
+    bin = dec2bin(out(t),8);
+    fprintf('sine[%i] &lt;= 8''b%s;\n', t-1, bin);
+end
+                                </code>
+                            </pre>
+                            </div>
+                            
+                            <div class="white">
+                            <h2 style="font-size:200%; margin-bottom: 2%; margin-top:2%;">Generating the Sine Waveform using our DAC &nbsp;
+                                <a href="/code/TuneGenerator.v" download>
+                                    <i class="fa fa-download" aria-hidden="true"></i>
+                                </a>
+                            </h2>   
+                            <p>Next, we choose to generate a more complicated wave, a sine wave, at the frequency of 440 Hz. For this, we used a 8-bit R2R DAC which is shown below to convert 8-bit digital signal from FPGA to analog voltages into the lab speaker. </p>
+                            <img src="https://i.imgur.com/nvkDDJW.png" style="width:100%;">
+                            <p>Since it is an 8-bit converter, the highest value we could get is 255, which represents 3.3V output from R2R DAC. Therefore, we use 256 points to represent 1 period of a sine wave. In that case, we need to toggle the sine pulse every 25MHz/440Hz/256 = 222 cycles, i.e. one point will stay for 222 cycles until updating to the next point. When the point (counter) reaches maximum, it will go back to 0 and increment again.</p>
+                            <p>The code snippet and the oscillscope display for sine wave are shown below:</p>
+                            <div style="width:50%; display: inline; float:right;">
+                                <img src="https://i.imgur.com/KxlZYuS.jpg" style="width:100%;">
+                            </div>
+                            <div style="width:45%;">
+                            <pre>
+                                <code>
+module SINE_WAVE
+...
+begin
+    sine[0] &lt;= 8'b10000000;
+    //... sine table//
+    sine[255] &lt;= 8'b10000000;
+end
+always @ (posedge CLOCK) begin
+    SINE_OUT &lt;= sine[ADDR_VALUE];
+end
+endmodule
+                                </code>
+                            </pre>
+                                </div>
+                            <p>And it sounds like: <a href="https://drive.google.com/file/d/0B8bwFN4zRmfVekRXM3dIenRQNGM/view">sine_wave_sound</a></p>
+                            <p>Finally, we made two more sine wave sounds with different frequencies: 660 Hz and 220 Hz, with a state machine. The three different sounds will be played when Arduino generates a done signal to FPGA. At this point, the Arudino is generating on and off signals every 6 seconds so that the sound will play for 6 seconds and stop for 6 seconds. The code snippet is represented below:</p>
+                            <pre  style="margin-left:0;">
+                                <code>
+always @(posedge CLOCK_25) begin                always @ (posedge CLOCK_25) begin
+    if (audio_state == 1) begin                     if (audio_state == 0)
+        if (counter == toggle_1) begin                  // if sound is playing, update the tone
+            counter &lt;= 0;                            // if sound isn't playing, update tone to be
+            if (addr &gt;= 255) addr &lt;= 0;               the start tone
+            else addr &lt;= addr + 1;                   else
+        end else                                        // if sound isn't playing, update tone to be
+            counter &lt;= counter + 1;                      the start tone
+    end                                                 else if (sec_counter == ONE_SEC)
+    // repeated for audio_states 2 and 3                    // reset counter      
+end                                                         // if on the last tone, loop to first       
+                                                            // otherwise, increment tone
+                                                            else
+                                                                // increment counter, update tone
+                                                    end
+                                </code>
+                            </pre>
+                            
+                            <p>It sounds like: <a href="https://drive.google.com/file/d/0B8bwFN4zRmfVbFNjOXd4bTNfQm8/view">sine_wave_sound_on_off</a></p>
+                            </div>
+
+						</section>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	<!-- /Main -->
+
+	<!-- Tweet -->
+		<div id="tweet">
+			<div class="container">
+				<section>
+					<blockquote style="font-family:Ubuntu; letter-spacing: 2px;">no bad robots</blockquote>
+				</section>
+			</div>
+		</div>
+
+	<!-- Copyright -->
+		<div id="copyright">
+			<div class="container">
+				website design from <a href="http://templated.co">TEMPLATED</a>
+                <br>
+			</div>
+		</div>
+
+	</body>
+</html>

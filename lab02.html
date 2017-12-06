@@ -1,0 +1,301 @@
+<!DOCTYPE HTML>
+<!--
+	Linear by TEMPLATED
+    templated.co @templatedco
+    Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+	<head>
+		<title>Lab02</title>
+        <link href="shrimp.ico" rel="icon">
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="description" content="" />
+		<meta name="keywords" content="" />
+		<link href="https://fonts.googleapis.com/css?family=Roboto:100" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+        <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+		<script src="js/skel.min.js"></script>
+		<script src="js/skel-panels.min.js"></script>
+		<script src="js/init.js"></script>
+		<noscript>
+			<link rel="stylesheet" href="css/skel-noscript.css" />
+			<link rel="stylesheet" href="css/style.css" />
+			<link rel="stylesheet" href="css/style-desktop.css" />
+		</noscript>
+        <style>
+            h3 {
+                font-size:150%;
+                margin-bottom:1%;
+            }
+        </style>
+	</head>
+	<body>
+
+	<!-- Header -->
+		<div id="header">
+			<div id="nav-wrapper"> 
+				<!-- Nav -->
+				<nav id="nav">
+					<ul>
+                        <li><a href="index.html">Homepage</a></li>
+						<li><a href="about.html">About</a></li>
+						<li><a href="team-contract.html">Team Contract</a></li>
+						<li><a href="meeting-minutes.html">Meeting Minutes</a></li>
+                        <li><a href="ethics.html">Ethics Case Study</a></li>
+					</ul>
+				</nav>
+			</div>
+			<div class="container"> 
+				
+				<!-- Logo -->
+				<div id="logo" style="font-family: Ubuntu; font-weight: normal">
+					<h1><a href="index.html">team-shrimp-cracker</a></h1>
+					<span class="tag">A robotics team dedicated to jamming the most flavor in a little robot.</span>
+				</div>
+			</div>
+		</div>
+	<!-- Header --> 
+
+	<!-- Main -->
+		<div id="main">
+			<div class="container">
+				<div class="row">
+
+					<!-- Sidebar -->
+					<div id="sidebar" style="width: 18%;" class="4u">
+						<section>
+							<header>
+								<h2>LABWORK</h2>
+							</header>
+							<div class="row">
+								<section class="6u">
+									<ul class="default">
+                                        <li><a href="lab01.html">Lab01</a></li>
+										<li><a href="lab02.html">Lab02</a></li>
+										<li><a href="lab03.html">Lab03</a></li>
+                                        <li><a href="lab04.html">Lab04</a></li>
+										<li><a href="m01.html">Milestone01</a></li>
+										<li><a href="m02.html">Milestone02</a></li>
+										<li><a href="m03.html">Milestone03</a></li>
+                                        <li><a href="m04.html">Milestone04</a></li>
+                                        <li><a href="competition.html">Competition</a></li>
+									</ul>
+								</section>
+							</div>
+						</section>
+			</div>
+					
+					<!-- Content -->
+					<div id="content" class="8u skel-cell-important" style="width:77%;">
+						<section>
+							<header style="margin-bottom:5%; ">
+								<h2>LAB02: ANALOG CIRCUITRY AND FFT</h2>
+							</header>
+                            <div class="grey">
+                            <h2 style="font-size:200%; margin-bottom: 2%;">Objective</h2>
+							<p>In this lab we added sensors to the robot and used Arduino’s Open Music Labs’ FFT library to process the signals. We split into two teams; the acoustic team (Frank Li and Boyi Xu) attached a microphone to detect the start frequency of 660 Hz. The optical team (Malavika Attaluri, Shirley Burt, and Adam Weld) attached an IR sensor to detect the presence and frequency of treasures.</p>
+                            <p style="font-size:120%; margin-bottom:0;">Equipment</p>
+                            <p>Acoustic Team</p>
+                            <ul style="margin-left:5%;">
+                                <li>* Arduino Uno</li>
+                                <li>* Electret microphone amplifier - MAX 4466</li>
+                                <li>* 1 Continuous rotation servos</li>
+                                <li>* 1 µF capacitor</li>
+                                <li>* 300 Ω resistors</li>
+                                <li>* ~3 kΩ resistor</li>
+                            </ul>
+                            <p>Optical Team</p>
+                            <ul style="margin-left:5%;">
+                                <li>* Arduino Uno</li>
+                                <li>* IR receiver</li>
+                                <li>* 300 Ω resistors</li>
+                                <li>* Treasure board</li>
+                            </ul>
+                            </div>
+                            
+                            <div class="white">
+                            <h2 style="font-size:200%; margin-bottom: 2%;">Pre-Lab</h2>
+                                <p>To introduce Fast Fourier Transform (FFT), it would be necessary to start from Fourier Transform. It looks like:</p>
+                            <img src="images/lab02_prelab1.jpg" style="margin-left:35%;">
+                            <p>where v is the frequency, t is the time, and i is the imaginary number. <br>As you can see from this equation, it transforms a function at time domain to a function at frequency domain. The function in time domain can be thought as a combination of various sinusoids as shown below:</p>
+                            <img src="images/lab02_prelab2.jpg" style="margin-left:20%;">
+                            <p>where T is the period which is the inverse of frequency, A is the amplitude, and ϕ is the phase. Since we know the three important characteristics of the sinusoidal wave, we could then represent the amplitude and the phase at the specific frequency of the wave.</p>
+                            <p>The original function is consisted of multiple sinusoids wave at time domain as mentioned above. Therefore, it can also be represented by multiple amplitudes and phases at frequency domain. The transform from time domain to frequency domain is called Fourier Transform and the reverse is called Inverse Fourier Transform as shown below:</p>
+                            <img src="images/lab02_prelab3.jpg" style="margin-left:35%;">
+                            <p>We use integral here because of the continuous spectrum of frequency. e^(2πivt) here is Euler’s formula for cos(t)+i*sin(t).</p>
+                            <p>This is actually Continuous Fourier Transform (CFT). Another flavor of Fourier Transform is Discrete Fourier Transform (DFT) which is used by Fast Fourier Transform (FFT). DFT has a finite number of frequency points which differs from CFT with an infinite number of sampling points. The improvement of FFT comparing with DFT is that FFT is much faster. The DFT is represented below (1):</p>
+                            <img src="images/lab02_prelab4.jpg" style="margin-left:25%;">
+                            <p>where x(0), …, x(N-1) are complex numbers. DFT requires O(N^2) operations: “there are N outputs X(k), and each output requires a sum of N terms” [ 1 ]. FFT, however, is any efficient algorithm requiring O(nlog(n)) operations. In this lab, we applied Arduino FFT library which is a “fast implementation of a standard FFT algorithm which operates on only real data” [ 2 ].</p>
+                            <p>From ATmega328 datasheet, the resolution of ADC can reach 10 bits when the input clock frequency is lower than 200 kHz [ 3 ]. First conversion takes 25 ADC clock cycles for initialization and normal conversion takes 13 cycles. If it is set to free running mode, a new conversion would be performed right after the completion of previous conversion. We also notice that the ADC module contains a prescaler so that the “clock frequency would be acceptable from any CPU frequency above 100kHz” [ 3 ]. The Arduino example “fft_adc_serial” uses a prescaler of 32 and saves 256 samples. Since it has a 16MHz crystal, the sampling frequency is 16000kHz/32/13=38kHz. The 660 Hz sine wave can therefore be found at bin number: 660/(38000/256)=5. And the ~10 kHz treasure can be found at bin number: 10000/(38000/256)=68.</p>
+                            <p>From Arduino reference page, we found the maximum reading rate for “analogRead” function is about 10kHz [ 4 ]. The sampling frequency is much lower than that of free running mode. We should be able to detect 660 Hz sine wave at bin number: 660/(10000/256)=17. It would be unrealistic to detect 10kHz treasure with “analogRead”. The human voice frequency ranges from 85-255 Hz [ 5 ] which should fall around bin 1 for free running mode. The fluorescent light has a frequency twice of the frequency of the electrical supply. 120 Hz should not affect IR sensor since the target’s frequencies are much higher (7kHz, 12kHz, 17kHz). Therefore, both human voice and the light should not affect ADC and IR sensor.</p>
+                            <p>A good cutoff frequency should be about 5-20 kHz since the treasure is from 7 to 17 kHz. A gain of 2V peak to peak should be appropriate. Since the Arduino inputs must be 0 and 5V, a good DC offset should be 2-3V.</p>
+                            <p>Citations</p>
+                            <ul style="margin-left:5%;">
+                                <li>[ 1 ] &nbsp; &nbsp; &nbsp;“Fast Fourier transform.” Wikipedia, Wikimedia Foundation, 15 Sept. 2017, en.wikipedia.org/wiki/Fast_Fourier_transform. <!--Accessed 18 Sept. 2017.--></li> 
+                                <li>[ 2 ] &nbsp; &nbsp; &nbsp;“Arduino FFT Library.” Open Music Labs Wiki, wiki.openmusiclabs.com/wiki/ArduinoFFT. <!--Accessed 20 Sept. 2017.--> </li>
+                                <li>[ 3 ] &nbsp; &nbsp; &nbsp;ATmega328/P Datasheet Complete. Atmel, Nov. 2016. <!--Accessed 20 Sept. 2017.--> </li>
+                                <li>[ 4 ] &nbsp; &nbsp; &nbsp;“AnalogRead().” Arduino, www.arduino.cc/en/Reference/AnalogRead. <!--Accessed 20 Sept. 2017.--> </li>
+                                <li>[ 5 ] &nbsp; &nbsp; &nbsp;“Voice frequency.” Wikipedia, Wikimedia Foundation, 5 Sept. 2017, en.wikipedia.org/wiki/Voice_frequency. <!--Accessed 20 Sept. 2017.--></li>
+                            </ul>
+                            </div>
+                            
+                            <div class="grey">
+                            <h2 style="font-size:200%; margin-bottom: 2%;">Open Music Labs FFT Library &nbsp;
+                                <a href="/code/lab02_1.ino" download>
+                                    <i class="fa fa-download" aria-hidden="true"></i>
+                                </a>
+                            </h2>
+                            <h3>Unit Test</h3>
+                            <p>Our first step was to determine how the provided FFT functions transformed inputs of different frequencies. In order to read the output of the ADC pin and perform the Fourier Transform on the signal, we started off with the example sketch from the FFT library as a base.</p>
+                            <p>We added the following 5code to capture the output of the Fourier Transform:</p>
+                            <pre>
+                                <code>
+for (int i = 0; i &lt; 128; i++) {
+      	Serial.write(&quot;--------------&quot;);
+int x = (int) fft_log_out[i];
+     	Serial.print(str(x));
+}
+                                </code>
+                            </pre>
+                            <p>We used the function generator to output a sine wave at different frequencies with a peak to peak voltage of around 2 V. <br>The following figure shows the setup of our function generator:</p>
+                            <img src="https://i.imgur.com/vUHTf8E.jpg" width=100%>
+                            <p>We measured the Fourier Transform of a sine wave at 7kHz, 12 kHz, and 17kHz. We then plotted our results:</p>
+                            <img src="images/lab02_graph.png" width=100%>
+                            <p>From the above results, we were able to determine which bins would have a peak at different input frequencies.</p>
+                            </div>
+                            
+                            <div class="white">
+                            <h2 style="font-size:200%; margin-bottom: 2%;">Optical Team  &nbsp;
+                                <a href="/code/lab2_merged.ino" download>
+                                    <i class="fa fa-download" aria-hidden="true"></i>
+                                </a>
+                            </h2>   
+                            <h3>Objective</h3>
+                            <p>Our goal for the optical task is to be able to detect a 7kHz IR beacon with an Arduino.</p>
+                            <h3>Unit Test</h3>
+                            <p>Before connecting the sensor to the Arduino, we measured the output of the sensor on the oscilloscope to determine if we would need any additional analog circuitry. We connected the sensor in series with a 2 kOhm resistor and measured the voltage signal between the sensor and ground as we moved the treasure near the sensor. The following circuit below shows how we connected the sensor to the oscilloscope:</p>
+                            <img src="https://i.imgur.com/00SZzun.jpg" style="width:100%;">
+                            <p>[Note: in this picture we were using the wrong IR sensor, but we swapped it out for the correct one before proceeding with testing & the rest of the lab]</p>
+                            
+                            <p>The following show the output on the oscilloscope as we moved the treasure close to the sensor, and the oscilloscope output as we moved the sensor towards and away from the treasure:</p>
+                            <img src="https://i.imgur.com/iflJqSx.jpg" width=592>
+                            <img src="https://thumbs.gfycat.com/TalkativeYearlyArcticfox-size_restricted.gif" style="margin-left:1%;">
+                            
+                            <p>From the low peak-to-peak voltage (around 1 V), we determined that it would be best to feed the output of the sensor into an op-amp.</p>
+                            
+                            <h3>Analog Circuitry</h3>
+                            <p>In order to amplify the sensor output and increase the range at which the treasures could be detected, we constructed an op-amp circuit around the LM 358 dual op-amp package.</p>
+                            <p>The amplifier topology chosen is a dual inverting amplifier. The signal is twice inverted, thus the output remains positive. A lot of tuning of the resistor values was required to ensure the op amp never saturated or produced a clipped output. Another important modification of the circuit was to reference both the OP amp voltage rails, and the photo-transistor output to the “virtual ground” created with a voltage divider halfway between VCC and GND. This allows the op amps to be driven off of a single 5V source and without any negative voltage source.</p>
+                            <img src="images/lab02_circuitry.png" style="width:100%;">
+                            <p>The circuit was tested with a breadboard implementation. The laptop in the background shows the unamplified output of the phototransistor versus the ~5X amplified op amp output.</p>
+                            <img src="https://i.imgur.com/wOvjCZV.jpg" style="width:100%;">
+                            <p>While this circuit does a lot to improve performance, there is more that could be done in the future. A higher voltage op-amp voltage supply could greatly increase gain; the current 5V source can never create a bandwith that takes full advantage of the arduino’s 5V ADC.</p>
+                            <p>Furthermore, an analog filtering system could be put in place to reduce picked up noise.</p>
+                            
+                            <h3>Detecting the Presence of the Treasure with the Arduino</h3>
+                           
+                            
+                            <div style="width:50%; display: inline; float:right;">  
+                            <p>Here is a video of the code in action</p>
+                            <iframe src='https://gfycat.com/ifr/MelodicSecretLadybug' frameborder='0' scrolling='no' width='350' height='624' allowfullscreen style="margin-left: 5%;"></iframe>
+                            </div> 
+                                
+                            <div style="width:45%;">
+                            <p>From the unit test we performed at the start of the lab, we determined that the 7kHz frequency signal has a peak in bins 45-50. For the purposes of this lab, we decided to set our threshold value for the FFT magnitude at 50, in order to make our system sensitive to the treasure. We expect that we will change this value for our final robot based on our final analog circuitry in order to properly distinguish between different frequencies of treasure. <br>
+                            Based on this we modified our code to detect the treasure at 7kHz:</p>
+                            <pre>
+                                <code>
+bool treasure_detected = false;
+    for (int i = 0; i &lt; 128; i++) {
+      int x = (int) fft_log_out[i];
+      if (i >= 45 &amp; i &lt;= 50)
+        if (x > 50) 
+          treasure_detected = true;
+    }
+    if (treasure_detected)
+      Serial.write("Treasure Detected!\n");
+      
+      
+      
+      
+      
+      
+      
+      
+                                </code>
+                            </pre>
+                            </div>
+                                
+                            </div>
+                            
+                            <div class="grey">
+                            <h2 style="font-size:200%; margin-bottom: 2%;">Acoustic Team  &nbsp;
+                                <a href="/code/lab2_merged.ino" download>
+                                    <i class="fa fa-download" aria-hidden="true"></i>
+                                </a>
+                            </h2>   
+                            <p>The application used to generate the tones is <a href="https://itunes.apple.com/us/app/tone-generator/id457003837?mt=8">Tone Generator by Michael Heinz</a>. Using the generator, we hooked up the microphone amplifier breakout board to the Arduino and tested the capabilities of the microphone. Unsurprisingly, the microphone was able to detect the signal and output generated was satisfactory. The microphone breakout board already contains basic preamplification circuit that utilizes a non-inverting negative feedback op-amp circuit in a active second order band pass configuration. </p>
+                            <img src="images/lab02_circuitry2.png">
+                            <img src="images/lab02_circuitry3.png" style="margin-bottom: 18%; margin-left: 3%;">
+                            <p>The breakout lists that it can detect frequencies from 20Hz-20kHz. The negative feedback provides lower gain but increases stability of the circuit. This works by feeding back some of the output voltage back to the inverting input of the op-amp. This causes the input impedance to the op-amp to be really high which conforms to the ideal op-amp circuit. Consequently, the resistance of the output is low. Also, because it is non-inverting, the output voltage is the same sign as the input voltage which can be convenient to our FFT analysis. C2 acts as the high pass filter which filters out low frequencies as low frequencies cause C2 to act like an open circuit. On the other spectrum, C4 acts as a low pass as at high frequencies, the capacitor shorts the output voltage to ground. This combination creates the band pass filter which only reads frequencies that humans can hear (20Hz-20kHz).</p>
+                            <p>We then tested the circuit using the FFT serial adc test code in order to output the data in bins. Parsing through the code in the example, we realized that the ADC clock speed was set to 500kHz as the prescaler was set to 32. The data that we collected using this clock speed is shown below. </p>
+                            <p>We can convert the bin numbers into the respective frequency as we know that (500kHz/13 clock cyles)/256 samples is around 150 Hz per bin. The frequency adjusted graph is as follows.</p>
+                            <img src="images/lab02_graph2.png" style="width:49%; margin-bottom: 2%;">
+                            <img src="images/lab02_graph3.png" style="width:49%; margin-left:1%; margin-bottom: 2%;">                            
+                            
+                            <div style="width:50%; display: inline; float:right;"> 
+                            <p>As seen by the axis transformation, the data that the microphone recorded was fairly accurate. To confirm this result even more, we hooked up the output of the microphone circuit to the oscilloscope to see the resulting analog signal.</p>
+                            <p>Here is a video showing that the signal detected was very accurate in its frequency:</p>
+                            <iframe src='https://gfycat.com/ifr/UnnaturalBlaringDeviltasmanian' frameborder='0' scrolling='no'  height='241' allowfullscreen style="width:100%; margin-top:3.7%;"></iframe>
+                            </div>
+                            
+                            <div style="width:45%;">
+                            <img src="https://i.imgur.com/sBGRjkj.png" width=400>
+                            </div>
+                            
+                            <p>The following snippet of code is added serial detector code in order to detect the frequencies around 660 Hz.</p>
+                            <pre>
+                                <code>
+bool signal = false;
+for (byte i = 0 ; i &lt; FFT_N/2 ; i++) { 
+  if ((i==3) || (i==4) || (i=5)) {
+    if (fft_log_out[i] > 150) {
+      signal = true;
+    }
+  } 
+  if (signal) {
+    Serial.println("660 Hz Signal Detected\n"); // send out the data
+  }
+}    
+                                </code>
+                            </pre>
+                            <p>But these are pretty ideal conditions. And everyone knows all is fair in love and war. Intimidated by our gorgeous robot, other teams will likely attempt to sabotage our robot by making <a href="https://drive.google.com/file/d/0BwOxbk7b-QdodlJzWG5RNUc5Z1E/view">noise</a> during the starting launch. The basic signal still prevails even though the source of the noise was close to the sensor.</p>
+                            </div>
+						</section>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	<!-- /Main -->
+
+	<!-- Tweet -->
+		<div id="tweet">
+			<div class="container">
+				<section>
+					<blockquote style="font-family:Ubuntu; letter-spacing: 2px;">no bad robots</blockquote>
+				</section>
+			</div>
+		</div>
+
+	<!-- Copyright -->
+		<div id="copyright">
+			<div class="container">
+				website design from <a href="http://templated.co">TEMPLATED</a>
+                <br>
+			</div>
+		</div>
+        
+	</body>
+</html>
