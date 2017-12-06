@@ -11,16 +11,12 @@
 #include <FFT.h>
 
 //turns
-#define turn90 400//350
+#define turn90 325
 #define turn180 750
 //Treasure detection
 
 //speeds
-#define MAXSPEED 900
-
-#define PGAIN 2.5
-#define IGAIN 11000
-#define DGAIN .5
+#define MAXSPEED 600
 
 // Distance Sensors
 #define XSHUT_pinA 6
@@ -442,90 +438,6 @@ int moveAdjacent(int curX, int curY, int heading, int goalX, int goalY) {
   if (dir == -1)
     return dir;
 
-  switch(heading) {
-    case 0:
-      switch (dir) {
-        case 0: 
-          if (detectWall(0))
-            return -1;
-          break;
-        case 1:
-          if (detectWall(1))
-            return -1;
-          break;
-        case 2:
-          if (detectWall(2))
-            return -1;
-          break;
-        case 3: 
-          if (detectWall(3))
-            return -1;
-          break;
-      }
-    break;
-    case 1:
-      switch (dir) {
-        case 0: 
-          if (detectWall(3))
-            return -1;
-          break;
-        case 1:
-          if (detectWall(0))
-            return -1;
-          break;
-        case 2:
-          if (detectWall(1))
-            return -1;
-          break;
-        case 3: 
-          if (detectWall(2))
-            return -1;
-          break;
-      }
-    break;
-    case 2:
-      switch (dir) {
-        case 0: 
-          if (detectWall(2))
-            return -1;
-          break;
-        case 1:
-          if (detectWall(3))
-            return -1;
-          break;
-        case 2:
-          if (detectWall(0))
-            return -1;
-          break;
-        case 3: 
-          if (detectWall(1))
-            return -1;
-          break;
-      }
-    break;
-    case 3:
-      switch (dir) {
-        case 0: 
-          if (detectWall(1))
-            return -1;
-          break;
-        case 1:
-          if (detectWall(2))
-            return -1;
-          break;
-        case 2:
-          if (detectWall(3))
-            return -1;
-          break;
-        case 3: 
-          if (detectWall(0))
-            return -1;
-          break;
-      }
-    break;
-  }
-  
-
   if (heading != dir) {
     switch (heading) {
       case 0:
@@ -661,7 +573,7 @@ bool detectTone() {
   sei();
   Serial.println("start");
   for (byte i = 18 ; i < 21 ; i++) {
-    if (fft_log_out[i] > 45) {
+    if (fft_log_out[i] > 35) {
       return true;
     }
   }
@@ -753,9 +665,9 @@ void goForwardOneSquare() {
     integral = integral + pos;
     lastPos = pos;
 
-    power_difference = pos / PGAIN + integral / IGAIN + derivative * DGAIN;
+    power_difference = pos / 12 + integral / 11000 + derivative * .5;
 
-    
+    const int max = 200;
     if (power_difference > max)
       power_difference = max;
     if (power_difference < -max)
@@ -807,6 +719,7 @@ void turnRight(int time) {
   int detect_treasure() {
   int threshold = 50;
   for (int i = 0; i < 10; i++) {
+
   }
   }
   //read from adc0 and do fft
@@ -829,6 +742,7 @@ void turnRight(int time) {
     fft_mag_log(); // take the output of the fft
     sei(); // turns interrupts back on
   }
+
   //treasure detection
   //return 0 if no treasure, 1 if 7kHz, 2 if 12kHz, 3 if 17kHz
   /*int treasureDetect() {
